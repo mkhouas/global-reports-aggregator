@@ -1,1877 +1,876 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="مُجمِّع التقارير الدولية — سياسة، أمن، حوكمة، جيوبوليتيك">
-    <title>🌍 مُجمِّع التقارير الدولية | Global Reports Aggregator</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        /* ============================================================
-           CSS VARIABLES — DARK / LIGHT THEMES
-        ============================================================ */
-        :root {
-            --bg-primary:    #080c18;
-            --bg-secondary:  #0d1220;
-            --bg-card:       #111827;
-            --bg-card-hover: #162032;
-            --text-primary:  #e2e8f0;
-            --text-secondary:#8899aa;
-            --text-muted:    #55667a;
-            --accent-blue:   #3b82f6;
-            --accent-cyan:   #06b6d4;
-            --accent-purple: #8b5cf6;
-            --accent-green:  #10b981;
-            --accent-orange: #f59e0b;
-            --accent-red:    #ef4444;
-            --accent-pink:   #ec4899;
-            --accent-gold:   #fbbf24;
-            --accent-teal:   #14b8a6;
-            --border-color:  #1a2540;
-            --shadow-sm:     0 2px 12px rgba(0,0,0,.35);
-            --shadow-md:     0 6px 30px rgba(0,0,0,.45);
-            --shadow-lg:     0 12px 50px rgba(0,0,0,.55);
-            --glass:         rgba(13,18,32,.85);
-            --glass-border:  rgba(255,255,255,.04);
-            --grad-blue:     linear-gradient(135deg,#3b82f6,#8b5cf6);
-            --grad-green:    linear-gradient(135deg,#06b6d4,#10b981);
-            --grad-orange:   linear-gradient(135deg,#f59e0b,#ef4444);
-            --grad-pink:     linear-gradient(135deg,#ec4899,#8b5cf6);
-            --grad-gold:     linear-gradient(135deg,#fbbf24,#f59e0b);
-            --radius-sm: 10px;
-            --radius-md: 16px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
-        }
-
-        [data-theme="light"] {
-            --bg-primary:    #eef2f7;
-            --bg-secondary:  #f8fafc;
-            --bg-card:       #ffffff;
-            --bg-card-hover: #f1f5fb;
-            --text-primary:  #0f172a;
-            --text-secondary:#475569;
-            --text-muted:    #94a3b8;
-            --border-color:  #dde4ef;
-            --shadow-sm:     0 2px 12px rgba(0,0,0,.08);
-            --shadow-md:     0 6px 30px rgba(0,0,0,.12);
-            --shadow-lg:     0 12px 50px rgba(0,0,0,.15);
-            --glass:         rgba(255,255,255,.92);
-            --glass-border:  rgba(0,0,0,.06);
-        }
-
-        /* ============================================================
-           BASE RESET
-        ============================================================ */
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, 'Arial Unicode MS', Geneva, Verdana, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background .3s, color .3s;
-        }
-
-        a { text-decoration: none; color: inherit; }
-        button { cursor: pointer; font-family: inherit; }
-
-        /* ============================================================
-           ANIMATED BACKGROUND
-        ============================================================ */
-        #bg-canvas {
-            position: fixed; inset: 0; z-index: 0;
-            pointer-events: none; opacity: .55;
-        }
-
-        /* ============================================================
-           SCROLLBAR
-        ============================================================ */
-        ::-webkit-scrollbar { width: 7px; }
-        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-blue);
-            border-radius: 4px;
-        }
-
-        /* ============================================================
-           TOP BANNER
-        ============================================================ */
-        .top-banner {
-            position: relative; z-index: 10;
-            background: var(--grad-blue);
-            padding: 7px 20px;
-            text-align: center;
-            font-size: .8rem;
-            color: rgba(255,255,255,.9);
-            letter-spacing: .4px;
-        }
-
-        .top-banner span { opacity: .7; margin: 0 10px; }
-
-        /* ============================================================
-           HEADER
-        ============================================================ */
-        .header {
-            position: sticky; top: 0; z-index: 100;
-            background: var(--glass);
-            backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 12px 28px;
-            transition: background .3s;
-        }
-
-        .header-inner {
-            max-width: 1700px; margin: 0 auto;
-            display: flex; align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap; gap: 12px;
-        }
-
-        /* Logo */
-        .logo { display: flex; align-items: center; gap: 12px; }
-
-        .logo-orb {
-            width: 46px; height: 46px;
-            background: var(--grad-blue);
-            border-radius: var(--radius-sm);
-            display: flex; align-items: center;
-            justify-content: center; font-size: 22px;
-            animation: orbGlow 3s infinite;
-        }
-
-        @keyframes orbGlow {
-            0%,100% { box-shadow: 0 0 12px rgba(59,130,246,.4); }
-            50%      { box-shadow: 0 0 28px rgba(59,130,246,.8); }
-        }
-
-        .logo-info h1 {
-            font-size: 1.1rem; font-weight: 700;
-            background: var(--grad-blue);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo-info p {
-            font-size: .7rem; color: var(--text-secondary);
-        }
-
-        /* Header Right */
-        .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-        /* Language Switcher */
-        .lang-switch {
-            display: flex; gap: 4px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 25px; padding: 4px;
-        }
-
-        .lang-btn {
-            padding: 5px 14px; border-radius: 20px;
-            border: none; background: none;
-            color: var(--text-secondary);
-            font-size: .78rem; font-weight: 600;
-            transition: all .25s;
-        }
-
-        .lang-btn.active {
-            background: var(--accent-blue); color: #fff;
-        }
-
-        .lang-btn:hover:not(.active) {
-            color: var(--text-primary);
-        }
-
-        /* Live Pill */
-        .live-pill {
-            display: flex; align-items: center; gap: 6px;
-            padding: 6px 14px;
-            background: rgba(16,185,129,.1);
-            border: 1px solid rgba(16,185,129,.3);
-            border-radius: 20px;
-            font-size: .78rem; color: var(--accent-green);
-            font-weight: 600;
-        }
-
-        .live-dot {
-            width: 8px; height: 8px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            animation: blink 1.4s infinite;
-        }
-
-        @keyframes blink {
-            0%,100% { opacity: 1; }
-            50%      { opacity: .2; }
-        }
-
-        /* Timer */
-        .timer-pill {
-            font-size: .75rem; color: var(--text-secondary);
-            display: flex; align-items: center; gap: 5px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px; padding: 5px 12px;
-        }
-
-        /* Icon Button */
-        .icon-btn {
-            width: 38px; height: 38px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-secondary);
-            display: flex; align-items: center;
-            justify-content: center; font-size: 15px;
-            transition: all .25s;
-        }
-
-        .icon-btn:hover {
-            background: var(--accent-blue); color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(59,130,246,.35);
-        }
-
-        /* ============================================================
-           STATS ROW
-        ============================================================ */
-        .stats-row {
-            max-width: 1700px; margin: 20px auto;
-            padding: 0 28px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 18px 20px;
-            display: flex; align-items: center; gap: 14px;
-            transition: all .3s;
-            position: relative; overflow: hidden;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute; bottom: 0; left: 0;
-            width: 100%; height: 3px;
-        }
-
-        .stat-card:nth-child(1)::after { background: var(--grad-blue); }
-        .stat-card:nth-child(2)::after { background: var(--grad-green); }
-        .stat-card:nth-child(3)::after { background: var(--grad-orange); }
-        .stat-card:nth-child(4)::after { background: var(--grad-pink); }
-        .stat-card:nth-child(5)::after { background: var(--grad-gold); }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-ico {
-            width: 46px; height: 46px;
-            border-radius: var(--radius-sm);
-            display: flex; align-items: center;
-            justify-content: center; font-size: 20px;
-            color: #fff; flex-shrink: 0;
-        }
-
-        .stat-info h3 { font-size: 1.6rem; font-weight: 800; line-height: 1; }
-        .stat-info p  { font-size: .75rem; color: var(--text-secondary); margin-top: 3px; }
-
-        /* ============================================================
-           CONTROLS
-        ============================================================ */
-        .controls {
-            max-width: 1700px; margin: 0 auto;
-            padding: 0 28px 16px;
-        }
-
-        /* Search */
-        .search-wrap {
-            position: relative; margin-bottom: 14px;
-        }
-
-        .search-wrap input {
-            width: 100%; padding: 14px 55px 14px 50px;
-            background: var(--bg-card);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            color: var(--text-primary); font-size: .95rem;
-            transition: border-color .3s, box-shadow .3s;
-            outline: none;
-        }
-
-        .search-wrap input:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 22px rgba(59,130,246,.2);
-        }
-
-        .search-wrap input::placeholder { color: var(--text-muted); }
-
-        .search-ico {
-            position: absolute; left: 18px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted); font-size: 16px;
-        }
-
-        .search-clear {
-            position: absolute; right: 15px; top: 50%;
-            transform: translateY(-50%);
-            background: none; border: none;
-            color: var(--text-muted); font-size: 16px;
-            display: none;
-        }
-
-        .search-clear.visible { display: block; }
-        .search-clear:hover { color: var(--accent-red); }
-
-        /* Filter pills row */
-        .pills-row {
-            display: flex; gap: 7px;
-            flex-wrap: wrap; margin-bottom: 10px;
-        }
-
-        .pill {
-            padding: 7px 16px; border-radius: 22px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            font-size: .82rem; font-weight: 500;
-            transition: all .25s; white-space: nowrap;
-        }
-
-        .pill:hover { transform: translateY(-2px); }
-
-        /* Topic pills */
-        .pill.topic.active, .pill.topic:hover {
-            background: var(--accent-blue); color: #fff;
-            border-color: var(--accent-blue);
-        }
-
-        /* Language pills */
-        .pill.lng { border-radius: 22px; }
-        .pill.lng.en { border-color: #3b82f640; }
-        .pill.lng.en.active, .pill.lng.en:hover { background: #3b82f6; color: #fff; border-color: #3b82f6; }
-        .pill.lng.ar { border-color: #10b98140; }
-        .pill.lng.ar.active, .pill.lng.ar:hover { background: #10b981; color: #fff; border-color: #10b981; }
-        .pill.lng.fr { border-color: #f59e0b40; }
-        .pill.lng.fr.active, .pill.lng.fr:hover { background: #f59e0b; color: #000; border-color: #f59e0b; }
-        .pill.lng.multi { border-color: #8b5cf640; }
-        .pill.lng.multi.active, .pill.lng.multi:hover { background: #8b5cf6; color: #fff; border-color: #8b5cf6; }
-
-        /* Source category pills */
-        .pill.src-un     { border-color: #4da6ff40; color: #4da6ff; }
-        .pill.src-un.active, .pill.src-un:hover     { background: #4da6ff; color: #fff; border-color: #4da6ff; }
-        .pill.src-eu     { border-color: #ffd70040; color: #ffd700; }
-        .pill.src-eu.active, .pill.src-eu:hover     { background: #ffd700; color: #000; border-color: #ffd700; }
-        .pill.src-au     { border-color: #10b98140; color: #10b981; }
-        .pill.src-au.active, .pill.src-au:hover     { background: #10b981; color: #fff; border-color: #10b981; }
-        .pill.src-arab   { border-color: #f59e0b40; color: #f59e0b; }
-        .pill.src-arab.active, .pill.src-arab:hover { background: #f59e0b; color: #000; border-color: #f59e0b; }
-        .pill.src-fr-tank{ border-color: #ec489940; color: #ec4899; }
-        .pill.src-fr-tank.active, .pill.src-fr-tank:hover { background: #ec4899; color: #fff; border-color: #ec4899; }
-        .pill.src-tank   { border-color: #8b5cf640; color: #8b5cf6; }
-        .pill.src-tank.active, .pill.src-tank:hover { background: #8b5cf6; color: #fff; border-color: #8b5cf6; }
-        .pill.src-ngo    { border-color: #14b8a640; color: #14b8a6; }
-        .pill.src-ngo.active, .pill.src-ngo:hover   { background: #14b8a6; color: #fff; border-color: #14b8a6; }
-
-        /* Divider between pills rows */
-        .pills-label {
-            font-size: .7rem; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1px;
-            padding: 6px 2px 4px;
-        }
-
-        /* ============================================================
-           REPORTS GRID
-        ============================================================ */
-        .grid-wrap {
-            max-width: 1700px; margin: 0 auto;
-            padding: 0 28px 40px;
-        }
-
-        .reports-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
-            gap: 18px;
-        }
-
-        /* ============================================================
-           REPORT CARD
-        ============================================================ */
-        .rcard {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 22px;
-            position: relative; overflow: hidden;
-            transition: all .35s cubic-bezier(.4,0,.2,1);
-            animation: fadeUp .55s ease backwards;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-
-        .rcard::before {
-            content: '';
-            position: absolute; top: 0; right: 0;
-            width: 3px; height: 100%;
-            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-            transition: width .3s;
-        }
-
-        /* Side stripe colours by category */
-        .rcard[data-cat="un"]      ::before, .rcard[data-cat="un"]::before      { background: #4da6ff; }
-        .rcard[data-cat="eu"]      ::before, .rcard[data-cat="eu"]::before      { background: #ffd700; }
-        .rcard[data-cat="au"]      ::before, .rcard[data-cat="au"]::before      { background: #10b981; }
-        .rcard[data-cat="arab"]    ::before, .rcard[data-cat="arab"]::before    { background: #f59e0b; }
-        .rcard[data-cat="fr-tank"] ::before, .rcard[data-cat="fr-tank"]::before { background: #ec4899; }
-        .rcard[data-cat="think-tank"]::before                                   { background: #8b5cf6; }
-        .rcard[data-cat="ngo"]     ::before, .rcard[data-cat="ngo"]::before     { background: #14b8a6; }
-
-        .rcard:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-            border-color: rgba(59,130,246,.35);
-        }
-
-        .rcard:hover::before { width: 5px; }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(28px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Card header row */
-        .card-top {
-            display: flex; align-items: flex-start;
-            justify-content: space-between; gap: 8px;
-        }
-
-        .card-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-        /* Source badge */
-        .src-badge {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 10px; border-radius: 20px;
-            font-size: .72rem; font-weight: 700;
-        }
-
-        .src-badge.un      { background: #4da6ff18; color: #4da6ff; }
-        .src-badge.eu      { background: #ffd70018; color: #c9aa00; }
-        .src-badge.au      { background: #10b98118; color: #10b981; }
-        .src-badge.arab    { background: #f59e0b18; color: #f59e0b; }
-        .src-badge.fr-tank { background: #ec489918; color: #ec4899; }
-        .src-badge.think-tank { background: #8b5cf618; color: #8b5cf6; }
-        .src-badge.ngo     { background: #14b8a618; color: #14b8a6; }
-
-        /* Language flag badge */
-        .lang-badge {
-            padding: 2px 8px; border-radius: 12px;
-            font-size: .68rem; font-weight: 700;
-        }
-
-        .lang-badge.en   { background: #3b82f618; color: #3b82f6; }
-        .lang-badge.ar   { background: #10b98118; color: #10b981; }
-        .lang-badge.fr   { background: #f59e0b18; color: #d97706; }
-        .lang-badge.multi{ background: #8b5cf618; color: #8b5cf6; }
-
-        /* Date + bookmark */
-        .card-right {
-            display: flex; align-items: center; gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .card-date { font-size: .72rem; color: var(--text-muted); }
-
-        .bmark-btn {
-            background: none; border: none;
-            color: var(--text-muted); font-size: .95rem;
-            transition: all .25s; padding: 2px;
-        }
-
-        .bmark-btn:hover       { color: var(--accent-gold); transform: scale(1.2); }
-        .bmark-btn.saved       { color: var(--accent-gold); }
-
-        /* Card title */
-        .card-title {
-            font-size: 1rem; font-weight: 700;
-            line-height: 1.55; color: var(--text-primary);
-            display: -webkit-box; -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical; overflow: hidden;
-            transition: color .2s;
-        }
-
-        .card-title:hover { color: var(--accent-blue); }
-
-        /* Card description */
-        .card-desc {
-            font-size: .83rem; color: var(--text-secondary);
-            line-height: 1.65;
-            display: -webkit-box; -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical; overflow: hidden;
-        }
-
-        /* Tags row */
-        .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-
-        .tag {
-            padding: 3px 9px; border-radius: 10px;
-            font-size: .68rem; font-weight: 600;
-            background: var(--bg-primary); color: var(--text-muted);
-        }
-
-        /* Card footer */
-        .card-foot {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding-top: 10px;
-            border-top: 1px solid var(--border-color);
-            margin-top: auto;
-        }
-
-        .read-link {
-            font-size: .8rem; color: var(--accent-blue);
-            font-weight: 600;
-            display: flex; align-items: center; gap: 5px;
-            transition: gap .25s, color .25s;
-        }
-
-        .read-link:hover { gap: 9px; color: var(--accent-cyan); }
-
-        /* ============================================================
-           LOADING STATE
-        ============================================================ */
-        .loader-wrap {
-            grid-column: 1/-1;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 70px 20px; gap: 18px;
-        }
-
-        .spinner {
-            width: 52px; height: 52px;
-            border: 4px solid var(--border-color);
-            border-top-color: var(--accent-blue);
-            border-radius: 50%;
-            animation: spin .75s linear infinite;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .loader-progress {
-            width: 260px; height: 4px;
-            background: var(--border-color);
-            border-radius: 2px; overflow: hidden;
-        }
-
-        .loader-bar {
-            height: 100%; background: var(--grad-blue);
-            border-radius: 2px;
-            animation: progressBar 3s ease-in-out infinite;
-        }
-
-        @keyframes progressBar {
-            0%   { width: 5%; }
-            50%  { width: 70%; }
-            100% { width: 95%; }
-        }
-
-        /* ============================================================
-           NO RESULTS
-        ============================================================ */
-        .empty-state {
-            grid-column: 1/-1;
-            text-align: center; padding: 70px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i { font-size: 4rem; opacity: .2; margin-bottom: 16px; display: block; }
-        .empty-state h3 { margin-bottom: 8px; }
-
-        /* ============================================================
-           MODAL
-        ============================================================ */
-        .modal-bg {
-            position: fixed; inset: 0; z-index: 300;
-            background: rgba(0,0,0,.75);
-            backdrop-filter: blur(10px);
-            display: none; align-items: center;
-            justify-content: center; padding: 20px;
-        }
-
-        .modal-bg.open { display: flex; }
-
-        .modal-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-xl);
-            padding: 28px;
-            width: min(740px, 100%);
-            max-height: 82vh; overflow-y: auto;
-            animation: modalPop .35s ease;
-        }
-
-        @keyframes modalPop {
-            from { opacity: 0; transform: scale(.92) translateY(20px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .modal-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 20px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-header h2 { font-size: 1.2rem; }
-
-        .modal-close {
-            width: 34px; height: 34px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-secondary); font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all .25s;
-        }
-
-        .modal-close:hover { background: var(--accent-red); color: #fff; }
-
-        /* Source list in modal */
-        .src-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-
-        .src-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px; border-radius: var(--radius-sm);
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            transition: border-color .25s;
-        }
-
-        .src-item:hover { border-color: var(--accent-blue); }
-
-        .src-item .ico { font-size: 1.3rem; }
-
-        .src-item .info { overflow: hidden; }
-        .src-item .info strong { font-size: .8rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .src-item .info small  { font-size: .68rem; color: var(--text-muted); }
-
-        /* Tab buttons inside modal */
-        .modal-tabs {
-            display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;
-        }
-
-        .m-tab {
-            padding: 6px 14px; border-radius: 20px;
-            border: 1px solid var(--border-color);
-            background: none; color: var(--text-secondary);
-            font-size: .78rem;
-        }
-
-        .m-tab.active, .m-tab:hover {
-            background: var(--accent-blue); color: #fff;
-            border-color: var(--accent-blue);
-        }
-
-        /* ============================================================
-           TOAST
-        ============================================================ */
-        .toast {
-            position: fixed; bottom: 28px; left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--accent-green); color: #fff;
-            padding: 11px 24px; border-radius: var(--radius-md);
-            font-size: .88rem; z-index: 9999; white-space: nowrap;
-            box-shadow: 0 8px 30px rgba(16,185,129,.35);
-            transition: transform .45s cubic-bezier(.4,0,.2,1);
-        }
-
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.err   { background: var(--accent-red); box-shadow: 0 8px 30px rgba(239,68,68,.35); }
-
-        /* ============================================================
-           SCROLL TOP
-        ============================================================ */
-        .scroll-top {
-            position: fixed; bottom: 28px; right: 28px;
-            width: 44px; height: 44px;
-            background: var(--grad-blue);
-            border: none; border-radius: 50%;
-            color: #fff; font-size: 17px;
-            display: none; align-items: center;
-            justify-content: center; z-index: 100;
-            box-shadow: 0 5px 20px rgba(59,130,246,.4);
-            transition: all .3s;
-        }
-
-        .scroll-top:hover { transform: translateY(-3px) scale(1.1); }
-
-        /* ============================================================
-           SECTION LABEL
-        ============================================================ */
-        .section-label {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 8px 0 14px;
-            color: var(--text-secondary); font-size: .85rem;
-        }
-
-        .section-label strong { color: var(--text-primary); font-size: 1rem; }
-
-        /* ============================================================
-           FOOTER
-        ============================================================ */
-        .footer {
-            text-align: center; padding: 28px;
-            color: var(--text-muted); font-size: .8rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .footer a { color: var(--accent-blue); }
-
-        /* ============================================================
-           RESPONSIVE
-        ============================================================ */
-        @media (max-width: 900px) {
-            .reports-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-        }
-
-        @media (max-width: 600px) {
-            .reports-grid { grid-template-columns: 1fr; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
-            .header-inner { flex-direction: column; align-items: flex-start; }
-            .controls, .grid-wrap, .stats-row { padding-left: 14px; padding-right: 14px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مُجمِّع التقارير البحثية PDF | Global Policy Reports</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+--bg0:#050a14;--bg1:#0b1222;--bg2:#10192e;--bg3:#162040;
+--tx1:#e2e8f0;--tx2:#7f92ad;
+--blue:#3b82f6;--cyan:#06b6d4;--purple:#8b5cf6;--green:#10b981;
+--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--yellow:#eab308;
+--brd:#152038;--shadow:0 8px 40px rgba(0,0,0,.45);
+--glass:rgba(11,18,34,.88);--glassBrd:rgba(255,255,255,.04);
+--g1:linear-gradient(135deg,#3b82f6,#8b5cf6);
+--g2:linear-gradient(135deg,#06b6d4,#10b981);
+--g3:linear-gradient(135deg,#f59e0b,#ef4444);
+--g4:linear-gradient(135deg,#ec4899,#8b5cf6);
+--r:16px;
+}
+[data-theme="light"]{
+--bg0:#f1f5f9;--bg1:#fff;--bg2:#fff;--bg3:#f8fafc;
+--tx1:#0f172a;--tx2:#64748b;
+--brd:#e2e8f0;--shadow:0 4px 20px rgba(0,0,0,.06);
+--glass:rgba(255,255,255,.94);--glassBrd:rgba(0,0,0,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg0);color:var(--tx1);min-height:100vh;overflow-x:hidden;transition:.3s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg1)}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:3px}
+
+/* BG */
+.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bgfx .o{position:absolute;border-radius:50%;filter:blur(100px);opacity:.1;animation:fl 25s infinite ease-in-out}
+.bgfx .o:nth-child(1){width:600px;height:600px;background:#3b82f6;top:-12%;left:-8%}
+.bgfx .o:nth-child(2){width:500px;height:500px;background:#8b5cf6;top:35%;right:-12%;animation-delay:-7s}
+.bgfx .o:nth-child(3){width:450px;height:450px;background:#06b6d4;bottom:-8%;left:30%;animation-delay:-14s}
+@keyframes fl{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(50px,-40px) scale(1.06)}66%{transform:translate(-35px,45px) scale(.95)}}
+
+/* PROGRESS */
+.pbar{position:fixed;top:0;left:0;height:3px;background:var(--g1);z-index:999;transition:width .3s;border-radius:0 3px 3px 0}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(24px);border-bottom:1px solid var(--glassBrd);padding:10px 20px}
+.hdr-in{max-width:1800px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-ic{width:46px;height:46px;background:var(--g1);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;animation:pg 3s infinite}
+@keyframes pg{0%,100%{box-shadow:0 0 10px rgba(59,130,246,.3)}50%{box-shadow:0 0 28px rgba(59,130,246,.6)}}
+.logo-tx h1{font-size:1.1rem;background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-tx span{font-size:.7rem;color:var(--tx2)}
+.hdr-act{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.bi{width:36px;height:36px;border-radius:9px;border:1px solid var(--brd);background:var(--bg2);color:var(--tx1);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s;font-size:14px}
+.bi:hover{background:var(--blue);color:#fff;transform:translateY(-2px)}
+.live{display:flex;align-items:center;gap:5px;padding:4px 11px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);border-radius:18px;font-size:.75rem;color:var(--green)}
+.ldot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:bl 1.5s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
+.tmr{font-size:.7rem;color:var(--tx2);display:flex;align-items:center;gap:4px}
+
+/* STATS */
+.stats{max-width:1800px;margin:14px auto;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stc{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:10px;transition:.3s}
+.stc:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.sti{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff}
+.stv h3{font-size:1.2rem;font-weight:700}.stv p{font-size:.72rem;color:var(--tx2)}
+
+/* CONTROLS */
+.ctrl{max-width:1800px;margin:14px auto;padding:0 20px}
+.sbox{position:relative;margin-bottom:10px}
+.sbox input{width:100%;padding:13px 18px 13px 45px;background:var(--bg2);border:2px solid var(--brd);border-radius:var(--r);color:var(--tx1);font-size:.92rem;transition:.3s;outline:none}
+.sbox input:focus{border-color:var(--blue);box-shadow:0 0 18px rgba(59,130,246,.15)}
+.sbox>i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--tx2)}
+.frow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+
+/* PILLS */
+.pill{padding:6px 14px;border-radius:20px;font-size:.78rem;cursor:pointer;transition:.3s;border:1px solid;white-space:nowrap}
+.pill:hover{transform:translateY(-1px);filter:brightness(1.2)}
+.pill.act{filter:brightness(1)}
+
+/* Frequency pills */
+.pill.freq{border-color:#3b82f640;color:#3b82f6;background:#3b82f608}
+.pill.freq.act,.pill.freq:hover{background:#3b82f6;color:#fff;border-color:#3b82f6}
+
+/* Lang pills */
+.pill.l-all{border-color:#64748b40;color:#64748b;background:#64748b08}.pill.l-all.act{background:#64748b;color:#fff}
+.pill.l-en{border-color:#10b98140;color:#10b981;background:#10b98108}.pill.l-en.act{background:#10b981;color:#fff}
+.pill.l-ar{border-color:#f59e0b40;color:#f59e0b;background:#f59e0b08}.pill.l-ar.act{background:#f59e0b;color:#000}
+.pill.l-fr{border-color:#8b5cf640;color:#8b5cf6;background:#8b5cf608}.pill.l-fr.act{background:#8b5cf6;color:#fff}
+
+/* Source pills */
+.pill.s-all{border-color:#3b82f640;color:#3b82f6;background:#3b82f608}.pill.s-all.act{background:#3b82f6;color:#fff}
+.pill.s-un{border-color:#4da6ff40;color:#4da6ff;background:#4da6ff08}.pill.s-un.act{background:#4da6ff;color:#fff}
+.pill.s-eu{border-color:#ffd70040;color:#ffd700;background:#ffd70008}.pill.s-eu.act{background:#ffd700;color:#000}
+.pill.s-au{border-color:#10b98140;color:#10b981;background:#10b98108}.pill.s-au.act{background:#10b981;color:#fff}
+.pill.s-tk{border-color:#8b5cf640;color:#8b5cf6;background:#8b5cf608}.pill.s-tk.act{background:#8b5cf6;color:#fff}
+.pill.s-tkf{border-color:#a78bfa40;color:#a78bfa;background:#a78bfa08}.pill.s-tkf.act{background:#a78bfa;color:#fff}
+.pill.s-ar{border-color:#f59e0b40;color:#f59e0b;background:#f59e0b08}.pill.s-ar.act{background:#f59e0b;color:#000}
+.pill.s-ngo{border-color:#ec489940;color:#ec4899;background:#ec489908}.pill.s-ngo.act{background:#ec4899;color:#fff}
+.pill.s-ifi{border-color:#06b6d440;color:#06b6d4;background:#06b6d408}.pill.s-ifi.act{background:#06b6d4;color:#fff}
+.pill.s-sec{border-color:#ef444440;color:#ef4444;background:#ef444408}.pill.s-sec.act{background:#ef4444;color:#fff}
+
+/* Topic pills */
+.pill.tp{border-color:#64748b30;color:var(--tx2);background:var(--bg2)}
+.pill.tp.act{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* GRID */
+.gwrap{max-width:1800px;margin:0 auto;padding:0 20px 30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:20px;transition:.4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;animation:fu .5s ease backwards}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--blue)}
+.card::after{content:'';position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 var(--r) var(--r) 0;transition:.3s}
+.card[data-c="un"]::after{background:#4da6ff}.card[data-c="eu"]::after{background:#ffd700}
+.card[data-c="au"]::after{background:#10b981}.card[data-c="think-tank"]::after{background:#8b5cf6}
+.card[data-c="think-tank-fr"]::after{background:#a78bfa}.card[data-c="arabic"]::after{background:#f59e0b}
+.card[data-c="ngo"]::after{background:#ec4899}.card[data-c="ifi"]::after{background:#06b6d4}
+.card[data-c="security"]::after{background:#ef4444}
+.card:hover::after{width:6px}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:6px}
+.card-badges{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:14px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge.un{background:#4da6ff15;color:#4da6ff}.badge.eu{background:#ffd70015;color:#ffd700}
+.badge.au{background:#10b98115;color:#10b981}.badge.think-tank{background:#8b5cf615;color:#8b5cf6}
+.badge.think-tank-fr{background:#a78bfa15;color:#a78bfa}.badge.arabic{background:#f59e0b15;color:#f59e0b}
+.badge.ngo{background:#ec489915;color:#ec4899}.badge.ifi{background:#06b6d415;color:#06b6d4}
+.badge.security{background:#ef444415;color:#ef4444}
+
+.lbadge{padding:2px 7px;border-radius:8px;font-size:.62rem;font-weight:700}
+.lbadge.en{background:#10b98120;color:#10b981}.lbadge.ar{background:#f59e0b20;color:#f59e0b}.lbadge.fr{background:#8b5cf620;color:#8b5cf6}
+
+/* Frequency badge */
+.fbadge{padding:3px 8px;border-radius:8px;font-size:.65rem;font-weight:700}
+.fbadge.annual{background:#ef444420;color:#ef4444}
+.fbadge.semi{background:#f59e0b20;color:#f59e0b}
+.fbadge.quarterly{background:#8b5cf620;color:#8b5cf6}
+.fbadge.monthly{background:#06b6d420;color:#06b6d4}
+.fbadge.periodic{background:#10b98120;color:#10b981}
+
+.card-meta{display:flex;align-items:center;gap:6px}
+.card-date{font-size:.7rem;color:var(--tx2);white-space:nowrap}
+.bm-btn{background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.95rem;transition:.3s}
+.bm-btn:hover,.bm-btn.saved{color:var(--orange);transform:scale(1.15)}
+
+.card-title{font-size:1rem;font-weight:700;line-height:1.55;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-title a{color:var(--tx1);text-decoration:none;transition:.3s}.card-title a:hover{color:var(--blue)}
+.card-desc{font-size:.8rem;color:var(--tx2);line-height:1.6;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* PDF indicator */
+.pdf-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg0);border-radius:12px;margin-bottom:12px}
+.pdf-info{display:flex;align-items:center;gap:8px}
+.pdf-icon{width:38px;height:38px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px}
+.pdf-det p{font-size:.75rem;color:var(--tx2)}.pdf-det strong{font-size:.82rem;color:var(--red)}
+.pdf-dl{padding:7px 16px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:10px;font-size:.78rem;cursor:pointer;transition:.3s;display:flex;align-items:center;gap:5px;text-decoration:none;font-weight:600}
+.pdf-dl:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(239,68,68,.4)}
+
+.card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--brd)}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+.tag{padding:2px 8px;border-radius:9px;font-size:.66rem;background:var(--bg0);color:var(--tx2)}
+
+/* LOADER */
+.loader{display:flex;flex-direction:column;align-items:center;padding:60px;gap:14px}
+.spin{width:46px;height:46px;border:4px solid var(--brd);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.nores{text-align:center;padding:50px;color:var(--tx2)}.nores i{font-size:3rem;margin-bottom:14px;opacity:.25}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#fff;padding:10px 20px;border-radius:12px;font-size:.82rem;z-index:9999;transition:.4s cubic-bezier(.4,0,.2,1);box-shadow:0 6px 25px rgba(16,185,129,.3)}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+/* SCROLL TOP */
+.stt{position:fixed;bottom:24px;right:24px;width:40px;height:40px;background:var(--g1);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:15px;display:none;align-items:center;justify-content:center;z-index:100;transition:.3s;box-shadow:0 4px 14px rgba(59,130,246,.4)}
+.stt:hover{transform:translateY(-3px) scale(1.1)}
+
+/* MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.mbg.on{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--brd);border-radius:20px;padding:24px;max-width:900px;width:100%;max-height:85vh;overflow-y:auto;animation:mi .3s ease}
+@keyframes mi{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+.mclose{float:left;background:none;border:none;color:var(--tx2);font-size:1.2rem;cursor:pointer}
+.slist{list-style:none;display:grid;gap:5px}
+.slist li{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;background:var(--bg0);font-size:.82rem}
+.slist .cat-hdr{background:transparent;font-weight:700;font-size:.95rem;padding:10px 0 3px;border-bottom:1px solid var(--brd)}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin:10px 0}
+.cal-item{background:var(--bg0);border:1px solid var(--brd);border-radius:12px;padding:14px;display:flex;gap:10px;align-items:center;transition:.3s}
+.cal-item:hover{border-color:var(--blue);transform:translateY(-2px)}
+.cal-date{min-width:50px;text-align:center}
+.cal-date .month{font-size:.7rem;color:var(--blue);text-transform:uppercase;font-weight:700}
+.cal-date .year{font-size:.65rem;color:var(--tx2)}
+.cal-info h4{font-size:.85rem;margin-bottom:3px}.cal-info p{font-size:.72rem;color:var(--tx2)}
+
+/* FOOTER */
+.footer{text-align:center;padding:24px;color:var(--tx2);font-size:.78rem;border-top:1px solid var(--brd);margin-top:20px}
+.footer a{color:var(--blue);text-decoration:none}
+
+@media(max-width:768px){
+.hdr-in{flex-direction:column;text-align:center}
+.grid{grid-template-columns:1fr}
+.stats{grid-template-columns:repeat(2,1fr)}
+.ctrl,.gwrap,.stats{padding:0 10px}
+}
+@media(max-width:480px){.stats{grid-template-columns:1fr}.card{padding:14px}}
+
+/* Flagship highlight */
+.flagship{border:1px solid rgba(239,68,68,.3) !important;background:linear-gradient(135deg,var(--bg2),rgba(239,68,68,.04)) !important}
+.flagship-star{color:var(--red);font-size:.8rem;margin-left:4px}
+</style>
 </head>
-
 <body data-theme="dark">
 
-<!-- Animated Canvas Background -->
-<canvas id="bg-canvas"></canvas>
+<div class="pbar" id="pbar" style="width:0%"></div>
+<div class="bgfx"><div class="o"></div><div class="o"></div><div class="o"></div></div>
 
-<!-- Top Banner -->
-<div class="top-banner">
-    🌍 مُجمِّع التقارير الدولية &nbsp;<span>|</span>&nbsp;
-    Global Policy & Security Reports Aggregator &nbsp;<span>|</span>&nbsp;
-    Agrégateur de Rapports Internationaux
-</div>
-
-<!-- ===== HEADER ===== -->
-<header class="header">
-    <div class="header-inner">
-        <div class="logo">
-            <div class="logo-orb">🌐</div>
-            <div class="logo-info">
-                <h1>مُجمِّع التقارير الدولية</h1>
-                <p>Global Reports Aggregator — v3.0 | 60+ sources | EN · AR · FR</p>
-            </div>
-        </div>
-        <div class="header-right">
-            <div class="live-pill">
-                <div class="live-dot"></div>
-                <span>مباشر / Live</span>
-            </div>
-            <div class="timer-pill">
-                <i class="fas fa-clock"></i>
-                <span id="timerTxt">30:00</span>
-            </div>
-            <div class="lang-switch" title="واجهة اللغة / UI Language">
-                <button class="lang-btn active" onclick="setUILang('ar', this)">عربي</button>
-                <button class="lang-btn"        onclick="setUILang('en', this)">EN</button>
-                <button class="lang-btn"        onclick="setUILang('fr', this)">FR</button>
-            </div>
-            <button class="icon-btn" onclick="openSourcesModal()" title="قائمة المصادر">
-                <i class="fas fa-list-ul"></i>
-            </button>
-            <button class="icon-btn" onclick="openBookmarksModal()" title="المحفوظات">
-                <i class="fas fa-bookmark"></i>
-            </button>
-            <button class="icon-btn" onclick="exportJSON()" title="تصدير JSON">
-                <i class="fas fa-file-export"></i>
-            </button>
-            <button class="icon-btn" onclick="toggleTheme()" title="تبديل المظهر" id="themeBtn">
-                <i class="fas fa-moon"></i>
-            </button>
-            <button class="icon-btn" onclick="doRefresh()" title="تحديث">
-                <i class="fas fa-sync-alt" id="refreshIco"></i>
-            </button>
+<!-- HEADER -->
+<header class="hdr">
+<div class="hdr-in">
+    <div class="logo">
+        <div class="logo-ic">📚</div>
+        <div class="logo-tx">
+            <h1>مُجمِّع التقارير البحثية الدولية — PDF</h1>
+            <span>Global Policy Reports Aggregator — Annual | Semi-Annual | Monthly — 90+ Sources</span>
         </div>
     </div>
+    <div class="hdr-act">
+        <div class="live"><div class="ldot"></div><span>PDF Reports</span></div>
+        <div class="tmr"><i class="fas fa-clock"></i><span id="tmr">30:00</span></div>
+        <button class="bi" onclick="showCal()" title="تقويم التقارير"><i class="fas fa-calendar-alt"></i></button>
+        <button class="bi" onclick="showModal()" title="المصادر"><i class="fas fa-list"></i></button>
+        <button class="bi" onclick="exportJSON()" title="تصدير"><i class="fas fa-download"></i></button>
+        <button class="bi" onclick="toggleTheme()" title="المظهر"><i class="fas fa-moon" id="thIc"></i></button>
+        <button class="bi" onclick="refreshAll()" title="تحديث"><i class="fas fa-sync-alt" id="refIc"></i></button>
+    </div>
+</div>
 </header>
 
-<!-- ===== STATS ===== -->
-<div class="stats-row" id="statsRow">
-    <div class="stat-card">
-        <div class="stat-ico" style="background:var(--grad-blue)"><i class="fas fa-newspaper"></i></div>
-        <div class="stat-info"><h3 id="sTotal">—</h3><p>إجمالي التقارير</p></div>
+<!-- STATS -->
+<div class="stats">
+    <div class="stc"><div class="sti" style="background:var(--g1)"><i class="fas fa-file-pdf"></i></div><div class="stv"><h3 id="sT">0</h3><p>تقرير PDF</p></div></div>
+    <div class="stc"><div class="sti" style="background:var(--g2)"><i class="fas fa-building"></i></div><div class="stv"><h3 id="sS">90+</h3><p>مصدر دولي</p></div></div>
+    <div class="stc"><div class="sti" style="background:var(--g3)"><i class="fas fa-language"></i></div><div class="stv"><h3>3</h3><p>EN / AR / FR</p></div></div>
+    <div class="stc"><div class="sti" style="background:var(--g4)"><i class="fas fa-star"></i></div><div class="stv"><h3 id="sF">0</h3><p>تقرير رئيسي</p></div></div>
+    <div class="stc"><div class="sti" style="background:linear-gradient(135deg,#eab308,#f59e0b)"><i class="fas fa-clock"></i></div><div class="stv"><h3 id="sTm">--:--</h3><p>آخر تحديث</p></div></div>
+    <div class="stc"><div class="sti" style="background:linear-gradient(135deg,#ef4444,#dc2626)"><i class="fas fa-bookmark"></i></div><div class="stv"><h3 id="sBm">0</h3><p>محفوظات</p></div></div>
+</div>
+
+<!-- CONTROLS -->
+<div class="ctrl">
+    <div class="sbox">
+        <i class="fas fa-search"></i>
+        <input type="text" id="sIn" placeholder="🔍 ابحث في التقارير... SIPRI Yearbook, Human Development Report, Rapport IFRI..." oninput="applyF()">
     </div>
-    <div class="stat-card">
-        <div class="stat-ico" style="background:var(--grad-green)"><i class="fas fa-building-columns"></i></div>
-        <div class="stat-info"><h3>60+</h3><p>مصدر دولي</p></div>
+
+    <!-- Frequency -->
+    <div class="frow">
+        <button class="pill freq act" onclick="setFreq('all',this)"><i class="fas fa-layer-group"></i> الكل</button>
+        <button class="pill freq" onclick="setFreq('annual',this)"><i class="fas fa-calendar"></i> سنوي Annual</button>
+        <button class="pill freq" onclick="setFreq('semi',this)"><i class="fas fa-calendar-week"></i> نصف سنوي</button>
+        <button class="pill freq" onclick="setFreq('quarterly',this)"><i class="fas fa-calendar-day"></i> ربع سنوي</button>
+        <button class="pill freq" onclick="setFreq('monthly',this)"><i class="fas fa-calendar-days"></i> شهري</button>
+        <button class="pill freq" onclick="setFreq('periodic',this)"><i class="fas fa-file-lines"></i> أوراق بحثية</button>
+        <button class="pill freq" onclick="setFreq('flagship',this)" style="border-color:#ef444460;color:#ef4444;background:#ef444410">⭐ تقارير رئيسية</button>
     </div>
-    <div class="stat-card">
-        <div class="stat-ico" style="background:var(--grad-orange)"><i class="fas fa-globe"></i></div>
-        <div class="stat-info"><h3 id="sLangs">3</h3><p>لغات | Languages</p></div>
+
+    <!-- Language -->
+    <div class="frow">
+        <button class="pill l-all act" onclick="setLang('all',this)">🌐 الكل</button>
+        <button class="pill l-en" onclick="setLang('en',this)">🇬🇧 English</button>
+        <button class="pill l-ar" onclick="setLang('ar',this)">🇸🇦 العربية</button>
+        <button class="pill l-fr" onclick="setLang('fr',this)">🇫🇷 Français</button>
     </div>
-    <div class="stat-card">
-        <div class="stat-ico" style="background:var(--grad-pink)"><i class="fas fa-clock-rotate-left"></i></div>
-        <div class="stat-info"><h3 id="sTime">—</h3><p>آخر تحديث</p></div>
+
+    <!-- Topics -->
+    <div class="frow">
+        <button class="pill tp act" onclick="setTopic('all',this)"><i class="fas fa-globe"></i> الكل</button>
+        <button class="pill tp" onclick="setTopic('politics',this)"><i class="fas fa-landmark"></i> السياسة</button>
+        <button class="pill tp" onclick="setTopic('security',this)"><i class="fas fa-shield-alt"></i> الأمن</button>
+        <button class="pill tp" onclick="setTopic('governance',this)"><i class="fas fa-balance-scale"></i> الحوكمة</button>
+        <button class="pill tp" onclick="setTopic('international',this)"><i class="fas fa-handshake"></i> علاقات دولية</button>
+        <button class="pill tp" onclick="setTopic('geopolitics',this)"><i class="fas fa-map-marked-alt"></i> جيوبوليتيك</button>
+        <button class="pill tp" onclick="setTopic('rights',this)"><i class="fas fa-users"></i> حقوق إنسان</button>
+        <button class="pill tp" onclick="setTopic('economy',this)"><i class="fas fa-chart-line"></i> اقتصاد</button>
+        <button class="pill tp" onclick="setTopic('peace',this)"><i class="fas fa-dove"></i> سلم ونزاعات</button>
+        <button class="pill tp" onclick="setTopic('nuclear',this)"><i class="fas fa-radiation"></i> أسلحة ونووي</button>
     </div>
-    <div class="stat-card">
-        <div class="stat-ico" style="background:var(--grad-gold)"><i class="fas fa-bookmark"></i></div>
-        <div class="stat-info"><h3 id="sBmarks">0</h3><p>محفوظات</p></div>
+
+    <!-- Source categories -->
+    <div class="frow">
+        <button class="pill s-all act" onclick="setSrc('all',this)">🌐 الكل</button>
+        <button class="pill s-un" onclick="setSrc('un',this)">🇺🇳 أمم متحدة</button>
+        <button class="pill s-eu" onclick="setSrc('eu',this)">🇪🇺 اتحاد أوروبي</button>
+        <button class="pill s-au" onclick="setSrc('au',this)">🌍 أفريقيا</button>
+        <button class="pill s-tk" onclick="setSrc('think-tank',this)">🔬 مراكز بحثية EN</button>
+        <button class="pill s-tkf" onclick="setSrc('think-tank-fr',this)">🇫🇷 مراكز بحثية FR</button>
+        <button class="pill s-ar" onclick="setSrc('arabic',this)">📰 مصادر عربية</button>
+        <button class="pill s-ngo" onclick="setSrc('ngo',this)">⚖️ منظمات حقوقية</button>
+        <button class="pill s-ifi" onclick="setSrc('ifi',this)">🏦 مؤسسات مالية</button>
+        <button class="pill s-sec" onclick="setSrc('security',this)">🛡️ أمن ودفاع</button>
     </div>
 </div>
 
-<!-- ===== CONTROLS ===== -->
-<div class="controls">
+<!-- REPORTS GRID -->
+<div class="gwrap"><div class="grid" id="grid"><div class="loader" style="grid-column:1/-1"><div class="spin"></div><p>جارٍ تحميل التقارير البحثية PDF...</p></div></div></div>
 
-    <!-- Search -->
-    <div class="search-wrap">
-        <i class="fas fa-search search-ico"></i>
-        <input type="text" id="searchInput"
-               placeholder="🔍  ابحث بالعربية, English ou français — سياسة, security, géopolitique..."
-               oninput="handleSearch(this)">
-        <button class="search-clear" id="clearBtn" onclick="clearSearch()">
-            <i class="fas fa-times-circle"></i>
-        </button>
-    </div>
+<!-- MODALS -->
+<div class="mbg" id="modalSrc"><div class="modal"><button class="mclose" onclick="closeModals()"><i class="fas fa-times"></i></button><h2 style="text-align:center;margin-bottom:14px">📚 مصادر التقارير — 90+ مصدر</h2><ul class="slist" id="srcList"></ul></div></div>
+<div class="mbg" id="modalCal"><div class="modal"><button class="mclose" onclick="closeModals()"><i class="fas fa-times"></i></button><h2 style="text-align:center;margin-bottom:14px">📅 تقويم التقارير الرئيسية المتوقعة</h2><div class="cal-grid" id="calGrid"></div></div></div>
 
-    <!-- Topic Filters -->
-    <div class="pills-label">📌 تصنيف الموضوع / Topic</div>
-    <div class="pills-row" id="topicRow">
-        <button class="pill topic active" data-topic="all"        onclick="setTopic('all',this)">🌐 الكل / All</button>
-        <button class="pill topic"        data-topic="politics"   onclick="setTopic('politics',this)">🏛️ سياسة</button>
-        <button class="pill topic"        data-topic="security"   onclick="setTopic('security',this)">🔒 أمن / Sécurité</button>
-        <button class="pill topic"        data-topic="governance" onclick="setTopic('governance',this)">⚖️ حوكمة</button>
-        <button class="pill topic"        data-topic="international" onclick="setTopic('international',this)">🤝 علاقات دولية</button>
-        <button class="pill topic"        data-topic="geopolitics" onclick="setTopic('geopolitics',this)">🗺️ جيوبوليتيك</button>
-        <button class="pill topic"        data-topic="rights"     onclick="setTopic('rights',this)">👥 حقوق إنسان</button>
-        <button class="pill topic"        data-topic="economy"    onclick="setTopic('economy',this)">📈 اقتصاد سياسي</button>
-        <button class="pill topic"        data-topic="nuclear"    onclick="setTopic('nuclear',this)">☢️ أمن نووي</button>
-    </div>
-
-    <!-- Language Filters -->
-    <div class="pills-label">🌐 اللغة / Language / Langue</div>
-    <div class="pills-row" id="langRow">
-        <button class="pill lng multi active" data-lang="all"   onclick="setLang('all',this)">🌐 الكل / Toutes</button>
-        <button class="pill lng en"           data-lang="en"    onclick="setLang('en',this)">🇺🇸 English</button>
-        <button class="pill lng ar"           data-lang="ar"    onclick="setLang('ar',this)">🇸🇦 العربية</button>
-        <button class="pill lng fr"           data-lang="fr"    onclick="setLang('fr',this)">🇫🇷 Français</button>
-    </div>
-
-    <!-- Source Category Filters -->
-    <div class="pills-label">🏛️ فئة المصدر / Source Category</div>
-    <div class="pills-row" id="srcRow">
-        <button class="pill src-un active"   data-src="all"       onclick="setSrc('all',this)">🌐 الكل</button>
-        <button class="pill src-un"          data-src="un"        onclick="setSrc('un',this)">🇺🇳 الأمم المتحدة</button>
-        <button class="pill src-eu"          data-src="eu"        onclick="setSrc('eu',this)">🇪🇺 الاتحاد الأوروبي</button>
-        <button class="pill src-au"          data-src="au"        onclick="setSrc('au',this)">🌍 اتحاد أفريقي / أفريقي</button>
-        <button class="pill src-arab"        data-src="arab"      onclick="setSrc('arab',this)">🌙 مصادر عربية</button>
-        <button class="pill src-fr-tank"     data-src="fr-tank"   onclick="setSrc('fr-tank',this)">🥖 مراكز فرنسية</button>
-        <button class="pill src-tank"        data-src="think-tank" onclick="setSrc('think-tank',this)">🔬 مراكز بحثية</button>
-        <button class="pill src-ngo"         data-src="ngo"       onclick="setSrc('ngo',this)">⚖️ منظمات دولية</button>
-    </div>
-</div>
-
-<!-- ===== GRID ===== -->
-<div class="grid-wrap">
-    <div class="section-label">
-        <strong id="resultLabel">التقارير الدولية</strong>
-        <span id="resultCount"></span>
-    </div>
-    <div class="reports-grid" id="reportsGrid">
-        <div class="loader-wrap">
-            <div class="spinner"></div>
-            <p id="loadMsg">جارٍ تحميل التقارير من 60+ مصدر دولي…</p>
-            <div class="loader-progress"><div class="loader-bar"></div></div>
-        </div>
-    </div>
-</div>
-
-<!-- ===== SOURCES MODAL ===== -->
-<div class="modal-bg" id="srcModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h2>📚 المصادر الدولية — 60+ مصدر</h2>
-            <button class="modal-close" onclick="closeModal('srcModal')"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-tabs" id="srcModalTabs"></div>
-        <div class="src-grid" id="srcModalGrid"></div>
-    </div>
-</div>
-
-<!-- ===== BOOKMARKS MODAL ===== -->
-<div class="modal-bg" id="bmarkModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h2>🔖 التقارير المحفوظة</h2>
-            <button class="modal-close" onclick="closeModal('bmarkModal')"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="reports-grid" id="bmarkGrid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))"></div>
-    </div>
-</div>
-
-<!-- Toast -->
 <div class="toast" id="toast"></div>
+<button class="stt" id="sttBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 
-<!-- Scroll Top -->
-<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-    <i class="fas fa-chevron-up"></i>
-</button>
-
-<!-- Footer -->
 <footer class="footer">
-    <p>
-        🌍 مُجمِّع التقارير الدولية — Global Reports Aggregator — v3.0
-        &nbsp;|&nbsp;
-        <a href="https://github.com/" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-        &nbsp;|&nbsp; MIT License
-        <br>جميع التقارير ملك لمصادرها الأصلية — All reports belong to their original sources
-    </p>
+    <p>📚 مُجمِّع التقارير البحثية الدولية v4 — جميع التقارير ملك لمصادرها الأصلية — PDF Reports Only<br>
+    صُنع بـ ❤️ لخدمة الباحثين والمحللين — <a href="https://github.com/" target="_blank">GitHub</a></p>
 </footer>
 
-<!-- ===================================================
-     JAVASCRIPT
-==================================================== -->
 <script>
-/* ================================================================
-   CANVAS BACKGROUND ANIMATION
-================================================================ */
-(function() {
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
+// ======================================================================
+//  FLAGSHIP REPORTS DATABASE — Curated Annual/Periodic PDF Reports
+// ======================================================================
+const FLAGSHIP_REPORTS = [
+    // ===== UN SYSTEM =====
+    {title:'Human Development Report 2024/2025',titleAr:'تقرير التنمية البشرية 2024/2025',org:'UNDP',orgAr:'برنامج الأمم المتحدة الإنمائي',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://hdr.undp.org/system/files/documents/global-report-document/hdr2023-24reporten.pdf',
+     topics:['governance','economy','rights'],flagship:true,year:2024,month:'Mar',desc:'Annual assessment of human development trends worldwide covering health, education, and living standards.'},
 
-    function resize() {
-        W = canvas.width  = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-    }
+    {title:'Rapport sur le développement humain 2024/2025',titleAr:'تقرير التنمية البشرية (فرنسي)',org:'PNUD',orgAr:'البرنامج الإنمائي (فرنسي)',cat:'un',icon:'🇺🇳',lang:'fr',freq:'annual',
+     pdf:'https://hdr.undp.org/system/files/documents/global-report-document/hdr2023-24reportfr.pdf',
+     topics:['governance','economy'],flagship:true,year:2024,month:'Mar',desc:'Évaluation annuelle du développement humain dans le monde.'},
 
-    function mkParticle() {
-        return {
-            x: Math.random() * W, y: Math.random() * H,
-            r: Math.random() * 1.5 + .5,
-            dx: (Math.random() - .5) * .25,
-            dy: (Math.random() - .5) * .25,
-            alpha: Math.random() * .4 + .1
-        };
-    }
+    {title:'تقرير التنمية البشرية 2024/2025',titleAr:'تقرير التنمية البشرية (عربي)',org:'UNDP',orgAr:'برنامج الأمم المتحدة الإنمائي',cat:'un',icon:'🇺🇳',lang:'ar',freq:'annual',
+     pdf:'https://hdr.undp.org/system/files/documents/global-report-document/hdr2023-24reportar.pdf',
+     topics:['governance','economy'],flagship:true,year:2024,month:'Mar',desc:'التقييم السنوي لاتجاهات التنمية البشرية في العالم.'},
 
-    function init() {
-        resize();
-        particles = Array.from({ length: 140 }, mkParticle);
-        window.addEventListener('resize', resize);
-    }
+    {title:'Global Humanitarian Overview 2025',titleAr:'نظرة عامة على العمل الإنساني العالمي 2025',org:'OCHA',orgAr:'مكتب تنسيق الشؤون الإنسانية',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://www.unocha.org/publications/report/world/global-humanitarian-overview-2025',
+     topics:['rights','security','peace'],flagship:true,year:2025,month:'Dec',desc:'Annual overview of humanitarian needs and response plans worldwide.'},
 
-    function draw() {
-        ctx.clearRect(0, 0, W, H);
-        particles.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(59,130,246,${p.alpha})`;
-            ctx.fill();
-            p.x += p.dx; p.y += p.dy;
-            if (p.x < 0 || p.x > W) p.dx *= -1;
-            if (p.y < 0 || p.y > H) p.dy *= -1;
-        });
-        requestAnimationFrame(draw);
-    }
+    {title:'UNHCR Global Trends Report',titleAr:'تقرير الاتجاهات العالمية — مفوضية اللاجئين',org:'UNHCR',orgAr:'المفوضية السامية للاجئين',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://www.unhcr.org/global-trends-report-2024',
+     topics:['rights','security'],flagship:true,year:2024,month:'Jun',desc:'Annual statistical report on forced displacement worldwide.'},
 
-    init(); draw();
-})();
+    {title:'World Social Report',titleAr:'تقرير العالم الاجتماعي',org:'UN DESA',orgAr:'إدارة الشؤون الاقتصادية والاجتماعية',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://www.un.org/development/desa/dspd/world-social-report.html',
+     topics:['governance','economy','rights'],flagship:true,year:2025,month:'Feb',desc:'Analysis of major social development trends and policies.'},
 
-/* ================================================================
-   SOURCES — 60+ INTERNATIONAL SOURCES
-================================================================ */
-const API = 'https://api.rss2json.com/v1/api.json?rss_url=';
+    {title:'Trade and Development Report',titleAr:'تقرير التجارة والتنمية',org:'UNCTAD',orgAr:'مؤتمر الأمم المتحدة للتجارة والتنمية',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://unctad.org/publication/trade-and-development-report-2024',
+     topics:['economy','international','governance'],flagship:true,year:2024,month:'Sep',desc:'Annual review of global economic trends, trade policies, and development strategies.'},
 
-const SOURCES = [
+    {title:'World Drug Report',titleAr:'تقرير المخدرات العالمي',org:'UNODC',orgAr:'مكتب الأمم المتحدة المعني بالمخدرات والجريمة',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2024.html',
+     topics:['security','governance'],flagship:true,year:2024,month:'Jun',desc:'Comprehensive analysis of global drug markets and policy implications.'},
 
-    /* ===== UNITED NATIONS (EN) ===== */
-    {
-        id:'un-peace-en', name:'UN News — Peace & Security', nameAr:'الأمم المتحدة — السلم والأمن', nameFr:'ONU — Paix et Sécurité',
-        url:'https://news.un.org/feed/subscribe/en/news/topic/peace-and-security/feed/rss.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['security','politics','international']
-    },
-    {
-        id:'un-law-en', name:'UN News — Law & Crime', nameAr:'الأمم المتحدة — القانون والجريمة', nameFr:'ONU — Droit et Crime',
-        url:'https://news.un.org/feed/subscribe/en/news/topic/law-and-crime-prevention/feed/rss.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['governance','security']
-    },
-    {
-        id:'un-hr-en', name:'UN News — Human Rights', nameAr:'الأمم المتحدة — حقوق الإنسان', nameFr:'ONU — Droits de l\'homme',
-        url:'https://news.un.org/feed/subscribe/en/news/topic/human-rights/feed/rss.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['rights','governance']
-    },
-    {
-        id:'un-disarm-en', name:'UN News — Disarmament', nameAr:'الأمم المتحدة — نزع السلاح', nameFr:'ONU — Désarmement',
-        url:'https://news.un.org/feed/subscribe/en/news/topic/disarmament/feed/rss.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['security','nuclear','international']
-    },
+    {title:'Disarmament Yearbook',titleAr:'حولية نزع السلاح',org:'UNODA',orgAr:'مكتب الأمم المتحدة لشؤون نزع السلاح',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://yearbook.unoda.org/',
+     topics:['security','nuclear','peace'],flagship:true,year:2024,month:'Oct',desc:'Annual review of disarmament activities and arms control developments.'},
 
-    /* ===== UNITED NATIONS (AR) ===== */
-    {
-        id:'un-peace-ar', name:'UN News Arabic — Peace', nameAr:'أخبار الأمم المتحدة — عربي', nameFr:'ONU Arabe',
-        url:'https://news.un.org/feed/subscribe/ar/news/topic/peace-and-security/feed/rss.xml',
-        cat:'un', lang:'ar', icon:'🇺🇳',
-        topics:['security','politics','international']
-    },
-    {
-        id:'un-hr-ar', name:'UN News Arabic — HR', nameAr:'الأمم المتحدة عربي — حقوق', nameFr:'ONU Arabe — Droits',
-        url:'https://news.un.org/feed/subscribe/ar/news/topic/human-rights/feed/rss.xml',
-        cat:'un', lang:'ar', icon:'🇺🇳',
-        topics:['rights','governance']
-    },
+    {title:'State of Food Security and Nutrition',titleAr:'حالة الأمن الغذائي والتغذية في العالم',org:'FAO',orgAr:'منظمة الأغذية والزراعة',cat:'un',icon:'🇺🇳',lang:'en',freq:'annual',
+     pdf:'https://www.fao.org/publications/home/fao-flagship-publications/the-state-of-food-security-and-nutrition-in-the-world/en',
+     topics:['economy','rights','governance'],flagship:true,year:2024,month:'Jul',desc:'Annual assessment of progress towards global hunger and nutrition targets.'},
 
-    /* ===== UNITED NATIONS (FR) ===== */
-    {
-        id:'un-peace-fr', name:'ONU — Paix et Sécurité', nameAr:'الأمم المتحدة فرنسي — السلم', nameFr:'ONU — Paix et Sécurité',
-        url:'https://news.un.org/feed/subscribe/fr/news/topic/peace-and-security/feed/rss.xml',
-        cat:'un', lang:'fr', icon:'🇺🇳',
-        topics:['security','politics','international']
-    },
-    {
-        id:'un-hr-fr', name:'ONU — Droits de l\'homme', nameAr:'الأمم المتحدة فرنسي — حقوق', nameFr:'ONU — Droits de l\'homme',
-        url:'https://news.un.org/feed/subscribe/fr/news/topic/human-rights/feed/rss.xml',
-        cat:'un', lang:'fr', icon:'🇺🇳',
-        topics:['rights','governance']
-    },
+    {title:'ESCWA Arab Region Report',titleAr:'تقرير المنطقة العربية — الإسكوا',org:'UN ESCWA',orgAr:'اللجنة الاقتصادية لغربي آسيا',cat:'un',icon:'🇺🇳',lang:'ar',freq:'annual',
+     pdf:'https://www.unescwa.org/publications',
+     topics:['economy','governance','politics'],flagship:true,year:2024,month:'Mar',desc:'التقرير السنوي عن الأوضاع الاقتصادية والاجتماعية في المنطقة العربية.'},
 
-    /* ===== UN AGENCIES ===== */
-    {
-        id:'undp', name:'UNDP', nameAr:'برنامج الأمم المتحدة الإنمائي', nameFr:'PNUD',
-        url:'https://www.undp.org/rss.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['governance','economy']
-    },
-    {
-        id:'unhcr', name:'UNHCR', nameAr:'المفوضية السامية لشؤون اللاجئين', nameFr:'HCR',
-        url:'https://www.unhcr.org/rss/news.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['rights','security']
-    },
-    {
-        id:'ocha', name:'OCHA ReliefWeb', nameAr:'مكتب تنسيق الشؤون الإنسانية', nameFr:'OCHA',
-        url:'https://reliefweb.int/updates/rss.xml?theme=4589',
-        cat:'un', lang:'en', icon:'🟠',
-        topics:['security','international','rights']
-    },
-    {
-        id:'unodc', name:'UNODC', nameAr:'مكتب الأمم المتحدة المعني بالجريمة', nameFr:'ONUDC',
-        url:'https://www.unodc.org/rss/news.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['security','governance']
-    },
-    {
-        id:'unwomen', name:'UN Women', nameAr:'هيئة الأمم المتحدة للمرأة', nameFr:'ONU Femmes',
-        url:'https://www.unwomen.org/rss.xml',
-        cat:'un', lang:'en', icon:'🇺🇳',
-        topics:['rights','governance']
-    },
+    // ===== SIPRI =====
+    {title:'SIPRI Yearbook 2024: Armaments, Disarmament and International Security',titleAr:'حولية SIPRI 2024: التسلح ونزع السلاح والأمن الدولي',org:'SIPRI',orgAr:'معهد ستوكهولم لأبحاث السلام',cat:'think-tank',icon:'🔬',lang:'en',freq:'annual',
+     pdf:'https://www.sipri.org/yearbook/2024',
+     topics:['security','nuclear','peace','geopolitics'],flagship:true,year:2024,month:'Jun',desc:'The definitive annual review of the state of armaments, disarmament and international security.'},
 
-    /* ===== EUROPEAN UNION ===== */
-    {
-        id:'eu-council', name:'European Council — Press', nameAr:'المجلس الأوروبي', nameFr:'Conseil Européen',
-        url:'https://www.consilium.europa.eu/en/rss/press-releases/?lang=en&type=rss',
-        cat:'eu', lang:'en', icon:'🇪🇺',
-        topics:['politics','international','governance']
-    },
-    {
-        id:'eu-parl', name:'European Parliament', nameAr:'البرلمان الأوروبي', nameFr:'Parlement Européen',
-        url:'https://www.europarl.europa.eu/rss/doc/top-stories/en.xml',
-        cat:'eu', lang:'en', icon:'🇪🇺',
-        topics:['politics','governance']
-    },
-    {
-        id:'eeas', name:'EU External Action (EEAS)', nameAr:'الخدمة الأوروبية للعمل الخارجي', nameFr:'Service Européen d\'Action Extérieure',
-        url:'https://www.eeas.europa.eu/_en?_format=rss',
-        cat:'eu', lang:'multi', icon:'🇪🇺',
-        topics:['international','geopolitics','security']
-    },
-    {
-        id:'eu-iss', name:'EU ISS — Institute for Security Studies', nameAr:'معهد الدراسات الأمنية الأوروبي', nameFr:'Institut d\'Études de Sécurité de l\'UE',
-        url:'https://www.iss.europa.eu/content/rss',
-        cat:'eu', lang:'multi', icon:'🇪🇺',
-        topics:['security','geopolitics','international']
-    },
+    {title:'SIPRI Arms Transfers Report',titleAr:'تقرير نقل الأسلحة — SIPRI',org:'SIPRI',orgAr:'ستوكهولم لأبحاث السلام',cat:'think-tank',icon:'🔬',lang:'en',freq:'annual',
+     pdf:'https://www.sipri.org/publications/2024/sipri-fact-sheets/trends-international-arms-transfers',
+     topics:['security','nuclear','international'],flagship:true,year:2024,month:'Mar',desc:'Annual trends in international arms transfers and military spending.'},
 
-    /* ===== AFRICAN UNION & AFRICA ===== */
-    {
-        id:'au', name:'African Union', nameAr:'الاتحاد الأفريقي', nameFr:'Union Africaine',
-        url:'https://au.int/rss.xml',
-        cat:'au', lang:'multi', icon:'🌍',
-        topics:['politics','security','governance']
-    },
-    {
-        id:'iss-africa', name:'ISS Africa', nameAr:'معهد الدراسات الأمنية — أفريقيا', nameFr:'ISS Afrique',
-        url:'https://issafrica.org/rss.xml',
-        cat:'au', lang:'multi', icon:'🌍',
-        topics:['security','governance','geopolitics']
-    },
-    {
-        id:'african-args', name:'African Arguments', nameAr:'حجج أفريقية', nameFr:'African Arguments',
-        url:'https://africanarguments.org/feed/',
-        cat:'au', lang:'en', icon:'🌍',
-        topics:['politics','governance','rights']
-    },
-    {
-        id:'ips-africa', name:'IPS News — Africa', nameAr:'وكالة IPS — أفريقيا', nameFr:'IPS — Afrique',
-        url:'https://www.ipsnews.net/category/africa/feed/',
-        cat:'au', lang:'en', icon:'🌍',
-        topics:['politics','rights','international']
-    },
+    {title:'SIPRI Military Expenditure Report',titleAr:'تقرير الإنفاق العسكري — SIPRI',org:'SIPRI',orgAr:'ستوكهولم لأبحاث السلام',cat:'think-tank',icon:'🔬',lang:'en',freq:'annual',
+     pdf:'https://www.sipri.org/publications/2024/sipri-fact-sheets/trends-world-military-expenditure',
+     topics:['security','economy','geopolitics'],flagship:true,year:2024,month:'Apr',desc:'Global trends in military expenditure by region and country.'},
 
-    /* ===== ARAB SOURCES (AR) ===== */
-    {
-        id:'aljazeera-ar', name:'Al Jazeera Arabic — Politics', nameAr:'الجزيرة العربية — سياسة', nameFr:'Al Jazeera Arabe',
-        url:'https://www.aljazeera.net/xml/rss/all.xml',
-        cat:'arab', lang:'ar', icon:'📡',
-        topics:['politics','security','international','geopolitics']
-    },
-    {
-        id:'aljazeera-en', name:'Al Jazeera English', nameAr:'الجزيرة الإنجليزية', nameFr:'Al Jazeera Anglais',
-        url:'https://www.aljazeera.com/xml/rss/all.xml',
-        cat:'arab', lang:'en', icon:'📡',
-        topics:['politics','security','international']
-    },
-    {
-        id:'mee-ar', name:'Middle East Eye Arabic', nameAr:'ميدل إيست آي — عربي', nameFr:'Middle East Eye Arabe',
-        url:'https://www.middleeasteye.net/ar/rss',
-        cat:'arab', lang:'ar', icon:'👁️',
-        topics:['politics','geopolitics','rights']
-    },
-    {
-        id:'mee-en', name:'Middle East Eye', nameAr:'ميدل إيست آي', nameFr:'Middle East Eye',
-        url:'https://www.middleeasteye.net/rss',
-        cat:'arab', lang:'en', icon:'👁️',
-        topics:['politics','geopolitics','international']
-    },
-    {
-        id:'carnegie-ar', name:'Carnegie Middle East (AR)', nameAr:'كارنيغي الشرق الأوسط — عربي', nameFr:'Carnegie Moyen-Orient',
-        url:'https://carnegie-mec.org/ar/rss/',
-        cat:'arab', lang:'ar', icon:'🕊️',
-        topics:['politics','governance','international']
-    },
-    {
-        id:'orient-xxi', name:'Orient XXI', nameAr:'أوريان XXI', nameFr:'Orient XXI',
-        url:'https://orientxxi.info/spip.php?page=backend',
-        cat:'arab', lang:'fr', icon:'🌙',
-        topics:['geopolitics','politics','international']
-    },
-    {
-        id:'mei', name:'Middle East Institute', nameAr:'معهد الشرق الأوسط', nameFr:'Institut du Moyen-Orient',
-        url:'https://www.mei.edu/rss.xml',
-        cat:'arab', lang:'en', icon:'🏛️',
-        topics:['politics','geopolitics','international']
-    },
+    // ===== THINK TANKS EN =====
+    {title:'Global Peace Index 2024',titleAr:'مؤشر السلام العالمي 2024',org:'IEP',orgAr:'معهد الاقتصاد والسلام',cat:'think-tank',icon:'🕊️',lang:'en',freq:'annual',
+     pdf:'https://www.visionofhumanity.org/maps/#/',
+     topics:['peace','security','geopolitics'],flagship:true,year:2024,month:'Jun',desc:'Annual ranking of 163 countries by their level of peacefulness.'},
 
-    /* ===== FRENCH THINK TANKS ===== */
-    {
-        id:'ifri', name:'IFRI', nameAr:'معهد العلاقات الدولية الفرنسي', nameFr:'Institut Français des Relations Internationales',
-        url:'https://www.ifri.org/fr/rss.xml',
-        cat:'fr-tank', lang:'fr', icon:'🥖',
-        topics:['international','geopolitics','security']
-    },
-    {
-        id:'iris', name:'IRIS', nameAr:'معهد العلاقات الدولية والاستراتيجية', nameFr:'Institut de Relations Internationales et Stratégiques',
-        url:'https://www.iris-france.org/feed/',
-        cat:'fr-tank', lang:'fr', icon:'🔭',
-        topics:['security','geopolitics','politics']
-    },
-    {
-        id:'grip', name:'GRIP', nameAr:'مجموعة أبحاث السلام والأمن', nameFr:'Groupe de Recherche et d\'Information sur la Paix',
-        url:'https://www.grip.org/fr/feed',
-        cat:'fr-tank', lang:'fr', icon:'🕊️',
-        topics:['security','nuclear','international']
-    },
-    {
-        id:'lemonde-diplo', name:'Le Monde Diplomatique', nameAr:'لوموند ديبلوماتيك', nameFr:'Le Monde Diplomatique',
-        url:'https://www.monde-diplomatique.fr/rss/rss.xml',
-        cat:'fr-tank', lang:'fr', icon:'📰',
-        topics:['geopolitics','politics','international','economy']
-    },
-    {
-        id:'rfi-politique', name:'RFI — Politique', nameAr:'راديو فرنسا الدولي — سياسة', nameFr:'RFI — Politique',
-        url:'https://www.rfi.fr/fr/rss/politique-internationale',
-        cat:'fr-tank', lang:'fr', icon:'📻',
-        topics:['politics','international','geopolitics']
-    },
-    {
-        id:'rfi-afrique', name:'RFI — Afrique', nameAr:'راديو فرنسا الدولي — أفريقيا', nameFr:'RFI — Afrique',
-        url:'https://www.rfi.fr/fr/rss/afrique',
-        cat:'fr-tank', lang:'fr', icon:'📻',
-        topics:['politics','security','governance']
-    },
-    {
-        id:'frs', name:'FRS — Fondation Recherche Stratégique', nameAr:'مؤسسة الأبحاث الاستراتيجية الفرنسية', nameFr:'Fondation pour la Recherche Stratégique',
-        url:'https://www.frstrategie.org/rss.xml',
-        cat:'fr-tank', lang:'fr', icon:'🛡️',
-        topics:['security','nuclear','geopolitics']
-    },
-    {
-        id:'irenees', name:'irenees.net', nameAr:'آيرنيس — أبحاث السلام', nameFr:'Irenees — Recherches de Paix',
-        url:'https://www.irenees.net/fr/rss.xml',
-        cat:'fr-tank', lang:'fr', icon:'☮️',
-        topics:['international','governance','rights']
-    },
+    {title:'Global Terrorism Index 2024',titleAr:'مؤشر الإرهاب العالمي 2024',org:'IEP',orgAr:'معهد الاقتصاد والسلام',cat:'think-tank',icon:'⚠️',lang:'en',freq:'annual',
+     pdf:'https://www.visionofhumanity.org/maps/global-terrorism-index/',
+     topics:['security','geopolitics'],flagship:true,year:2024,month:'Mar',desc:'Comprehensive analysis of the impact of terrorism across 163 countries.'},
 
-    /* ===== ENGLISH THINK TANKS ===== */
-    {
-        id:'sipri', name:'SIPRI', nameAr:'معهد ستوكهولم لأبحاث السلام', nameFr:'SIPRI',
-        url:'https://www.sipri.org/rss.xml',
-        cat:'think-tank', lang:'en', icon:'🔬',
-        topics:['security','nuclear','geopolitics']
-    },
-    {
-        id:'brookings', name:'Brookings Institution', nameAr:'معهد بروكينغز', nameFr:'Brookings Institution',
-        url:'https://www.brookings.edu/feed/',
-        cat:'think-tank', lang:'en', icon:'🏛️',
-        topics:['politics','governance','economy','international']
-    },
-    {
-        id:'csis', name:'CSIS', nameAr:'مركز الدراسات الاستراتيجية والدولية', nameFr:'CSIS',
-        url:'https://www.csis.org/analysis/feed',
-        cat:'think-tank', lang:'en', icon:'🔬',
-        topics:['security','geopolitics','international']
-    },
-    {
-        id:'chatham', name:'Chatham House', nameAr:'تشاتام هاوس', nameFr:'Chatham House',
-        url:'https://www.chathamhouse.org/feed/default/rss.xml',
-        cat:'think-tank', lang:'en', icon:'🏛️',
-        topics:['international','geopolitics','politics']
-    },
-    {
-        id:'cfr', name:'Council on Foreign Relations', nameAr:'مجلس العلاقات الخارجية', nameFr:'Conseil des Relations Étrangères',
-        url:'https://www.cfr.org/rss/news',
-        cat:'think-tank', lang:'en', icon:'🏛️',
-        topics:['international','geopolitics','security']
-    },
-    {
-        id:'carnegie-en', name:'Carnegie Endowment', nameAr:'مؤسسة كارنيغي للسلام', nameFr:'Carnegie Endowment',
-        url:'https://carnegieendowment.org/rss/solr.xml',
-        cat:'think-tank', lang:'en', icon:'🕊️',
-        topics:['international','geopolitics','governance']
-    },
-    {
-        id:'rand', name:'RAND Corporation', nameAr:'مؤسسة راند', nameFr:'RAND Corporation',
-        url:'https://www.rand.org/news/press.xml',
-        cat:'think-tank', lang:'en', icon:'🎲',
-        topics:['security','politics','economy']
-    },
-    {
-        id:'icg', name:'International Crisis Group', nameAr:'مجموعة الأزمات الدولية', nameFr:'International Crisis Group',
-        url:'https://www.crisisgroup.org/feed/rss',
-        cat:'think-tank', lang:'en', icon:'⚠️',
-        topics:['security','geopolitics','politics']
-    },
-    {
-        id:'atlantic', name:'Atlantic Council', nameAr:'المجلس الأطلسي', nameFr:'Conseil Atlantique',
-        url:'https://www.atlanticcouncil.org/feed/',
-        cat:'think-tank', lang:'en', icon:'🌊',
-        topics:['geopolitics','security','international']
-    },
-    {
-        id:'iiss', name:'IISS', nameAr:'المعهد الدولي للدراسات الاستراتيجية', nameFr:'IISS',
-        url:'https://www.iiss.org/rss',
-        cat:'think-tank', lang:'en', icon:'🛡️',
-        topics:['security','nuclear','geopolitics']
-    },
-    {
-        id:'wilson', name:'Wilson Center', nameAr:'مركز ويلسون', nameFr:'Centre Wilson',
-        url:'https://www.wilsoncenter.org/rss.xml',
-        cat:'think-tank', lang:'en', icon:'🏛️',
-        topics:['politics','international','geopolitics']
-    },
-    {
-        id:'wotr', name:'War on the Rocks', nameAr:'الحرب على الصخور', nameFr:'War on the Rocks',
-        url:'https://warontherocks.com/feed/',
-        cat:'think-tank', lang:'en', icon:'⚔️',
-        topics:['security','geopolitics','politics']
-    },
-    {
-        id:'diplomat', name:'The Diplomat', nameAr:'ذا ديبلومات', nameFr:'The Diplomat',
-        url:'https://thediplomat.com/feed/',
-        cat:'think-tank', lang:'en', icon:'🤝',
-        topics:['geopolitics','international','security']
-    },
-    {
-        id:'usip', name:'USIP', nameAr:'معهد السلام الأمريكي', nameFr:'USIP',
-        url:'https://www.usip.org/all_publications/feed',
-        cat:'think-tank', lang:'en', icon:'☮️',
-        topics:['security','governance','international']
-    },
-    {
-        id:'stimson', name:'Stimson Center', nameAr:'مركز ستيمسون', nameFr:'Stimson Center',
-        url:'https://www.stimson.org/feed/',
-        cat:'think-tank', lang:'en', icon:'🔬',
-        topics:['security','nuclear','international']
-    },
-    {
-        id:'fp', name:'Foreign Policy', nameAr:'فورين بوليسي', nameFr:'Foreign Policy',
-        url:'https://foreignpolicy.com/feed/',
-        cat:'think-tank', lang:'en', icon:'🗞️',
-        topics:['international','geopolitics','politics']
-    },
-    {
-        id:'belfer', name:'Belfer Center — Harvard', nameAr:'مركز بلفر — هارفارد', nameFr:'Centre Belfer — Harvard',
-        url:'https://www.belfercenter.org/rss.xml',
-        cat:'think-tank', lang:'en', icon:'🎓',
-        topics:['nuclear','security','geopolitics']
-    },
-    {
-        id:'eprs', name:'European Parliament Research', nameAr:'أبحاث البرلمان الأوروبي', nameFr:'EPRS',
-        url:'https://www.europarl.europa.eu/RegData/etudes/ATAG/rss.xml',
-        cat:'think-tank', lang:'multi', icon:'📋',
-        topics:['politics','governance','international']
-    },
+    {title:'Freedom in the World 2025',titleAr:'الحرية في العالم 2025',org:'Freedom House',orgAr:'فريدم هاوس',cat:'ngo',icon:'🗽',lang:'en',freq:'annual',
+     pdf:'https://freedomhouse.org/report/freedom-world',
+     topics:['governance','rights','politics'],flagship:true,year:2025,month:'Feb',desc:'Annual global assessment of political rights and civil liberties in 195 countries.'},
 
-    /* ===== NGOs & INTERNATIONAL ORGS ===== */
-    {
-        id:'hrw', name:'Human Rights Watch', nameAr:'هيومن رايتس ووتش', nameFr:'Human Rights Watch',
-        url:'https://www.hrw.org/rss/news',
-        cat:'ngo', lang:'en', icon:'⚖️',
-        topics:['rights','governance']
-    },
-    {
-        id:'amnesty', name:'Amnesty International', nameAr:'منظمة العفو الدولية', nameFr:'Amnesty International',
-        url:'https://www.amnesty.org/en/feed/',
-        cat:'ngo', lang:'en', icon:'🕯️',
-        topics:['rights','governance']
-    },
-    {
-        id:'freedom-house', name:'Freedom House', nameAr:'فريدم هاوس', nameFr:'Freedom House',
-        url:'https://freedomhouse.org/rss.xml',
-        cat:'ngo', lang:'en', icon:'🗽',
-        topics:['governance','rights','politics']
-    },
-    {
-        id:'transparency', name:'Transparency International', nameAr:'منظمة الشفافية الدولية', nameFr:'Transparency International',
-        url:'https://www.transparency.org/en/feed',
-        cat:'ngo', lang:'en', icon:'🔍',
-        topics:['governance','politics']
-    },
-    {
-        id:'idea', name:'International IDEA', nameAr:'المعهد الدولي للديمقراطية', nameFr:'IDEA International',
-        url:'https://www.idea.int/news-media/rss.xml',
-        cat:'ngo', lang:'en', icon:'🗳️',
-        topics:['governance','politics','rights']
-    },
-    {
-        id:'global-witness', name:'Global Witness', nameAr:'شاهد عالمي', nameFr:'Global Witness',
-        url:'https://www.globalwitness.org/en/feed/',
-        cat:'ngo', lang:'en', icon:'🌿',
-        topics:['governance','economy','rights']
-    }
+    {title:'Corruption Perceptions Index 2024',titleAr:'مؤشر مدركات الفساد 2024',org:'Transparency International',orgAr:'منظمة الشفافية الدولية',cat:'ngo',icon:'🔍',lang:'en',freq:'annual',
+     pdf:'https://www.transparency.org/en/cpi/2024',
+     topics:['governance','politics'],flagship:true,year:2024,month:'Jan',desc:'Annual ranking of countries by perceived levels of public sector corruption.'},
+
+    {title:'World Press Freedom Index',titleAr:'مؤشر حرية الصحافة العالمي',org:'RSF',orgAr:'مراسلون بلا حدود',cat:'ngo',icon:'📝',lang:'en',freq:'annual',
+     pdf:'https://rsf.org/en/index',
+     topics:['rights','governance'],flagship:true,year:2024,month:'May',desc:'Annual ranking of press freedom in 180 countries.'},
+
+    {title:'Democracy Report — V-Dem',titleAr:'تقرير الديمقراطية — V-Dem',org:'V-Dem Institute',orgAr:'معهد V-Dem — جامعة غوتنبرغ',cat:'think-tank',icon:'🗳️',lang:'en',freq:'annual',
+     pdf:'https://www.v-dem.net/publications/democracy-reports/',
+     topics:['governance','politics','rights'],flagship:true,year:2024,month:'Mar',desc:'Annual analysis of the state of democracy in every country worldwide.'},
+
+    {title:'Rule of Law Index',titleAr:'مؤشر سيادة القانون',org:'World Justice Project',orgAr:'مشروع العدالة العالمية',cat:'ngo',icon:'⚖️',lang:'en',freq:'annual',
+     pdf:'https://worldjusticeproject.org/rule-of-law-index/',
+     topics:['governance','rights'],flagship:true,year:2024,month:'Oct',desc:'Annual index measuring rule of law adherence across 142 countries.'},
+
+    {title:'IISS Military Balance',titleAr:'الميزان العسكري — IISS',org:'IISS',orgAr:'المعهد الدولي للدراسات الاستراتيجية',cat:'think-tank',icon:'🔬',lang:'en',freq:'annual',
+     pdf:'https://www.iiss.org/publications/the-military-balance/',
+     topics:['security','geopolitics'],flagship:true,year:2025,month:'Feb',desc:'The definitive annual assessment of military capabilities and defence economics.'},
+
+    {title:'IISS Strategic Survey',titleAr:'المسح الاستراتيجي — IISS',org:'IISS',orgAr:'المعهد الدولي للدراسات الاستراتيجية',cat:'think-tank',icon:'🔬',lang:'en',freq:'annual',
+     pdf:'https://www.iiss.org/publications/strategic-survey/',
+     topics:['geopolitics','security','international'],flagship:true,year:2024,month:'Oct',desc:'Annual review of major strategic events and their implications.'},
+
+    {title:'Munich Security Report',titleAr:'تقرير ميونخ للأمن',org:'MSC',orgAr:'مؤتمر ميونخ للأمن',cat:'think-tank',icon:'🛡️',lang:'en',freq:'annual',
+     pdf:'https://securityconference.org/en/msc-2025/munich-security-report/',
+     topics:['security','geopolitics','international'],flagship:true,year:2025,month:'Feb',desc:'Annual report on the most pressing security challenges facing the world.'},
+
+    // ===== IMF / WORLD BANK =====
+    {title:'World Economic Outlook',titleAr:'آفاق الاقتصاد العالمي',org:'IMF',orgAr:'صندوق النقد الدولي',cat:'ifi',icon:'🏦',lang:'en',freq:'semi',
+     pdf:'https://www.imf.org/en/Publications/WEO',
+     topics:['economy','governance','international'],flagship:true,year:2025,month:'Apr',desc:'Semi-annual IMF report on global economic developments, policies, and prospects.'},
+
+    {title:'Perspectives de l\'économie mondiale',titleAr:'آفاق الاقتصاد العالمي (فرنسي)',org:'FMI',orgAr:'صندوق النقد الدولي (فرنسي)',cat:'ifi',icon:'🏦',lang:'fr',freq:'semi',
+     pdf:'https://www.imf.org/fr/Publications/WEO',
+     topics:['economy','governance'],flagship:true,year:2025,month:'Apr',desc:'Rapport semestriel du FMI sur les perspectives économiques mondiales.'},
+
+    {title:'Global Financial Stability Report',titleAr:'تقرير الاستقرار المالي العالمي',org:'IMF',orgAr:'صندوق النقد الدولي',cat:'ifi',icon:'🏦',lang:'en',freq:'semi',
+     pdf:'https://www.imf.org/en/Publications/GFSR',
+     topics:['economy','governance'],flagship:true,year:2025,month:'Apr',desc:'Semi-annual assessment of global financial system risks and vulnerabilities.'},
+
+    {title:'World Development Report',titleAr:'تقرير عن التنمية في العالم',org:'World Bank',orgAr:'البنك الدولي',cat:'ifi',icon:'🏦',lang:'en',freq:'annual',
+     pdf:'https://www.worldbank.org/en/publication/wdr',
+     topics:['economy','governance'],flagship:true,year:2024,month:'Aug',desc:'The World Bank\'s flagship annual report on a specific development topic.'},
+
+    {title:'Global Economic Prospects',titleAr:'الآفاق الاقتصادية العالمية',org:'World Bank',orgAr:'البنك الدولي',cat:'ifi',icon:'🏦',lang:'en',freq:'semi',
+     pdf:'https://www.worldbank.org/en/publication/global-economic-prospects',
+     topics:['economy','international'],flagship:true,year:2025,month:'Jan',desc:'Semi-annual forecast of global economic growth and emerging risks.'},
+
+    {title:'OECD Economic Outlook',titleAr:'التوقعات الاقتصادية لمنظمة التعاون',org:'OECD',orgAr:'منظمة التعاون الاقتصادي والتنمية',cat:'ifi',icon:'📊',lang:'en',freq:'semi',
+     pdf:'https://www.oecd.org/economic-outlook/',
+     topics:['economy','governance'],flagship:true,year:2025,month:'Jun',desc:'Semi-annual analysis of economic trends and projections for OECD and major economies.'},
+
+    // ===== EU =====
+    {title:'EU Strategic Compass — Implementation Report',titleAr:'البوصلة الاستراتيجية للاتحاد الأوروبي',org:'EU',orgAr:'الاتحاد الأوروبي',cat:'eu',icon:'🇪🇺',lang:'en',freq:'annual',
+     pdf:'https://www.eeas.europa.eu/eeas/strategic-compass-security-and-defence-1_en',
+     topics:['security','geopolitics','international'],flagship:true,year:2024,month:'Mar',desc:'Annual implementation report of the EU security and defence strategy.'},
+
+    {title:'Europol TE-SAT — EU Terrorism Situation & Trend',titleAr:'تقرير يوروبول عن الإرهاب في أوروبا',org:'Europol',orgAr:'يوروبول',cat:'eu',icon:'🇪🇺',lang:'en',freq:'annual',
+     pdf:'https://www.europol.europa.eu/publications-events/main-reports/european-union-terrorism-situation-and-trend-report',
+     topics:['security','governance'],flagship:true,year:2024,month:'Jun',desc:'Annual assessment of the terrorism threat in the European Union.'},
+
+    {title:'Europol SOCTA — Serious & Organised Crime',titleAr:'تقرير يوروبول عن الجريمة المنظمة',org:'Europol',orgAr:'يوروبول',cat:'eu',icon:'🇪🇺',lang:'en',freq:'annual',
+     pdf:'https://www.europol.europa.eu/publications-events/main-reports/socta-report',
+     topics:['security','governance'],flagship:true,year:2025,month:'Mar',desc:'EU assessment of serious and organised crime threats.'},
+
+    {title:'EU Annual Report on Human Rights & Democracy',titleAr:'التقرير السنوي للاتحاد الأوروبي عن حقوق الإنسان',org:'EU',orgAr:'الاتحاد الأوروبي',cat:'eu',icon:'🇪🇺',lang:'en',freq:'annual',
+     pdf:'https://www.eeas.europa.eu/eeas/eu-annual-reports-human-rights-and-democracy-world_en',
+     topics:['rights','governance'],flagship:true,year:2024,month:'Jun',desc:'Annual EU report on global human rights and democracy.'},
+
+    // ===== AFRICA =====
+    {title:'African Economic Outlook',titleAr:'التوقعات الاقتصادية في أفريقيا',org:'AfDB',orgAr:'البنك الأفريقي للتنمية',cat:'au',icon:'🌍',lang:'en',freq:'annual',
+     pdf:'https://www.afdb.org/en/knowledge/publications/african-economic-outlook',
+     topics:['economy','governance'],flagship:true,year:2024,month:'May',desc:'Annual report on economic performance and outlook for African countries.'},
+
+    {title:'Ibrahim Index of African Governance',titleAr:'مؤشر إبراهيم للحوكمة في أفريقيا',org:'Mo Ibrahim Foundation',orgAr:'مؤسسة مو إبراهيم',cat:'au',icon:'🌍',lang:'en',freq:'annual',
+     pdf:'https://mo.ibrahim.foundation/iiag',
+     topics:['governance','politics'],flagship:true,year:2024,month:'Jan',desc:'Comprehensive assessment of governance quality in 54 African countries.'},
+
+    // ===== FRENCH THINK TANKS =====
+    {title:'Rapport annuel — IFRI',titleAr:'التقرير السنوي — المعهد الفرنسي',org:'IFRI',orgAr:'المعهد الفرنسي للعلاقات الدولية',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'annual',
+     pdf:'https://www.ifri.org/fr/publications',
+     topics:['geopolitics','security','international'],flagship:true,year:2024,month:'Jun',desc:'Rapport annuel de l\'IFRI sur les relations internationales et la géopolitique.'},
+
+    {title:'Ramses — Rapport annuel mondial sur le système économique et les stratégies',titleAr:'رمسيس — التقرير العالمي السنوي',org:'IFRI',orgAr:'المعهد الفرنسي للعلاقات الدولية',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'annual',
+     pdf:'https://www.ifri.org/fr/publications/ramses',
+     topics:['geopolitics','economy','international'],flagship:true,year:2025,month:'Sep',desc:'Le rapport de référence de l\'IFRI sur l\'état du monde.'},
+
+    {title:'Année stratégique — IRIS',titleAr:'السنة الاستراتيجية — IRIS',org:'IRIS',orgAr:'معهد العلاقات الدولية والاستراتيجية',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'annual',
+     pdf:'https://www.iris-france.org/publications/',
+     topics:['geopolitics','security','international'],flagship:true,year:2025,month:'Sep',desc:'Bilan stratégique annuel et analyse des enjeux géopolitiques mondiaux.'},
+
+    {title:'Note de la Fondation Robert Schuman — État de l\'Union',titleAr:'حالة الاتحاد — مؤسسة شومان',org:'Robert Schuman',orgAr:'مؤسسة روبرت شومان',cat:'think-tank-fr',icon:'🇪🇺',lang:'fr',freq:'annual',
+     pdf:'https://www.robert-schuman.eu/en/european-issues',
+     topics:['politics','governance','international'],flagship:true,year:2025,month:'Mar',desc:'Analyse annuelle de l\'état de l\'Union européenne.'},
+
+    {title:'Étude de l\'IRSEM',titleAr:'دراسة معهد البحث الاستراتيجي',org:'IRSEM',orgAr:'معهد البحث الاستراتيجي — وزارة الدفاع الفرنسية',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'periodic',
+     pdf:'https://www.irsem.fr/publications.html',
+     topics:['security','geopolitics'],flagship:false,year:2024,month:'',desc:'Études et analyses stratégiques du ministère de la Défense français.'},
+
+    // ===== ARABIC SOURCES =====
+    {title:'التقرير العربي للتنمية المستدامة',titleAr:'التقرير العربي للتنمية المستدامة',org:'UN ESCWA',orgAr:'اللجنة الاقتصادية لغربي آسيا — الإسكوا',cat:'arabic',icon:'📘',lang:'ar',freq:'annual',
+     pdf:'https://www.unescwa.org/ar/publications',
+     topics:['economy','governance'],flagship:true,year:2024,month:'Apr',desc:'التقرير السنوي عن التنمية المستدامة في المنطقة العربية.'},
+
+    {title:'المؤشر العربي',titleAr:'المؤشر العربي — استطلاع رأي',org:'Arab Center',orgAr:'المركز العربي للأبحاث ودراسة السياسات',cat:'arabic',icon:'📊',lang:'ar',freq:'annual',
+     pdf:'https://www.dohainstitute.org/ar/ResearchAndStudies/Pages/Arab-Index.aspx',
+     topics:['politics','governance'],flagship:true,year:2024,month:'Jul',desc:'أكبر استطلاع رأي في المنطقة العربية حول التوجهات السياسية والاجتماعية.'},
+
+    {title:'تقرير حالة اللغة العربية ومستقبلها',titleAr:'تقرير حالة اللغة العربية',org:'Arab Thought',orgAr:'مؤسسة الفكر العربي',cat:'arabic',icon:'📘',lang:'ar',freq:'annual',
+     pdf:'https://www.arabthought.org/ar/research-center',
+     topics:['governance','politics'],flagship:true,year:2024,month:'Dec',desc:'تقرير سنوي شامل عن واقع المنطقة العربية.'},
+
+    // ===== SECURITY / NATO / IAEA =====
+    {title:'NATO Annual Report by Secretary General',titleAr:'التقرير السنوي للأمين العام لحلف الناتو',org:'NATO',orgAr:'حلف شمال الأطلسي',cat:'security',icon:'🛡️',lang:'en',freq:'annual',
+     pdf:'https://www.nato.int/cps/en/natohq/topics_231601.htm',
+     topics:['security','geopolitics','international'],flagship:true,year:2024,month:'Mar',desc:'Annual report covering NATO operations, decisions, and strategic outlook.'},
+
+    {title:'Rapport annuel de l\'OTAN',titleAr:'التقرير السنوي للناتو (فرنسي)',org:'OTAN',orgAr:'حلف الناتو (فرنسي)',cat:'security',icon:'🛡️',lang:'fr',freq:'annual',
+     pdf:'https://www.nato.int/cps/fr/natohq/topics_231601.htm',
+     topics:['security','geopolitics'],flagship:true,year:2024,month:'Mar',desc:'Rapport annuel du Secrétaire général de l\'OTAN.'},
+
+    {title:'IAEA Annual Report',titleAr:'التقرير السنوي للوكالة الدولية للطاقة الذرية',org:'IAEA',orgAr:'الوكالة الدولية للطاقة الذرية',cat:'security',icon:'☢️',lang:'en',freq:'annual',
+     pdf:'https://www.iaea.org/publications/reports/annual-report',
+     topics:['nuclear','security'],flagship:true,year:2024,month:'Sep',desc:'Annual review of IAEA activities covering nuclear verification, safety, and security.'},
+
+    {title:'OPCW Annual Report',titleAr:'التقرير السنوي لمنظمة حظر الأسلحة الكيميائية',org:'OPCW',orgAr:'منظمة حظر الأسلحة الكيميائية',cat:'security',icon:'🧪',lang:'en',freq:'annual',
+     pdf:'https://www.opcw.org/resources/documents/annual-reports',
+     topics:['security','nuclear'],flagship:true,year:2024,month:'Dec',desc:'Annual report on the implementation of the Chemical Weapons Convention.'},
+
+    // ===== HUMAN RIGHTS WATCH / AMNESTY =====
+    {title:'Human Rights Watch World Report 2025',titleAr:'التقرير العالمي لهيومن رايتس ووتش 2025',org:'HRW',orgAr:'هيومن رايتس ووتش',cat:'ngo',icon:'⚖️',lang:'en',freq:'annual',
+     pdf:'https://www.hrw.org/world-report/2025',
+     topics:['rights','governance','politics'],flagship:true,year:2025,month:'Jan',desc:'Annual review of human rights practices in nearly 100 countries.'},
+
+    {title:'Amnesty International Annual Report 2024/2025',titleAr:'التقرير السنوي لمنظمة العفو الدولية',org:'Amnesty',orgAr:'منظمة العفو الدولية',cat:'ngo',icon:'⚖️',lang:'en',freq:'annual',
+     pdf:'https://www.amnesty.org/en/documents/pol10/7200/2025/en/',
+     topics:['rights','governance'],flagship:true,year:2025,month:'Apr',desc:'Annual assessment of the state of human rights around the world.'},
+
+    {title:'Rapport annuel d\'Amnesty International',titleAr:'التقرير السنوي لمنظمة العفو الدولية (فرنسي)',org:'Amnesty FR',orgAr:'العفو الدولية (فرنسي)',cat:'ngo',icon:'⚖️',lang:'fr',freq:'annual',
+     pdf:'https://www.amnesty.org/fr/documents/pol10/7200/2025/fr/',
+     topics:['rights','governance'],flagship:true,year:2025,month:'Apr',desc:'Évaluation annuelle de l\'état des droits humains dans le monde.'},
+
+    {title:'ACLED Annual Report — Conflict Data',titleAr:'تقرير ACLED السنوي — بيانات النزاعات',org:'ACLED',orgAr:'مشروع بيانات مواقع وأحداث النزاعات المسلحة',cat:'think-tank',icon:'📊',lang:'en',freq:'annual',
+     pdf:'https://acleddata.com/acleddatanew/wp-content/uploads/dlm_uploads/',
+     topics:['security','peace','geopolitics'],flagship:true,year:2024,month:'Jan',desc:'Annual report on global conflict trends and patterns using event-level data.'},
 ];
 
-/* ================================================================
-   TOPIC KEYWORDS (EN + AR + FR)
-================================================================ */
-const KEYWORDS = {
-    politics: [
-        'politic','election','democracy','parliament','government','regime','opposition','vote','party','president','minister','coup','diplomat',
-        'سياس','انتخاب','ديمقراط','برلمان','حكوم','رئيس','وزير','انقلاب','حزب','معارض',
-        'politique','élection','démocratie','parlement','gouvernement','régime','opposition','vote','parti','président','ministre','coup'
-    ],
-    security: [
-        'security','military','defense','conflict','war','terror','weapon','nuclear','army','force','missile','arms','drone','attack','threat','nato','insurgency',
-        'أمن','عسكر','دفاع','صراع','حرب','سلاح','نووي','قوات','هجوم','تهديد','ميليشيا','مسلح',
-        'sécurité','militaire','défense','conflit','guerre','terreur','armes','nucléaire','armée','force','attaque','menace','otan'
-    ],
-    governance: [
-        'governance','institution','reform','rule of law','corruption','accountability','transparency','justice','parliament','constitution','legal',
-        'حوكم','إصلاح','فساد','مساءل','شفافي','عدال','دستور','قانون','مؤسس',
-        'gouvernance','institution','réforme','état de droit','corruption','responsabilité','transparence','justice','constitution'
-    ],
-    international: [
-        'international','diplomatic','treaty','bilateral','multilateral','alliance','cooperation','summit','sanction','united nations','un ',
-        'دولي','دبلومات','معاهد','تعاون','قمة','عقوبات','أمم متحدة','تحالف','ثنائي',
-        'international','diplomatique','traité','bilatéral','multilatéral','alliance','coopération','sommet','sanction','nations unies'
-    ],
-    geopolitics: [
-        'geopolit','strategic','territorial','influence','power','region','sphere','balance','hegemony','rivalry','indo-pacific','arctic','sahel','balkans',
-        'جيوبوليت','استراتيج','إقليم','نفوذ','قوى','هيمنة','توازن','تنافس','ساحل',
-        'géopolitique','stratégique','territorial','influence','puissance','région','sphère','équilibre','hégémonie','rivalité','sahel'
-    ],
-    rights: [
-        'human rights','refugee','freedom','detention','abuse','civil','humanitarian','persecution','asylum','torture','minority',
-        'حقوق','لاجئ','حري','إنسان','انتهاك','اضطهاد','لجوء','تعذيب','أقلي',
-        'droits de l\'homme','réfugié','liberté','détention','abus','civil','humanitaire','persecution','asile','torture','minorité'
-    ],
-    economy: [
-        'economic','trade','development','poverty','finance','growth','invest','gdp','debt','inflation','fiscal','aid','sanction',
-        'اقتصاد','تجار','تنمي','فقر','تمويل','نمو','استثمار','ديون','تضخم',
-        'économique','commerce','développement','pauvreté','finances','croissance','investissement','pib','dette','inflation'
-    ],
-    nuclear: [
-        'nuclear','npt','iaea','nonprolifer','atomic','warhead','enrichment','deterren','radiation','disarmament',
-        'نووي','ذري','تخصيب','ردع','إشعاع','نزع السلاح','وكالة الطاقة الذرية',
-        'nucléaire','tpn','aiea','nonprolifération','atomique','ogive','enrichissement','dissuasion','désarmement'
-    ]
+// ======================================================================
+//  DYNAMIC RSS SOURCES — Publication Feeds (Not News)
+// ======================================================================
+const RSS_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const DYN_SOURCES = [
+    // THINK TANK PUBLICATIONS (EN)
+    {name:'SIPRI — Recent Publications',nameAr:'SIPRI — منشورات حديثة',url:'https://www.sipri.org/rss.xml',cat:'think-tank',icon:'🔬',lang:'en',freq:'periodic',topics:['security','nuclear','peace']},
+    {name:'Brookings — Reports',nameAr:'بروكينغز — تقارير',url:'https://www.brookings.edu/feed/',cat:'think-tank',icon:'🏛️',lang:'en',freq:'periodic',topics:['politics','governance','economy']},
+    {name:'CSIS — Reports',nameAr:'CSIS — تقارير',url:'https://www.csis.org/analysis/feed',cat:'think-tank',icon:'🔬',lang:'en',freq:'periodic',topics:['security','geopolitics','international']},
+    {name:'Chatham House — Publications',nameAr:'تشاتام هاوس — منشورات',url:'https://www.chathamhouse.org/feed/default/rss.xml',cat:'think-tank',icon:'🏛️',lang:'en',freq:'periodic',topics:['international','geopolitics']},
+    {name:'Carnegie — Publications',nameAr:'كارنيغي — منشورات',url:'https://carnegieendowment.org/rss/solr.xml',cat:'think-tank',icon:'🕊️',lang:'en',freq:'periodic',topics:['international','geopolitics','governance']},
+    {name:'ICG — Reports',nameAr:'مجموعة الأزمات — تقارير',url:'https://www.crisisgroup.org/feed/rss',cat:'think-tank',icon:'⚠️',lang:'en',freq:'periodic',topics:['security','peace','geopolitics']},
+    {name:'Atlantic Council — Reports',nameAr:'المجلس الأطلسي — تقارير',url:'https://www.atlanticcouncil.org/feed/',cat:'think-tank',icon:'🌊',lang:'en',freq:'periodic',topics:['geopolitics','security']},
+    {name:'RAND — Research',nameAr:'راند — أبحاث',url:'https://www.rand.org/pubs/research_reports.xml',cat:'think-tank',icon:'🔬',lang:'en',freq:'periodic',topics:['security','politics','economy']},
+    {name:'Stimson — Publications',nameAr:'ستيمسون — منشورات',url:'https://www.stimson.org/feed/',cat:'think-tank',icon:'🔬',lang:'en',freq:'periodic',topics:['security','peace']},
+    {name:'Wilson Center — Reports',nameAr:'مركز ويلسون — تقارير',url:'https://www.wilsoncenter.org/rss.xml',cat:'think-tank',icon:'🏛️',lang:'en',freq:'periodic',topics:['politics','international']},
+    {name:'ECFR — Publications',nameAr:'المجلس الأوروبي للعلاقات الخارجية',url:'https://ecfr.eu/feed/',cat:'think-tank',icon:'🇪🇺',lang:'en',freq:'periodic',topics:['international','geopolitics']},
+    {name:'Lowy Institute — Analysis',nameAr:'معهد لوي — تحليلات',url:'https://www.lowyinstitute.org/the-interpreter/feed',cat:'think-tank',icon:'🦘',lang:'en',freq:'periodic',topics:['geopolitics','international']},
+    {name:'War on the Rocks',nameAr:'تحليل عسكري واستراتيجي',url:'https://warontherocks.com/feed/',cat:'think-tank',icon:'⚔️',lang:'en',freq:'periodic',topics:['security','geopolitics']},
+    {name:'FPC UK — Policy Briefs',nameAr:'مركز السياسة الخارجية البريطاني',url:'https://fpc.org.uk/feed/',cat:'think-tank',icon:'🇬🇧',lang:'en',freq:'periodic',topics:['international','politics']},
+
+    // FRENCH (FR)
+    {name:'IFRI — Publications',nameAr:'IFRI — منشورات',url:'https://www.ifri.org/fr/publications/rss.xml',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'periodic',topics:['geopolitics','security','international']},
+    {name:'IRIS — Analyses',nameAr:'IRIS — تحليلات',url:'https://www.iris-france.org/feed/',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'periodic',topics:['security','geopolitics']},
+    {name:'Fondation Jean Jaurès',nameAr:'مؤسسة جان جوريس',url:'https://www.jean-jaures.org/feed/',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'periodic',topics:['politics','governance']},
+    {name:'Institut Montaigne',nameAr:'معهد مونتاني',url:'https://www.institutmontaigne.org/feed',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'periodic',topics:['governance','economy']},
+    {name:'Institut Jacques Delors',nameAr:'معهد جاك دولور',url:'https://institutdelors.eu/feed/',cat:'think-tank-fr',icon:'🇪🇺',lang:'fr',freq:'periodic',topics:['governance','international']},
+    {name:'Vie Publique',nameAr:'الحياة العامة الفرنسية',url:'https://www.vie-publique.fr/rss/a-la-une.xml',cat:'think-tank-fr',icon:'🇫🇷',lang:'fr',freq:'periodic',topics:['politics','governance']},
+    {name:'Le Monde Diplomatique',nameAr:'لوموند ديبلوماتيك',url:'https://www.monde-diplomatique.fr/recents.xml',cat:'think-tank-fr',icon:'📰',lang:'fr',freq:'monthly',topics:['geopolitics','international']},
+
+    // ARABIC (AR)
+    {name:'Al Jazeera Studies',nameAr:'مركز الجزيرة للدراسات',url:'https://studies.aljazeera.net/ar/rss',cat:'arabic',icon:'🔬',lang:'ar',freq:'periodic',topics:['politics','geopolitics','security']},
+    {name:'Carnegie Middle East Center',nameAr:'مركز كارنيغي للشرق الأوسط',url:'https://carnegie-mec.org/rss/solr.xml',cat:'arabic',icon:'🕊️',lang:'ar',freq:'periodic',topics:['politics','governance','geopolitics']},
+
+    // UN PUBLICATIONS
+    {name:'ReliefWeb — Reports',nameAr:'ريليف ويب — تقارير',url:'https://reliefweb.int/updates/rss.xml?format=8&theme=4589',cat:'un',icon:'🌐',lang:'en',freq:'periodic',topics:['security','international']},
+
+    // NGOs
+    {name:'HRW — Reports',nameAr:'هيومن رايتس ووتش — تقارير',url:'https://www.hrw.org/rss/publications',cat:'ngo',icon:'⚖️',lang:'en',freq:'periodic',topics:['rights','governance']},
+    {name:'Amnesty — Publications',nameAr:'العفو الدولية — منشورات',url:'https://www.amnesty.org/en/feed/',cat:'ngo',icon:'⚖️',lang:'en',freq:'periodic',topics:['rights','governance']},
+    {name:'RSF — Reports',nameAr:'مراسلون بلا حدود',url:'https://rsf.org/en/rss.xml',cat:'ngo',icon:'📝',lang:'en',freq:'periodic',topics:['rights']},
+    {name:'RSF — Rapports FR',nameAr:'مراسلون بلا حدود (فرنسي)',url:'https://rsf.org/fr/rss.xml',cat:'ngo',icon:'📝',lang:'fr',freq:'periodic',topics:['rights']},
+];
+
+// ======================================================================
+//  EXPECTED RELEASES CALENDAR
+// ======================================================================
+const CALENDAR = [
+    {month:'Jan',reports:['Corruption Perceptions Index (TI)','HRW World Report','Ibrahim Index']},
+    {month:'Feb',reports:['Freedom in the World (Freedom House)','IISS Military Balance','Munich Security Report']},
+    {month:'Mar',reports:['SIPRI Arms Transfers','V-Dem Democracy Report','NATO Annual Report','Global Terrorism Index (IEP)','Europol SOCTA']},
+    {month:'Apr',reports:['IMF World Economic Outlook (Apr)','Amnesty International Annual Report','IMF Fiscal Monitor']},
+    {month:'May',reports:['AfDB African Economic Outlook','World Press Freedom Index (RSF)']},
+    {month:'Jun',reports:['SIPRI Yearbook','Global Peace Index (IEP)','UNHCR Global Trends','Europol TE-SAT','EU Human Rights Report']},
+    {month:'Jul',reports:['FAO State of Food Security','المؤشر العربي (Arab Index)']},
+    {month:'Aug',reports:['World Bank — World Development Report']},
+    {month:'Sep',reports:['UNCTAD Trade & Development Report','IFRI RAMSES','IRIS Année Stratégique','IAEA Annual Report']},
+    {month:'Oct',reports:['IISS Strategic Survey','IMF World Economic Outlook (Oct)','WJP Rule of Law Index']},
+    {month:'Nov',reports:['OECD Economic Outlook (Nov)']},
+    {month:'Dec',reports:['OCHA Global Humanitarian Overview','UNDP Human Development Report','OPCW Annual Report']},
+];
+
+// ======================================================================
+//  STATE
+// ======================================================================
+let allReports=[], curTopic='all', curSrc='all', curLang='all', curFreq='all';
+let bookmarks=JSON.parse(localStorage.getItem('grpdf_bm')||'[]');
+let countdown=1800;
+
+const TOPIC_KW={
+    politics:['politic','election','democracy','parliament','government','vote','regime','سياس','انتخاب','ديمقراط','برلمان','حكوم','politique','élection','gouvernement'],
+    security:['security','military','defense','conflict','war','terror','weapon','army','force','missile','أمن','عسكر','دفاع','صراع','حرب','سلاح','sécurité','militaire','défense','conflit'],
+    governance:['governance','institution','reform','corruption','accountability','transparency','justice','حوكم','إصلاح','فساد','شفافي','عدال','gouvernance','réforme','corruption'],
+    international:['international','diplomatic','treaty','bilateral','alliance','cooperation','summit','دولي','دبلومات','معاهد','تعاون','تحالف','diplomatique','coopération','sommet'],
+    geopolitics:['geopolitic','strategic','territorial','sanction','influence','power','sphere','جيوبوليت','استراتيج','إقليم','عقوبات','نفوذ','géopolit','stratégique','influence','puissance'],
+    rights:['human rights','refugee','freedom','detention','humanitarian','حقوق','لاجئ','حري','إنسان','droits','réfugié','liberté','humanitaire'],
+    economy:['economic','trade','development','poverty','finance','growth','fiscal','اقتصاد','تجار','تنمي','فقر','économi','commerce','développement','financ','croissance'],
+    peace:['peace','ceasefire','negotiat','mediat','disarmament','reconcil','سلام','وقف إطلاق','تفاوض','نزع سلاح','paix','cessez','négociat','désarmement'],
+    nuclear:['nuclear','atomic','weapon of mass','chemical','biological','نووي','ذري','كيميائ','nucléaire','atomique','arme chimique']
 };
+const TOPIC_LABELS={politics:'سياسة',security:'أمن',governance:'حوكمة',international:'علاقات دولية',geopolitics:'جيوبوليتيك',rights:'حقوق إنسان',economy:'اقتصاد',peace:'سلم ونزاعات',nuclear:'أسلحة ونووي'};
+const FREQ_LABELS={annual:'سنوي',semi:'نصف سنوي',quarterly:'ربع سنوي',monthly:'شهري',periodic:'ورقة بحثية'};
 
-/* ================================================================
-   STATE
-================================================================ */
-let allReports = [];
-let activeTopic = 'all';
-let activeLang  = 'all';
-let activeSrc   = 'all';
-let bookmarks   = JSON.parse(localStorage.getItem('grb_bmarks') || '[]');
-let countdown   = 1800;
-let countInterval;
+// ======================================================================
+//  HELPERS
+// ======================================================================
+function clean(t){if(!t)return '';const d=document.createElement('div');d.innerHTML=t;return d.textContent.replace(/\s+/g,' ').trim().substring(0,600)}
+function hash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h&=h}return Math.abs(h).toString(36)}
+function detectTopics(text,def){const s=new Set(def),low=text.toLowerCase();for(const[t,kws]of Object.entries(TOPIC_KW))for(const k of kws)if(low.includes(k)){s.add(t);break}return[...s]}
+function hasPdfHint(text){const low=(text||'').toLowerCase();return low.includes('.pdf')||low.includes('report')||low.includes('publication')||low.includes('paper')||low.includes('brief')||low.includes('rapport')||low.includes('étude')||low.includes('تقرير')||low.includes('ورقة')||low.includes('دراسة')}
 
-/* ================================================================
-   FETCH ONE SOURCE
-================================================================ */
-async function fetchOne(src) {
-    try {
-        const r = await fetch(API + encodeURIComponent(src.url));
-        if (!r.ok) throw new Error();
-        const d = await r.json();
-        if (d.status !== 'ok' || !Array.isArray(d.items)) return [];
-
-        return d.items.map(item => ({
-            id:        hash(item.link || item.title),
-            title:     strip(item.title),
-            desc:      strip(item.description || item.content || ''),
-            link:      item.link || '#',
-            date:      item.pubDate || new Date().toISOString(),
-            srcId:     src.id,
-            srcName:   src.name,
-            srcNameAr: src.nameAr,
-            srcNameFr: src.nameFr,
-            cat:       src.cat,
-            lang:      src.lang,
-            icon:      src.icon,
-            topics:    detectTopics(item.title + ' ' + (item.description || ''), src.topics)
+// ======================================================================
+//  FETCH DYNAMIC
+// ======================================================================
+async function fetchDyn(s){
+    try{
+        const r=await fetch(RSS_API+encodeURIComponent(s.url));
+        if(!r.ok)throw 0;
+        const d=await r.json();
+        if(d.status!=='ok'||!d.items)return[];
+        return d.items.filter(i=>hasPdfHint(i.title+' '+(i.description||'')+' '+(i.link||''))).map(i=>({
+            title:clean(i.title),desc:clean(i.description||i.content||''),
+            link:i.link,date:i.pubDate||new Date().toISOString(),
+            source:s.name,sourceAr:s.nameAr,cat:s.cat,icon:s.icon,lang:s.lang,freq:s.freq,
+            topics:detectTopics(i.title+' '+(i.description||''),s.topics),
+            flagship:false,id:hash(i.link||i.title),
+            pdf:((i.link||'').toLowerCase().includes('.pdf'))?i.link:null
         }));
-    } catch {
-        return [];
-    }
+    }catch{return[]}
 }
 
-function strip(t) {
-    if (!t) return '';
-    const d = document.createElement('div');
-    d.innerHTML = t;
-    return d.textContent.replace(/\s+/g,' ').trim().slice(0,600);
-}
+// ======================================================================
+//  LOAD ALL
+// ======================================================================
+async function loadAll(){
+    const g=document.getElementById('grid'), pb=document.getElementById('pbar');
+    g.innerHTML=`<div class="loader" style="grid-column:1/-1"><div class="spin"></div><p>جارٍ تحميل التقارير البحثية PDF من ${FLAGSHIP_REPORTS.length + DYN_SOURCES.length}+ مصدر...</p></div>`;
+    pb.style.width='5%';
 
-function detectTopics(text, defaults) {
-    const set  = new Set(defaults || []);
-    const low  = text.toLowerCase();
-    for (const [topic, kws] of Object.entries(KEYWORDS))
-        for (const kw of kws)
-            if (low.includes(kw.toLowerCase())) { set.add(topic); break; }
-    return [...set];
-}
+    // 1) Flagship reports (static DB)
+    const flagshipItems = FLAGSHIP_REPORTS.map(r=>({
+        title:r.title,desc:r.desc,link:r.pdf,date:`${r.year}-${monthNum(r.month)}-15`,
+        source:r.org,sourceAr:r.orgAr,cat:r.cat,icon:r.icon,lang:r.lang,freq:r.freq,
+        topics:r.topics,flagship:r.flagship,id:hash(r.title+r.org),pdf:r.pdf
+    }));
+    pb.style.width='30%';
 
-function hash(s) {
-    let h = 0;
-    for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
-    return Math.abs(h).toString(36);
-}
-
-/* ================================================================
-   LOAD ALL
-================================================================ */
-async function loadAll() {
-    const grid = document.getElementById('reportsGrid');
-    const pct  = Math.ceil(SOURCES.length / 10);
-    grid.innerHTML = `
-        <div class="loader-wrap">
-            <div class="spinner"></div>
-            <p id="loadMsg">جارٍ تحميل التقارير من ${SOURCES.length} مصدر… / Loading from ${SOURCES.length} sources…</p>
-            <div class="loader-progress"><div class="loader-bar"></div></div>
-        </div>`;
-
-    const results = await Promise.allSettled(SOURCES.map(s => fetchOne(s)));
-    allReports = [];
-    results.forEach(r => { if (r.status === 'fulfilled') allReports.push(...r.value); });
-
-    /* deduplicate */
-    const seen = new Set();
-    allReports = allReports.filter(r => {
-        const k = r.title.slice(0, 80).toLowerCase();
-        if (seen.has(k)) return false;
-        seen.add(k); return true;
-    });
-
-    /* sort newest first */
-    allReports.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    /* stats */
-    document.getElementById('sTotal').textContent = allReports.length;
-    document.getElementById('sTime').textContent  = new Date().toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'});
-    updateBmarkCount();
-    render();
-    toast(`✅ تم تحميل ${allReports.length} تقرير من ${SOURCES.length} مصدر`);
-    countdown = 1800;
-}
-
-/* ================================================================
-   RENDER REPORTS
-================================================================ */
-function render() {
-    const search = document.getElementById('searchInput').value.trim().toLowerCase();
-    const grid   = document.getElementById('reportsGrid');
-
-    const filtered = allReports.filter(r => {
-        if (activeTopic !== 'all' && !r.topics.includes(activeTopic)) return false;
-        if (activeLang  !== 'all' && r.lang !== activeLang)            return false;
-        if (activeSrc   !== 'all' && r.cat  !== activeSrc)             return false;
-        if (search) {
-            const hay = (r.title + r.desc + r.srcName + r.srcNameAr + r.srcNameFr + r.topics.join(' ')).toLowerCase();
-            if (!hay.includes(search)) return false;
-        }
-        return true;
-    });
-
-    document.getElementById('resultCount').textContent = `${filtered.length} تقرير / reports`;
-
-    if (!filtered.length) {
-        grid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-satellite-dish"></i>
-                <h3>لا توجد نتائج / No Results</h3>
-                <p>جرّب تغيير الفلاتر أو البحث — Try changing filters or search term</p>
-            </div>`;
-        return;
+    // 2) Dynamic RSS (publications only)
+    let dynItems=[];
+    const batch=8;
+    for(let i=0;i<DYN_SOURCES.length;i+=batch){
+        const b=DYN_SOURCES.slice(i,i+batch);
+        const res=await Promise.allSettled(b.map(fetchDyn));
+        res.forEach(r=>{if(r.status==='fulfilled')dynItems.push(...r.value)});
+        pb.style.width=Math.min(30+(i/DYN_SOURCES.length)*65,92)+'%';
     }
 
-    const TOPIC_AR = {
-        politics:'سياسة', security:'أمن', governance:'حوكمة',
-        international:'علاقات دولية', geopolitics:'جيوبوليتيك',
-        rights:'حقوق إنسان', economy:'اقتصاد', nuclear:'نووي'
-    };
+    // Merge & deduplicate
+    allReports=[...flagshipItems,...dynItems];
+    const seen=new Set();
+    allReports=allReports.filter(r=>{const k=r.title.substring(0,55).toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
+    allReports.sort((a,b)=>new Date(b.date)-new Date(a.date));
 
-    grid.innerHTML = filtered.map((r, i) => {
-        const saved = bookmarks.includes(r.id);
-        const tags  = r.topics.slice(0, 3).map(t => `<span class="tag">${TOPIC_AR[t] || t}</span>`).join('');
-        const lbl   = { en:'EN', ar:'عربي', fr:'FR', multi:'متعدد' }[r.lang] || r.lang;
-        const srcLbl = r.srcNameAr;
+    pb.style.width='100%';
+    setTimeout(()=>pb.style.width='0%',800);
 
-        return `
-        <article class="rcard" data-cat="${r.cat}" style="animation-delay:${Math.min(i,.25) + i * .04}s">
-            <div class="card-top">
-                <div class="card-meta">
-                    <span class="src-badge ${r.cat}">${r.icon} ${srcLbl}</span>
-                    <span class="lang-badge ${r.lang}">${lbl}</span>
+    document.getElementById('sT').textContent=allReports.length;
+    document.getElementById('sS').textContent=FLAGSHIP_REPORTS.length+DYN_SOURCES.length;
+    document.getElementById('sF').textContent=allReports.filter(r=>r.flagship).length;
+    document.getElementById('sTm').textContent=new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+    updateBm();
+    display(allReports);
+    toast(`✅ تم تحميل ${allReports.length} تقرير بحثي PDF من ${FLAGSHIP_REPORTS.length+DYN_SOURCES.length}+ مصدر`);
+    countdown=1800;
+}
+
+function monthNum(m){const map={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};return map[m]||'01'}
+
+// ======================================================================
+//  DISPLAY
+// ======================================================================
+function display(reps){
+    const g=document.getElementById('grid');
+    if(!reps.length){g.innerHTML=`<div class="nores" style="grid-column:1/-1"><i class="fas fa-file-pdf"></i><h3>لا توجد تقارير مطابقة</h3><p>جرّب تغيير الفلاتر</p></div>`;return}
+    g.innerHTML=reps.map((r,i)=>{
+        const bm=bookmarks.includes(r.id);
+        const tags=r.topics.slice(0,3).map(t=>`<span class="tag">${TOPIC_LABELS[t]||t}</span>`).join('');
+        const langL=r.lang==='en'?'EN':r.lang==='ar'?'عربي':'FR';
+        const freqL=FREQ_LABELS[r.freq]||r.freq;
+        const freqC=r.freq;
+        const flagClass=r.flagship?'flagship':'';
+        const flagStar=r.flagship?'<span class="flagship-star">⭐</span>':'';
+        const pdfSection=`
+            <div class="pdf-bar">
+                <div class="pdf-info">
+                    <div class="pdf-icon"><i class="fas fa-file-pdf"></i></div>
+                    <div class="pdf-det">
+                        <strong>PDF ${r.flagship?'— تقرير رئيسي':''}</strong>
+                        <p>${freqL} | ${r.source}</p>
+                    </div>
                 </div>
-                <div class="card-right">
-                    <span class="card-date">${relDate(r.date)}</span>
-                    <button class="bmark-btn ${saved ? 'saved' : ''}"
-                            onclick="toggleBmark('${r.id}',this)" title="حفظ">
-                        <i class="fa${saved ? 's' : 'r'} fa-bookmark"></i>
-                    </button>
-                </div>
-            </div>
-            <a class="card-title" href="${r.link}" target="_blank" rel="noopener">${r.title}</a>
-            <div class="card-desc">${r.desc}</div>
-            <div class="card-tags">${tags}</div>
-            <div class="card-foot">
-                <div class="card-tags"></div>
-                <a class="read-link" href="${r.link}" target="_blank" rel="noopener">
-                    اقرأ المزيد / Read <i class="fas fa-arrow-left"></i>
+                <a href="${r.link}" target="_blank" class="pdf-dl" rel="noopener">
+                    <i class="fas fa-download"></i> تحميل PDF
                 </a>
+            </div>`;
+        return`
+        <div class="card ${flagClass}" data-c="${r.cat}" style="animation-delay:${Math.min(i*.03,1)}s">
+            <div class="card-top">
+                <div class="card-badges">
+                    <span class="lbadge ${r.lang}">${langL}</span>
+                    <span class="fbadge ${freqC}">${freqL}</span>
+                    <span class="badge ${r.cat}">${r.icon} ${r.sourceAr}</span>
+                    ${flagStar}
+                </div>
+                <div class="card-meta">
+                    <button class="bm-btn ${bm?'saved':''}" onclick="toggleBm('${r.id}',this)"><i class="fa${bm?'s':'r'} fa-bookmark"></i></button>
+                    <span class="card-date">${fmtDate(r.date)}</span>
+                </div>
             </div>
-        </article>`;
+            <div class="card-title"><a href="${r.link}" target="_blank" rel="noopener">${r.title}</a></div>
+            <div class="card-desc">${r.desc}</div>
+            ${pdfSection}
+            <div class="card-foot">
+                <div class="tags">${tags}</div>
+            </div>
+        </div>`;
     }).join('');
 }
 
-function relDate(ds) {
-    try {
-        const d = new Date(ds), n = new Date();
-        const h = Math.floor((n - d) / 3.6e6);
-        const days = Math.floor(h / 24);
-        if (h < 1)   return 'الآن / Now';
-        if (h < 24)  return `منذ ${h}س / ${h}h ago`;
-        if (days < 7) return `منذ ${days}ي / ${days}d ago`;
-        return d.toLocaleDateString('ar-EG', {year:'numeric', month:'short', day:'numeric'});
-    } catch { return ds; }
+function fmtDate(d){
+    try{const dt=new Date(d),now=new Date(),df=now-dt;
+    const days=Math.floor(df/864e5);
+    if(days<1)return 'اليوم';if(days<7)return `منذ ${days} يوم`;if(days<30)return `منذ ${Math.floor(days/7)} أسبوع`;
+    if(days<365)return `منذ ${Math.floor(days/30)} شهر`;
+    return dt.toLocaleDateString('ar-EG',{year:'numeric',month:'short'});
+    }catch{return d}
 }
 
-/* ================================================================
-   FILTERS
-================================================================ */
-function setTopic(v, btn) {
-    activeTopic = v;
-    document.querySelectorAll('.pill.topic').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    render();
+// ======================================================================
+//  FILTERS
+// ======================================================================
+function setTopic(t,b){curTopic=t;document.querySelectorAll('.pill.tp').forEach(x=>x.classList.remove('act'));b.classList.add('act');applyF()}
+function setSrc(s,b){curSrc=s;document.querySelectorAll('.pill[class*="s-"]').forEach(x=>x.classList.remove('act'));b.classList.add('act');applyF()}
+function setLang(l,b){curLang=l;document.querySelectorAll('.pill[class*="l-"]').forEach(x=>x.classList.remove('act'));b.classList.add('act');applyF()}
+function setFreq(f,b){curFreq=f;document.querySelectorAll('.pill.freq').forEach(x=>x.classList.remove('act'));b.classList.add('act');applyF()}
+
+function applyF(){
+    const q=document.getElementById('sIn').value.toLowerCase();
+    const filtered=allReports.filter(r=>{
+        if(curTopic!=='all'&&!r.topics.includes(curTopic))return false;
+        if(curSrc!=='all'&&r.cat!==curSrc)return false;
+        if(curLang!=='all'&&r.lang!==curLang)return false;
+        if(curFreq==='flagship'&&!r.flagship)return false;
+        else if(curFreq!=='all'&&curFreq!=='flagship'&&r.freq!==curFreq)return false;
+        if(q){const hay=(r.title+' '+r.desc+' '+r.sourceAr+' '+r.source).toLowerCase();return hay.includes(q)}
+        return true;
+    });
+    display(filtered);
 }
 
-function setLang(v, btn) {
-    activeLang = v;
-    document.querySelectorAll('.pill.lng').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    render();
+// ======================================================================
+//  BOOKMARKS
+// ======================================================================
+function toggleBm(id,btn){
+    const i=bookmarks.indexOf(id);
+    if(i>-1){bookmarks.splice(i,1);btn.classList.remove('saved');btn.innerHTML='<i class="far fa-bookmark"></i>'}
+    else{bookmarks.push(id);btn.classList.add('saved');btn.innerHTML='<i class="fas fa-bookmark"></i>'}
+    localStorage.setItem('grpdf_bm',JSON.stringify(bookmarks));updateBm();
+}
+function updateBm(){document.getElementById('sBm').textContent=bookmarks.length}
+
+// ======================================================================
+//  EXPORT
+// ======================================================================
+function exportJSON(){
+    const data={exported:new Date().toISOString(),total:allReports.length,
+    reports:allReports.map(r=>({title:r.title,source:r.source,sourceAr:r.sourceAr,cat:r.cat,lang:r.lang,freq:r.freq,flagship:r.flagship,date:r.date,topics:r.topics,pdf:r.link,desc:r.desc}))};
+    const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;
+    a.download=`policy_reports_pdf_${new Date().toISOString().slice(0,10)}.json`;a.click();
+    URL.revokeObjectURL(u);toast('📥 تم تصدير التقارير البحثية PDF بنجاح!')
 }
 
-function setSrc(v, btn) {
-    activeSrc = v;
-    document.querySelectorAll('[data-src]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    render();
+// ======================================================================
+//  THEME
+// ======================================================================
+function toggleTheme(){
+    const t=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.body.setAttribute('data-theme',t);
+    document.getElementById('thIc').className=t==='dark'?'fas fa-moon':'fas fa-sun';
+    localStorage.setItem('grpdf_th',t);
 }
+(()=>{const t=localStorage.getItem('grpdf_th')||'dark';document.body.setAttribute('data-theme',t);document.getElementById('thIc').className=t==='dark'?'fas fa-moon':'fas fa-sun'})();
 
-function handleSearch(el) {
-    document.getElementById('clearBtn').classList.toggle('visible', el.value.length > 0);
-    render();
-}
-
-function clearSearch() {
-    const el = document.getElementById('searchInput');
-    el.value = '';
-    document.getElementById('clearBtn').classList.remove('visible');
-    render();
-}
-
-/* ================================================================
-   BOOKMARKS
-================================================================ */
-function toggleBmark(id, btn) {
-    const idx = bookmarks.indexOf(id);
-    if (idx > -1) {
-        bookmarks.splice(idx, 1);
-        btn.classList.remove('saved');
-        btn.innerHTML = '<i class="far fa-bookmark"></i>';
-    } else {
-        bookmarks.push(id);
-        btn.classList.add('saved');
-        btn.innerHTML = '<i class="fas fa-bookmark"></i>';
+// ======================================================================
+//  MODALS
+// ======================================================================
+function showModal(){
+    const cats={'un':'🇺🇳 منظومة الأمم المتحدة','eu':'🇪🇺 الاتحاد الأوروبي','au':'🌍 أفريقيا','think-tank':'🔬 مراكز بحثية (EN)','think-tank-fr':'🇫🇷 مراكز بحثية (FR)','arabic':'📰 مصادر عربية','ngo':'⚖️ منظمات حقوقية','ifi':'🏦 مؤسسات مالية دولية','security':'🛡️ أمن ودفاع'};
+    let html='';
+    for(const[c,label]of Object.entries(cats)){
+        const items=[...FLAGSHIP_REPORTS.filter(r=>r.cat===c),...DYN_SOURCES.filter(r=>r.cat===c)];
+        if(!items.length)continue;
+        html+=`<li class="cat-hdr">${label} (${items.length})</li>`;
+        const seen=new Set();
+        items.forEach(s=>{
+            const n=s.org||s.name;if(seen.has(n))return;seen.add(n);
+            const lb=s.lang==='en'?'🇬🇧':s.lang==='ar'?'🇸🇦':'🇫🇷';
+            const fl=s.flagship?'⭐':'';
+            html+=`<li><span>${s.icon}</span><div><strong>${s.orgAr||s.nameAr} ${fl}</strong><br><small style="color:var(--tx2)">${n} ${lb} — ${FREQ_LABELS[s.freq]||s.freq}</small></div></li>`;
+        });
     }
-    localStorage.setItem('grb_bmarks', JSON.stringify(bookmarks));
-    updateBmarkCount();
+    document.getElementById('srcList').innerHTML=html;
+    document.getElementById('modalSrc').classList.add('on');
 }
 
-function updateBmarkCount() {
-    document.getElementById('sBmarks').textContent = bookmarks.length;
-}
-
-function openBookmarksModal() {
-    const saved = allReports.filter(r => bookmarks.includes(r.id));
-    const g = document.getElementById('bmarkGrid');
-
-    if (!saved.length) {
-        g.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
-            <i class="fas fa-bookmark"></i>
-            <h3>لا توجد محفوظات</h3></div>`;
-    } else {
-        g.innerHTML = saved.map(r => `
-            <article class="rcard" data-cat="${r.cat}">
-                <div class="card-top">
-                    <span class="src-badge ${r.cat}">${r.icon} ${r.srcNameAr}</span>
-                    <span class="lang-badge ${r.lang}">${r.lang.toUpperCase()}</span>
-                </div>
-                <a class="card-title" href="${r.link}" target="_blank">${r.title}</a>
-                <div class="card-foot">
-                    <span class="card-date">${relDate(r.date)}</span>
-                    <a class="read-link" href="${r.link}" target="_blank">
-                        اقرأ <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </article>`).join('');
-    }
-    document.getElementById('bmarkModal').classList.add('open');
-}
-
-/* ================================================================
-   SOURCES MODAL
-================================================================ */
-const SRC_CATS = [
-    { id:'all',        label:'🌐 الكل' },
-    { id:'un',         label:'🇺🇳 الأمم المتحدة' },
-    { id:'eu',         label:'🇪🇺 الاتحاد الأوروبي' },
-    { id:'au',         label:'🌍 أفريقيا' },
-    { id:'arab',       label:'🌙 المصادر العربية' },
-    { id:'fr-tank',    label:'🥖 مراكز فرنسية' },
-    { id:'think-tank', label:'🔬 مراكز بحثية' },
-    { id:'ngo',        label:'⚖️ منظمات دولية' }
-];
-
-let modalSrcFilter = 'all';
-
-function openSourcesModal() {
-    const tabs = document.getElementById('srcModalTabs');
-    tabs.innerHTML = SRC_CATS.map(c => `
-        <button class="m-tab ${c.id === modalSrcFilter ? 'active' : ''}"
-                onclick="setModalSrcFilter('${c.id}',this)">${c.label}</button>
-    `).join('');
-    renderSrcModal();
-    document.getElementById('srcModal').classList.add('open');
-}
-
-function setModalSrcFilter(v, btn) {
-    modalSrcFilter = v;
-    document.querySelectorAll('#srcModalTabs .m-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderSrcModal();
-}
-
-function renderSrcModal() {
-    const list = modalSrcFilter === 'all'
-        ? SOURCES
-        : SOURCES.filter(s => s.cat === modalSrcFilter);
-
-    const LANG_LABEL = { en:'🇺🇸 EN', ar:'🇸🇦 AR', fr:'🇫🇷 FR', multi:'🌐 Multi' };
-
-    document.getElementById('srcModalGrid').innerHTML = list.map(s => `
-        <div class="src-item">
-            <span class="ico">${s.icon}</span>
-            <div class="info">
-                <strong title="${s.name}">${s.nameAr}</strong>
-                <small>${LANG_LABEL[s.lang] || s.lang} · ${s.name}</small>
-            </div>
+function showCal(){
+    document.getElementById('calGrid').innerHTML=CALENDAR.map(c=>`
+        <div class="cal-item">
+            <div class="cal-date"><div class="month">${c.month}</div><div class="year">2025</div></div>
+            <div class="cal-info"><h4>📅 ${c.month}</h4><p>${c.reports.join(' • ')}</p></div>
         </div>`).join('');
+    document.getElementById('modalCal').classList.add('on');
 }
 
-function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
+function closeModals(){document.querySelectorAll('.mbg').forEach(m=>m.classList.remove('on'))}
+document.querySelectorAll('.mbg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)closeModals()}));
+
+// ======================================================================
+//  TOAST + SCROLL + REFRESH + TIMER + KEYBOARD
+// ======================================================================
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3500)}
+window.addEventListener('scroll',()=>{document.getElementById('sttBtn').style.display=window.scrollY>400?'flex':'none'});
+
+function refreshAll(){
+    const ic=document.getElementById('refIc');ic.style.animation='sp .7s linear infinite';
+    loadAll().then(()=>setTimeout(()=>ic.style.animation='',800));
 }
 
-/* Close on backdrop click */
-document.querySelectorAll('.modal-bg').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+setInterval(()=>{
+    countdown--;if(countdown<=0){loadAll();countdown=1800}
+    const m=String(Math.floor(countdown/60)).padStart(2,'0'),s=String(countdown%60).padStart(2,'0');
+    document.getElementById('tmr').textContent=m+':'+s;
+},1000);
+
+document.addEventListener('keydown',e=>{
+    if((e.ctrlKey&&e.key==='k')||(e.key==='/'&&document.activeElement.tagName!=='INPUT')){e.preventDefault();document.getElementById('sIn').focus()}
+    if(e.key==='Escape')closeModals();
 });
 
-/* ================================================================
-   THEME
-================================================================ */
-function toggleTheme() {
-    const isDark = document.body.dataset.theme === 'dark';
-    document.body.dataset.theme = isDark ? 'light' : 'dark';
-    document.querySelector('#themeBtn i').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
-    localStorage.setItem('grb_theme', document.body.dataset.theme);
-}
-
-(function() {
-    const t = localStorage.getItem('grb_theme') || 'dark';
-    document.body.dataset.theme = t;
-    document.querySelector('#themeBtn i').className = t === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
-})();
-
-/* ================================================================
-   UI LANGUAGE (header labels)
-================================================================ */
-const UI_STRINGS = {
-    ar: {
-        placeholder: '🔍  ابحث بالعربية, English ou français…',
-        topicLabel:  '📌 تصنيف الموضوع / Topic',
-        loadMsg:     `جارٍ تحميل التقارير من ${SOURCES.length} مصدر…`
-    },
-    en: {
-        placeholder: '🔍  Search in English, Arabic or French…',
-        topicLabel:  '📌 Filter by Topic',
-        loadMsg:     `Loading reports from ${SOURCES.length} sources…`
-    },
-    fr: {
-        placeholder: '🔍  Rechercher en français, anglais ou arabe…',
-        topicLabel:  '📌 Filtrer par Sujet',
-        loadMsg:     `Chargement depuis ${SOURCES.length} sources…`
-    }
-};
-
-function setUILang(lang, btn) {
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const s = UI_STRINGS[lang] || UI_STRINGS['ar'];
-    document.getElementById('searchInput').placeholder = s.placeholder;
-}
-
-/* ================================================================
-   EXPORT JSON
-================================================================ */
-function exportJSON() {
-    const payload = {
-        exported: new Date().toISOString(),
-        total: allReports.length,
-        reports: allReports.map(({ id, title, desc, link, date, srcName, srcNameAr, srcNameFr, cat, lang, topics }) =>
-            ({ id, title, desc, link, date, srcName, srcNameAr, srcNameFr, cat, lang, topics }))
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `global_reports_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    toast('📥 تم التصدير / Exported successfully!');
-}
-
-/* ================================================================
-   REFRESH & COUNTDOWN
-================================================================ */
-function doRefresh() {
-    const ico = document.getElementById('refreshIco');
-    ico.style.animation = 'spin .75s linear infinite';
-    loadAll().finally(() => { ico.style.animation = ''; });
-}
-
-function startCountdown() {
-    clearInterval(countInterval);
-    countInterval = setInterval(() => {
-        countdown--;
-        if (countdown <= 0) { loadAll(); countdown = 1800; }
-        const m = String(Math.floor(countdown / 60)).padStart(2,'0');
-        const s = String(countdown % 60).padStart(2,'0');
-        document.getElementById('timerTxt').textContent = `${m}:${s}`;
-    }, 1000);
-}
-
-/* ================================================================
-   TOAST
-================================================================ */
-function toast(msg, isErr = false) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className   = 'toast show' + (isErr ? ' err' : '');
-    setTimeout(() => { t.className = 'toast'; }, 3600);
-}
-
-/* ================================================================
-   SCROLL TOP
-================================================================ */
-window.addEventListener('scroll', () => {
-    document.getElementById('scrollTopBtn').style.display =
-        window.scrollY > 500 ? 'flex' : 'none';
-});
-
-/* ================================================================
-   KEYBOARD SHORTCUTS
-================================================================ */
-document.addEventListener('keydown', e => {
-    if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
-        e.preventDefault();
-        document.getElementById('searchInput').focus();
-    }
-    if (e.key === 'Escape') {
-        document.querySelectorAll('.modal-bg.open').forEach(m => m.classList.remove('open'));
-    }
-});
-
-/* ================================================================
-   INIT
-================================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-    loadAll();
-    startCountdown();
-});
+document.addEventListener('DOMContentLoaded',loadAll);
 </script>
 </body>
 </html>
