@@ -1,373 +1,151 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>دراسات الشرق الأوسط وأفريقيا | MENA & Africa Studies Tracker</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
-:root{--b0:#060b18;--b1:#0c1424;--b2:#111d32;--t1:#e4e9f2;--t2:#7e90ad;--ac:#3b82f6;--gn:#10b981;--rd:#ef4444;--or:#f59e0b;--pu:#8b5cf6;--cy:#06b6d4;--pk:#ec4899;--bd:#172340;--sh:0 6px 28px rgba(0,0,0,.4);--gl:rgba(12,20,36,.9);--gb:rgba(255,255,255,.04);--R:14px}
-[data-theme="light"]{--b0:#f0f4f8;--b1:#fff;--b2:#fff;--t1:#0f172a;--t2:#64748b;--bd:#e2e8f0;--sh:0 3px 12px rgba(0,0,0,.06);--gl:rgba(255,255,255,.95);--gb:rgba(0,0,0,.05)}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--b0);color:var(--t1);min-height:100vh;transition:.3s}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--ac);border-radius:2px}
-.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none}.bgfx b{position:absolute;border-radius:50%;filter:blur(100px);opacity:.07;animation:ob 30s infinite ease-in-out}.bgfx b:nth-child(1){width:500px;height:500px;background:#3b82f6;top:-10%;left:-5%}.bgfx b:nth-child(2){width:400px;height:400px;background:#8b5cf6;bottom:10%;right:-8%;animation-delay:-10s}.bgfx b:nth-child(3){width:300px;height:300px;background:#10b981;top:40%;left:40%;animation-delay:-20s}@keyframes ob{0%,100%{transform:translate(0,0)}33%{transform:translate(40px,-30px)}66%{transform:translate(-30px,40px)}}
-.pbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#3b82f6,#8b5cf6);z-index:999;transition:width .3s}
-header{position:sticky;top:0;z-index:100;background:var(--gl);backdrop-filter:blur(20px);border-bottom:1px solid var(--gb);padding:8px 16px}
-.hi{max-width:1800px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.logo{display:flex;align-items:center;gap:8px}.logo-ic{width:42px;height:42px;background:linear-gradient(135deg,#f59e0b,#10b981);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px}
-.logo h1{font-size:.92rem;background:linear-gradient(135deg,#f59e0b,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo small{font-size:.6rem;color:var(--t2);display:block}
-.ha{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.ib{width:30px;height:30px;border-radius:7px;border:1px solid var(--bd);background:var(--b2);color:var(--t1);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;font-size:11px}.ib:hover{background:var(--ac);color:#fff}
-.hb{padding:2px 7px;border-radius:8px;font-size:.6rem;font-weight:600}
-.hb.r{background:rgba(239,68,68,.1);color:var(--rd);border:1px solid rgba(239,68,68,.15)}
-.hb.g{background:rgba(16,185,129,.1);color:var(--gn);border:1px solid rgba(16,185,129,.15)}
-.hb.o{background:rgba(245,158,11,.1);color:var(--or);border:1px solid rgba(245,158,11,.15)}
-.tmr{font-size:.58rem;color:var(--t2)}
-.stats{max-width:1800px;margin:8px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:5px}
-.sc{background:var(--b2);border:1px solid var(--bd);border-radius:var(--R);padding:9px;display:flex;align-items:center;gap:7px;transition:.2s}.sc:hover{transform:translateY(-1px);box-shadow:var(--sh)}
-.si{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0}
-.sv h3{font-size:.95rem;font-weight:700}.sv p{font-size:.58rem;color:var(--t2)}
-.ctrl{max-width:1800px;margin:8px auto;padding:0 16px}
-.sbox{position:relative;margin-bottom:6px}
-.sbox input{width:100%;padding:9px 12px 9px 34px;background:var(--b2);border:1px solid var(--bd);border-radius:var(--R);color:var(--t1);font-size:.82rem;outline:none;transition:.2s}
-.sbox input:focus{border-color:var(--ac)}
-.sbox>i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--t2);font-size:11px}
-.fr{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:5px}
-.p{padding:3px 9px;border-radius:12px;font-size:.65rem;cursor:pointer;transition:.2s;border:1px solid var(--bd);background:var(--b2);color:var(--t2);white-space:nowrap}.p:hover{filter:brightness(1.15)}.p.a{background:var(--ac);color:#fff;border-color:var(--ac)}.p.rd{border-color:rgba(239,68,68,.25);color:var(--rd)}.p.rd.a{background:var(--rd);color:#fff}.p.gn{border-color:rgba(16,185,129,.25);color:var(--gn)}.p.gn.a{background:var(--gn);color:#fff}.p.or{border-color:rgba(245,158,11,.25);color:var(--or)}.p.or.a{background:var(--or);color:#000}.p.pu{border-color:rgba(139,92,246,.25);color:var(--pu)}.p.pu.a{background:var(--pu);color:#fff}.p.pk{border-color:rgba(236,72,153,.25);color:var(--pk)}.p.pk.a{background:var(--pk);color:#fff}.p.cy{border-color:rgba(6,182,212,.25);color:var(--cy)}.p.cy.a{background:var(--cy);color:#fff}
-.exbar{max-width:1800px;margin:0 auto 4px;padding:0 16px}.exbox{display:none;align-items:center;gap:5px;padding:5px 8px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.08);border-radius:7px;font-size:.64rem;color:var(--rd)}
-.gw{max-width:1800px;margin:0 auto;padding:0 16px 20px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:10px}
-.card{background:var(--b2);border:1px solid var(--bd);border-radius:var(--R);padding:14px;transition:.3s;position:relative;overflow:hidden;animation:fu .4s ease backwards}.card:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--ac)}
-.card::after{content:'';position:absolute;top:0;right:0;width:3px;height:100%;transition:.2s}
-.card[data-c="mena-uni"]::after{background:#f59e0b}.card[data-c="afr-uni"]::after{background:#10b981}
-.card[data-c="mena-tk"]::after{background:#fb923c}.card[data-c="afr-tk"]::after{background:#34d399}
-.card[data-c="ext-mena"]::after{background:#8b5cf6}.card[data-c="ext-afr"]::after{background:#a78bfa}
-.card[data-c="un-reg"]::after{background:#4da6ff}.card[data-c="ifi-reg"]::after{background:#06b6d4}
-.card[data-c="ngo-reg"]::after{background:#ec4899}.card[data-c="global"]::after{background:#64748b}
-.card:hover::after{width:5px}.card.fs{border-color:rgba(239,68,68,.1);background:linear-gradient(135deg,var(--b2),rgba(239,68,68,.015))}
-@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.ct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;gap:3px}.cb{display:flex;flex-wrap:wrap;gap:2px;align-items:center}
-.bd{padding:1px 5px;border-radius:7px;font-size:.56rem;font-weight:600;white-space:nowrap}
-.bd.mena-uni{background:#f59e0b10;color:#f59e0b}.bd.afr-uni{background:#10b98110;color:#10b981}.bd.mena-tk{background:#fb923c10;color:#fb923c}.bd.afr-tk{background:#34d39910;color:#34d399}.bd.ext-mena{background:#8b5cf610;color:#8b5cf6}.bd.ext-afr{background:#a78bfa10;color:#a78bfa}.bd.un-reg{background:#4da6ff10;color:#4da6ff}.bd.ifi-reg{background:#06b6d410;color:#06b6d4}.bd.ngo-reg{background:#ec489910;color:#ec4899}.bd.global{background:#64748b10;color:#64748b}
-.lb{padding:1px 4px;border-radius:4px;font-size:.5rem;font-weight:700}.lb.en{background:#10b98110;color:#10b981}.lb.ar{background:#f59e0b10;color:#f59e0b}.lb.fr{background:#8b5cf610;color:#8b5cf6}
-.fb{padding:1px 4px;border-radius:4px;font-size:.5rem;font-weight:700}.fb.annual{background:#ef444410;color:#ef4444}.fb.semi{background:#f59e0b10;color:#f59e0b}.fb.periodic{background:#10b98110;color:#10b981}
-.fn{padding:1px 4px;border-radius:4px;font-size:.48rem;font-weight:700}.fn.nw{background:#ef444418;color:#ef4444;animation:pu 2s infinite}.fn.tm{background:#f59e0b12;color:#f59e0b}.fn.rc{background:#10b98110;color:#10b981}
-@keyframes pu{0%,100%{opacity:1}50%{opacity:.5}}
-.rg{padding:1px 5px;border-radius:4px;font-size:.5rem;font-weight:700}.rg.mena{background:rgba(245,158,11,.12);color:#f59e0b}.rg.africa{background:rgba(16,185,129,.12);color:#10b981}.rg.global{background:rgba(59,130,246,.08);color:#3b82f6}
-.cm{display:flex;align-items:center;gap:3px}.cd{font-size:.56rem;color:var(--t2)}
-.bm{background:none;border:none;color:var(--t2);cursor:pointer;font-size:.78rem;transition:.2s}.bm:hover,.bm.on{color:var(--or)}
-.tt{font-size:.84rem;font-weight:700;line-height:1.45;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.tt a{color:var(--t1);text-decoration:none;transition:.2s}.tt a:hover{color:var(--ac)}
-.ds{font-size:.7rem;color:var(--t2);line-height:1.5;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pf{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;background:var(--b0);border-radius:8px;margin-bottom:6px;gap:5px}
-.pi{display:flex;align-items:center;gap:5px}
-.pc{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;flex-shrink:0}.pc.y{background:linear-gradient(135deg,#ef4444,#dc2626)}.pc.n{background:linear-gradient(135deg,#64748b,#475569)}
-.pd{font-size:.6rem;color:var(--t2)}.pd b{font-size:.68rem}.pd b.y{color:var(--rd)}.pd b.n{color:var(--t2)}
-.pa{padding:4px 10px;border:none;border-radius:6px;font-size:.66rem;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:3px;text-decoration:none;font-weight:600;white-space:nowrap}.pa.dl{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}.pa.dl:hover{box-shadow:0 2px 8px rgba(239,68,68,.3)}.pa.ol{background:var(--b2);color:var(--ac);border:1px solid var(--bd)}.pa.ol:hover{background:var(--ac);color:#fff}
-.cf{display:flex;justify-content:space-between;align-items:center;padding-top:5px;border-top:1px solid var(--bd)}.tg{display:flex;gap:2px;flex-wrap:wrap}.tg span{padding:1px 4px;border-radius:5px;font-size:.54rem;background:var(--b0);color:var(--t2)}
-.loader{display:flex;flex-direction:column;align-items:center;padding:35px;gap:8px}.spin{width:35px;height:35px;border:3px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:sp .7s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
-.nr{text-align:center;padding:35px;color:var(--t2)}.nr i{font-size:2rem;display:block;margin-bottom:8px;opacity:.2}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gn);color:#fff;padding:7px 14px;border-radius:8px;font-size:.72rem;z-index:9999;transition:.4s}.toast.on{transform:translateX(-50%) translateY(0)}
-.stt{position:fixed;bottom:16px;right:16px;width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:11px;display:none;align-items:center;justify-content:center;z-index:100}
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:10px}.mbg.on{display:flex}
-.mdl{background:var(--b2);border:1px solid var(--bd);border-radius:14px;padding:16px;max-width:900px;width:100%;max-height:85vh;overflow-y:auto}
-.mx{float:left;background:none;border:none;color:var(--t2);cursor:pointer;font-size:.9rem}
-.sl{list-style:none;display:grid;gap:2px}.sl li{display:flex;align-items:center;gap:5px;padding:4px 5px;border-radius:5px;background:var(--b0);font-size:.68rem}.sl .ch{background:transparent;font-weight:700;font-size:.78rem;padding:6px 0 2px;border-bottom:1px solid var(--bd)}
-footer{text-align:center;padding:14px;color:var(--t2);font-size:.64rem;border-top:1px solid var(--bd);margin-top:8px}footer a{color:var(--ac);text-decoration:none}
-@media(max-width:768px){.hi{flex-direction:column}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:480px){.stats{grid-template-columns:1fr}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>رصد دراسات الشرق الأوسط وأفريقيا</title>
+  <style>
+    body{font-family:Tahoma,Arial,sans-serif;margin:0;background:#0b1220;color:#e5e7eb}
+    header{padding:20px;background:#111827;position:sticky;top:0}
+    .wrap{max-width:1200px;margin:auto;padding:16px}
+    input,select{padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#e5e7eb}
+    .toolbar{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}
+    .stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .stat{background:#111827;padding:10px 14px;border-radius:10px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:18px}
+    .card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:14px}
+    .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+    .pill{font-size:12px;background:#1f2937;padding:4px 8px;border-radius:999px}
+    .title{font-size:18px;line-height:1.4;margin:8px 0}
+    .title a{color:#f8fafc;text-decoration:none}
+    .desc{font-size:13px;color:#94a3b8;line-height:1.6}
+    .actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+    .btn{padding:8px 12px;border-radius:8px;text-decoration:none;color:white;background:#2563eb}
+    .btn.pdf{background:#dc2626}
+    .muted{color:#94a3b8;font-size:12px}
+    @media(max-width:800px){.toolbar{grid-template-columns:1fr}}
+  </style>
 </head>
-<body data-theme="dark">
-<div class="pbar" id="pb" style="width:0%"></div>
-<div class="bgfx"><b></b><b></b><b></b></div>
-<header><div class="hi">
-<div class="logo"><div class="logo-ic">🎓</div><div><h1>دراسات الشرق الأوسط وأفريقيا — جامعات ومراكز بحثية</h1><small>MENA & Africa Studies — Universities, Think Tanks & Research Centers — 180+ Sources</small></div></div>
-<div class="ha">
-<span class="hb r">📄 3+ صفحات</span><span class="hb o">🕌 MENA</span><span class="hb g">🌍 Africa</span>
-<span class="tmr"><i class="fas fa-clock"></i> <span id="tmr">30:00</span></span>
-<button class="ib" onclick="showSrc()" title="المصادر"><i class="fas fa-list"></i></button>
-<button class="ib" onclick="doExp()" title="تصدير"><i class="fas fa-download"></i></button>
-<button class="ib" onclick="togTh()" title="المظهر"><i class="fas fa-moon" id="thI"></i></button>
-<button class="ib" onclick="doRef()" title="تحديث"><i class="fas fa-sync-alt" id="rfI"></i></button>
-</div></div></header>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>رصد دراسات الشرق الأوسط وأفريقيا</h1>
+      <div class="toolbar">
+        <input id="q" placeholder="ابحث بالعنوان أو المصدر..." />
+        <select id="region">
+          <option value="all">كل المناطق</option>
+          <option value="mena">الشرق الأوسط/العالم العربي</option>
+          <option value="africa">أفريقيا</option>
+          <option value="global">عالمي</option>
+        </select>
+        <select id="base">
+          <option value="all">كل المقرات</option>
+          <option value="in-region">مقره في المنطقة</option>
+          <option value="in-africa">مقره في أفريقيا</option>
+          <option value="outside">مقره خارج المنطقة</option>
+        </select>
+        <select id="lang">
+          <option value="all">كل اللغات</option>
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+      <div class="stats">
+        <div class="stat">الإجمالي: <b id="total">0</b></div>
+        <div class="stat">MENA: <b id="menaCount">0</b></div>
+        <div class="stat">Africa: <b id="africaCount">0</b></div>
+        <div class="stat">PDF مباشر: <b id="pdfCount">0</b></div>
+      </div>
+    </div>
+  </header>
 
-<div class="stats">
-<div class="sc"><div class="si" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)"><i class="fas fa-file-pdf"></i></div><div class="sv"><h3 id="xT">0</h3><p>تقرير/دراسة</p></div></div>
-<div class="sc"><div class="si" style="background:linear-gradient(135deg,#ef4444,#f97316)"><i class="fas fa-filter"></i></div><div class="sv"><h3 id="xR">0</h3><p>مرفوض</p></div></div>
-<div class="sc"><div class="si" style="background:linear-gradient(135deg,#f59e0b,#fb923c)"><i class="fas fa-mosque"></i></div><div class="sv"><h3 id="xM">0</h3><p>شرق أوسط</p></div></div>
-<div class="sc"><div class="si" style="background:linear-gradient(135deg,#10b981,#34d399)"><i class="fas fa-globe-africa"></i></div><div class="sv"><h3 id="xAf">0</h3><p>أفريقيا</p></div></div>
-<div class="sc"><div class="si" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)"><i class="fas fa-university"></i></div><div class="sv"><h3 id="xU">0</h3><p>جامعة/مركز</p></div></div>
-<div class="sc"><div class="si" style="background:linear-gradient(135deg,#ef4444,#dc2626)"><i class="fas fa-file-pdf"></i></div><div class="sv"><h3 id="xP">0</h3><p>PDF مباشر</p></div></div>
-<div class="sc"><div class="si" style="background:linear-gradient(135deg,#64748b,#475569)"><i class="fas fa-clock"></i></div><div class="sv"><h3 id="xTm">--:--</h3><p>آخر تحديث</p></div></div>
-</div>
-<div class="exbar"><div class="exbox" id="exB"><i class="fas fa-info-circle"></i><span id="exT"></span></div></div>
+  <main class="wrap">
+    <div id="generated" class="muted"></div>
+    <div id="grid" class="grid"></div>
+  </main>
 
-<div class="ctrl">
-<div class="sbox"><i class="fas fa-search"></i><input id="sIn" placeholder="🔍 ابحث... SIPRI, Carnegie ME, الإسكوا, IFRI Sahel, ISS Africa, governance..." oninput="go()"></div>
-<div class="fr" id="fRg"><button class="p a" onclick="sf('rg','all',this)">🌐 كل المناطق</button><button class="p or" onclick="sf('rg','mena',this)">🕌 شرق أوسط وعالم عربي</button><button class="p gn" onclick="sf('rg','africa',this)">🌍 أفريقيا</button><button class="p" onclick="sf('rg','global',this)">🌐 عالمي</button></div>
-<div class="fr" id="fBase"><button class="p a" onclick="sf('bs','all',this)">الكل</button><button class="p or" onclick="sf('bs','in-mena',this)">🏛 مقره في المنطقة العربية</button><button class="p gn" onclick="sf('bs','in-afr',this)">🏛 مقره في أفريقيا</button><button class="p pu" onclick="sf('bs','outside',this)">🌍 مقره خارج المنطقة</button></div>
-<div class="fr" id="fTp"><button class="p a" onclick="sf('tp','all',this)">كل المواضيع</button><button class="p" onclick="sf('tp','politics',this)">🏛 سياسة</button><button class="p" onclick="sf('tp','security',this)">🔒 أمن</button><button class="p" onclick="sf('tp','governance',this)">⚖ حوكمة</button><button class="p" onclick="sf('tp','economy',this)">📈 اقتصاد</button><button class="p" onclick="sf('tp','rights',this)">👥 حقوق إنسان</button><button class="p" onclick="sf('tp','geopolitics',this)">🗺 جيوبوليتيك</button><button class="p" onclick="sf('tp','peace',this)">🕊 سلم ونزاعات</button><button class="p" onclick="sf('tp','culture',this)">🎭 ثقافة ومجتمع</button><button class="p" onclick="sf('tp','migration',this)">🚶 هجرة</button><button class="p" onclick="sf('tp','energy',this)">⚡ طاقة ومناخ</button></div>
-<div class="fr" id="fLn"><button class="p a" onclick="sf('ln','all',this)">🌐 الكل</button><button class="p gn" onclick="sf('ln','en',this)">EN</button><button class="p or" onclick="sf('ln','ar',this)">عربي</button><button class="p pu" onclick="sf('ln','fr',this)">FR</button></div>
-<div class="fr" id="fFq"><button class="p a" onclick="sf('fq','all',this)">الكل</button><button class="p" onclick="sf('fq','annual',this)">سنوي</button><button class="p" onclick="sf('fq','semi',this)">نصف سنوي</button><button class="p" onclick="sf('fq','periodic',this)">أوراق بحثية</button><button class="p rd" onclick="sf('fq','flagship',this)">⭐ رئيسية</button></div>
-</div>
+  <script>
+    let REPORTS = [];
 
-<div class="gw"><div class="grid" id="G"><div class="loader" style="grid-column:1/-1"><div class="spin"></div><p>جارٍ رصد دراسات الشرق الأوسط وأفريقيا...</p></div></div></div>
-<div class="mbg" id="mS"><div class="mdl"><button class="mx" onclick="cm()"><i class="fas fa-times"></i></button><h2 style="text-align:center;margin-bottom:8px">🎓 المصادر — 180+</h2><ul class="sl" id="sL"></ul></div></div>
-<div class="toast" id="tst"></div>
-<button class="stt" id="stB" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
-<footer>🎓 v8 — دراسات شرق أوسطية وأفريقية — جامعات ومراكز بحثية — 180+ مصدر — <a href="https://github.com/" target="_blank">GitHub</a></footer>
+    function fmtDate(date) {
+      try { return new Date(date).toLocaleDateString('ar-EG'); }
+      catch { return date; }
+    }
 
-<script>
-const NOW=new Date(),CUT=new Date(NOW);CUT.setFullYear(CUT.getFullYear()-1);
-function ok12(d){try{const x=new Date(d);return!isNaN(x)&&x>=CUT&&x<=NOW}catch{return false}}
-function dSince(d){try{return Math.floor((NOW-new Date(d))/864e5)}catch{return 999}}
-function freshB(d){const n=dSince(d);if(n<=7)return{c:'nw',t:'🔴 جديد'};if(n<=30)return{c:'tm',t:'🟡 هذا الشهر'};if(n<=90)return{c:'rc',t:'🟢 حديث'};return null}
+    function render(items) {
+      document.getElementById('total').textContent = items.length;
+      document.getElementById('menaCount').textContent = items.filter(x => x.region === 'mena').length;
+      document.getElementById('africaCount').textContent = items.filter(x => x.region === 'africa').length;
+      document.getElementById('pdfCount').textContent = items.filter(x => x.hasPdf).length;
 
-const SHORT_KW=['press release','press statement','op-ed','blog post','tweet','speech','remarks','communiqué de presse','déclaration','discours','بيان صحفي','تصريح','news release','media statement','infographic','podcast','video','webinar'];
-const REPORT_KW=['report','study','paper','brief','analysis','assessment','survey','outlook','index','yearbook','monitor','review','working paper','discussion paper','policy paper','research paper','occasional paper','strategic review','situation report','country report','thematic report','special report','rapport','étude','note d\'analyse','cahier','bilan','aperçu','bulletin','تقرير','دراسة','ورقة بحثية','ورقة سياسات','إحاطة','تحليل','مؤشر','تقييم','مسح','ورقة عمل'];
-function isSubstantial(title,desc){const t=(title+' '+desc).toLowerCase();if(SHORT_KW.some(k=>t.includes(k)))return false;if(!REPORT_KW.some(k=>t.includes(k))&&(desc||'').length<120)return false;if((desc||'').length<60)return false;return true}
+      const grid = document.getElementById('grid');
+      if (!items.length) {
+        grid.innerHTML = '<div class="muted">لا توجد نتائج مطابقة.</div>';
+        return;
+      }
 
-const MIN_PDF=150000;
-async function chkPdf(url){try{const r=await fetch(url,{method:'HEAD',mode:'cors'});const l=r.headers.get('content-length');return!l||parseInt(l)>=MIN_PDF}catch{return true}}
+      grid.innerHTML = items.map(r => `
+        <div class="card">
+          <div class="meta">
+            <span class="pill">${r.sourceAr || r.source}</span>
+            <span class="pill">${r.region}</span>
+            <span class="pill">${r.base}</span>
+            <span class="pill">${r.lang}</span>
+            <span class="pill">${r.freq || 'periodic'}</span>
+          </div>
+          <div class="title"><a href="${r.pageUrl || r.url}" target="_blank" rel="noopener">${r.title}</a></div>
+          <div class="desc">${r.description || ''}</div>
+          <div class="meta" style="margin-top:10px">
+            ${(r.topics || []).slice(0,4).map(t => `<span class="pill">${t}</span>`).join('')}
+          </div>
+          <div class="actions">
+            <span class="muted">${fmtDate(r.date)}</span>
+            <a class="btn ${r.hasPdf ? 'pdf' : ''}" href="${r.url}" target="_blank" rel="noopener">
+              ${r.hasPdf ? 'تحميل PDF' : 'فتح التقرير'}
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
 
-// ══════ FLAGSHIP REPORTS — curated, verified 3+ pages ══════
-// Each: [title, orgAr, org, cat, icon, lang, freq, url, hasPdf, topics, flagship, publishDate, desc, region, base]
-// base: 'in-mena'|'in-afr'|'outside'
-// region: 'mena'|'africa'|'global'
-const F=[
-// === BASED IN MENA/ARAB WORLD ===
-['المؤشر العربي — استطلاع الرأي العام','المركز العربي للأبحاث','Arab Center','mena-tk','📊','ar','annual','https://www.dohainstitute.org/ar/ResearchAndStudies/Pages/Arab-Index.aspx',0,['politics','governance','culture'],1,'2024-07-10','أكبر استطلاع رأي في المنطقة العربية حول التوجهات السياسية والاجتماعية','mena','in-mena'],
-['Arab Opinion Index (English)','المركز العربي للأبحاث','Arab Center','mena-tk','📊','en','annual','https://www.dohainstitute.org/en/ResearchAndStudies/Pages/Arab-Opinion-Index.aspx',0,['politics','governance'],1,'2024-07-10','Largest public opinion survey in the Arab world','mena','in-mena'],
-['ME Council Annual Report','مجلس الشرق الأوسط للشؤون الدولية','ME Council','mena-tk','🏛️','en','annual','https://mecouncil.org/publications/',0,['geopolitics','politics','economy'],1,'2024-12-01','Policy research on MENA geopolitical and socioeconomic issues','mena','in-mena'],
-['IFI-AUB Policy Research','معهد عصام فارس — الجامعة الأمريكية في بيروت','IFI-AUB','mena-uni','🎓','en','periodic','https://www.aub.edu.lb/ifi/Pages/default.aspx',0,['governance','politics','economy'],0,'2024-09-01','Policy research on Arab world challenges from AUB','mena','in-mena'],
-['PCNS Policy Brief','مركز السياسات من أجل الجنوب الجديد — المغرب','PCNS Morocco','mena-tk','🇲🇦','en','periodic','https://www.policycenter.ma/publications',0,['economy','governance','geopolitics'],0,'2024-10-01','Policy analysis from Morocco covering Africa and Arab world','mena','in-mena'],
-['IRES Rapport Stratégique','المعهد الملكي للدراسات الاستراتيجية — المغرب','IRES Maroc','mena-tk','🇲🇦','fr','annual','https://www.ires.ma/publications',0,['geopolitics','economy','governance'],1,'2024-06-01','Rapport stratégique annuel sur le Maroc et son environnement régional','mena','in-mena'],
-['ECSSR Strategic Report','مركز الإمارات للدراسات','ECSSR','mena-tk','🇦🇪','en','annual','https://www.ecssr.ae/en/publication-category/books/',0,['geopolitics','security','economy'],1,'2024-03-15','Strategic analysis on Gulf and regional geopolitics','mena','in-mena'],
-['مركز المستقبل — تقرير','مركز المستقبل للأبحاث','Future Center','mena-tk','🇦🇪','ar','periodic','https://futureuae.com/ar/Mainpage/Item',0,['politics','security','economy'],0,'2024-11-01','تحليلات مستقبلية للتطورات الإقليمية والدولية','mena','in-mena'],
-['مركز الملك فيصل — تقرير','مركز الملك فيصل للبحوث','KFCRIS','mena-tk','🇸🇦','ar','periodic','https://www.kfcris.com/ar/publications',0,['politics','culture','economy'],0,'2024-08-01','دراسات سعودية في السياسة والاقتصاد والثقافة','mena','in-mena'],
+    function applyFilters() {
+      const q = document.getElementById('q').value.toLowerCase();
+      const region = document.getElementById('region').value;
+      const base = document.getElementById('base').value;
+      const lang = document.getElementById('lang').value;
 
-// === BASED IN AFRICA ===
-['African Economic Outlook 2024','البنك الأفريقي للتنمية','AfDB','afr-tk','🌍','en','annual','https://www.afdb.org/en/knowledge/publications/african-economic-outlook',0,['economy','governance'],1,'2024-05-30','Annual report on Africa economic performance','africa','in-afr'],
-['Perspectives économiques en Afrique 2024','البنك الأفريقي','BAD','afr-tk','🌍','fr','annual','https://www.afdb.org/fr/knowledge/publications/african-economic-outlook',0,['economy','governance'],1,'2024-05-30','Rapport annuel de la BAD','africa','in-afr'],
-['Ibrahim Index of African Governance 2024','مؤسسة مو إبراهيم','Mo Ibrahim','afr-tk','🌍','en','annual','https://mo.ibrahim.foundation/iiag',0,['governance','politics'],1,'2024-01-25','Governance across 54 African countries','africa','in-afr'],
-['ISS Africa — Peace & Security Report','معهد الدراسات الأمنية — أفريقيا','ISS Africa','afr-tk','🔬','en','periodic','https://issafrica.org/research/reports',0,['security','peace','governance'],0,'2024-10-01','Research on African peace, security and justice','africa','in-afr'],
-['Afrobarometer Round 10','أفروباروميتر','Afrobarometer','afr-tk','📊','en','annual','https://www.afrobarometer.org/publications/',0,['governance','politics','culture'],1,'2024-07-10','Pan-African survey on democracy, governance and society','africa','in-afr'],
-['SAIIA Policy Insights','معهد جنوب أفريقيا للشؤون الدولية','SAIIA','afr-tk','🌍','en','periodic','https://saiia.org.za/research-reports/',0,['governance','economy','international'],0,'2024-09-01','South African foreign policy and governance research','africa','in-afr'],
-['ACCORD Conflict Trends','أكورد — حل النزاعات','ACCORD','afr-tk','🕊️','en','periodic','https://www.accord.org.za/publications/',0,['peace','security'],0,'2024-08-01','African conflict resolution and peacebuilding research','africa','in-afr'],
-['IPSS — Addis Ababa University','معهد دراسات السلام والأمن — أديس أبابا','IPSS-AAU','afr-uni','🎓','en','periodic','https://ipss-addis.org/publications/',0,['peace','security','governance'],0,'2024-06-01','Horn of Africa peace and security research','africa','in-afr'],
-['CODESRIA Research','مجلس تطوير البحث الاجتماعي في أفريقيا','CODESRIA','afr-uni','🎓','en','periodic','https://codesria.org/publications/',0,['governance','culture','economy'],0,'2024-05-01','Pan-African social science research from Dakar','africa','in-afr'],
+      const filtered = REPORTS.filter(r => {
+        if (region !== 'all' && r.region !== region) return false;
+        if (base !== 'all' && r.base !== base) return false;
+        if (lang !== 'all' && r.lang !== lang) return false;
+        if (q) {
+          const hay = `${r.title} ${r.description} ${r.source} ${r.sourceAr}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
 
-// === EXTERNAL — FOCUSED ON MENA ===
-['Carnegie ME Center — Reports','كارنيغي الشرق الأوسط','Carnegie ME','ext-mena','🕊️','en','periodic','https://carnegie-mec.org/publications',0,['politics','governance','geopolitics'],0,'2024-12-01','Beirut-based research on Arab politics and society','mena','outside'],
-['Chatham House MENA Programme','تشاتام هاوس — برنامج الشرق الأوسط','Chatham House MENA','ext-mena','🏛��','en','periodic','https://www.chathamhouse.org/regions/middle-east-and-north-africa',0,['politics','geopolitics','economy'],0,'2024-11-01','UK think tank MENA research and analysis','mena','outside'],
-['Brookings — Center for ME Policy','بروكينغز — سياسة الشرق الأوسط','Brookings CMEP','ext-mena','🏛️','en','periodic','https://www.brookings.edu/centers/center-for-middle-east-policy/',0,['politics','geopolitics','economy'],0,'2024-11-01','US think tank on ME policy formulation','mena','outside'],
-['IFRI — Moyen-Orient / Maghreb','المعهد الفرنسي — الشرق الأوسط','IFRI ME','ext-mena','🇫🇷','fr','periodic','https://www.ifri.org/fr/recherche/zones-geographiques/moyen-orient-maghreb',0,['geopolitics','security','economy'],0,'2024-10-01','IFRI research on Middle East and Maghreb','mena','outside'],
-['GIGA Institute for ME Studies','معهد GIGA — دراسات الشرق الأوسط','GIGA ME','ext-mena','🇩🇪','en','periodic','https://www.giga-hamburg.de/en/the-giga/institutes/giga-institute-for-middle-east-studies',0,['politics','governance','economy'],0,'2024-09-01','German research institute — Middle East politics and society','mena','outside'],
-['MERIP — Middle East Report','مشروع معلومات الشرق الأوسط','MERIP','ext-mena','📰','en','periodic','https://merip.org/feed/',0,['politics','rights','culture'],0,'2024-11-01','Critical analysis of the Middle East since 1971','mena','outside'],
-['MEI — Middle East Institute','معهد الشرق الأوسط — واشنطن','MEI','ext-mena','🏛️','en','periodic','https://mei.edu/publications',0,['politics','economy','geopolitics','culture'],0,'2024-12-01','Expert analysis on ME politics, economy and culture','mena','outside'],
-['POMEPS Studies','مشروع علوم الشرق الأوسط السياسية','POMEPS','ext-mena','🎓','en','periodic','https://pomeps.org/feed',0,['politics','governance'],0,'2024-06-01','Political science research on the Middle East','mena','outside'],
-['Al-Shabaka Policy Network','الشبكة — السياسات الفلسطينية','Al-Shabaka','ext-mena','📋','en','periodic','https://al-shabaka.org/feed/',0,['politics','rights'],0,'2024-10-01','Palestinian policy analysis network','mena','outside'],
-['TIMEP — Tahrir Institute','معهد التحرير لسياسة الشرق الأوسط','TIMEP','ext-mena','📊','en','periodic','https://timep.org/feed/',0,['politics','rights','governance'],0,'2024-11-01','ME policy institute — governance, justice, rights','mena','outside'],
-['Washington Institute — WINEP','معهد واشنطن لسياسة الشرق الأدنى','WINEP','ext-mena','🏛️','en','periodic','https://www.washingtoninstitute.org/policy-analysis',0,['geopolitics','security','politics'],0,'2024-12-01','Near East policy research and analysis','mena','outside'],
-['Century Foundation — ME','مؤسسة القرن — الشرق الأوسط','TCF ME','ext-mena','🏛️','en','periodic','https://tcf.org/topics/international-affairs/middle-east/',0,['politics','governance'],0,'2024-09-01','Promoting stability and pluralism in the Arab world','mena','outside'],
-['SWP Berlin — Middle East & Africa','المعهد الألماني للشؤون الدولية — الشرق الأوسط','SWP ME','ext-mena','🇩🇪','en','periodic','https://www.swp-berlin.org/en/topics/middle-east-and-africa',0,['geopolitics','security','politics'],0,'2024-10-01','German policy advice on Middle East and Africa','mena','outside'],
-['ARI — Arab Reform Initiative','مبادرة الإصلاح العربي','ARI','ext-mena','📋','en','periodic','https://www.arab-reform.net/feed/',0,['governance','rights','politics'],0,'2024-11-01','Arab reform governance and rights research','mena','outside'],
+      render(filtered);
+    }
 
-// === EXTERNAL — FOCUSED ON AFRICA ===
-['Africa Center for Strategic Studies','مركز أفريقيا للدراسات الاستراتيجية','ACSS','ext-afr','🌍','en','periodic','https://africacenter.org/feed/',0,['security','governance'],0,'2024-11-01','US DoD research institution — African security studies','africa','outside'],
-['Brookings — Africa Growth Initiative','بروكينغز — مبادرة النمو الأفريقي','Brookings Africa','ext-afr','🏛️','en','periodic','https://www.brookings.edu/topic/africa/feed/',0,['economy','governance'],0,'2024-11-01','Brookings Africa economic and governance research','africa','outside'],
-['Chatham House Africa Programme','تشاتام هاوس — برنامج أفريقيا','Chatham Africa','ext-afr','🏛️','en','periodic','https://www.chathamhouse.org/regions/africa',0,['governance','economy','international'],0,'2024-10-01','UK think tank Africa programme research','africa','outside'],
-['Nordic Africa Institute','المعهد الاسكندنافي لأفريقيا','NAI','ext-afr','🇸🇪','en','periodic','https://nai.uu.se/feed/',0,['governance','economy','culture'],0,'2024-08-01','Swedish research institute on Africa — multidisciplinary','africa','outside'],
-['ECDPM — European Centre for Dev Policy','مركز سياسات التنمية الأوروبي','ECDPM','ext-afr','🇪🇺','en','periodic','https://ecdpm.org/feed/',0,['governance','economy','international'],0,'2024-11-01','EU-Africa development policy research','africa','outside'],
-['GIGA Institute for African Affairs','معهد GIGA — الشؤون الأفريقية','GIGA Africa','ext-afr','🇩🇪','en','periodic','https://www.giga-hamburg.de/en/the-giga/institutes/giga-institute-for-african-affairs',0,['politics','governance','economy'],0,'2024-09-01','German research on African politics and economy','africa','outside'],
-['IFRI — Programme Afrique sub-saharienne','المعهد الفرنسي — أفريقيا','IFRI Africa','ext-afr','🇫🇷','fr','periodic','https://www.ifri.org/fr/recherche/zones-geographiques/afrique-subsaharienne',0,['geopolitics','security','economy'],0,'2024-10-01','IFRI research on sub-Saharan Africa','africa','outside'],
-['Cambridge Centre of African Studies','جامعة كامبريدج — الدراسات الأفريقية','Cambridge CAS','ext-afr','🎓','en','periodic','https://www.african.cam.ac.uk/',0,['culture','governance','economy'],0,'2024-06-01','Cambridge University multidisciplinary African research','africa','outside'],
+    ['q','region','base','lang'].forEach(id => {
+      document.getElementById(id).addEventListener('input', applyFilters);
+      document.getElementById(id).addEventListener('change', applyFilters);
+    });
 
-// === GLOBAL WITH STRONG MENA/AFRICA COVERAGE ===
-['SIPRI Yearbook 2024','ستوكهولم لأبحاث السلام','SIPRI','global','🔬','en','annual','https://www.sipri.org/yearbook/2024',0,['security','peace','geopolitics'],1,'2024-06-17','World armaments and security — includes MENA & Africa','global','outside'],
-['Freedom in the World 2025','فريدم هاوس','Freedom House','global','🗽','en','annual','https://freedomhouse.org/report/freedom-world',0,['governance','rights','politics'],1,'2025-02-27','Global political rights — covers every Arab/African country','global','outside'],
-['CPI 2024','الشفافية الدولية','TI','global','🔍','en','annual','https://www.transparency.org/en/cpi/2024',0,['governance','politics'],1,'2025-01-30','Corruption ranking of all countries','global','outside'],
-['HRW World Report 2025','هيومن رايتس ووتش','HRW','global','⚖️','en','annual','https://www.hrw.org/world-report/2025',0,['rights','governance'],1,'2025-01-16','Human rights in 100+ countries','global','outside'],
-['IMF REO — MENA','صندوق النقد — الشرق الأوسط','IMF MENA','ifi-reg','🏦','en','semi','https://www.imf.org/en/Publications/REO/MECA',0,['economy','governance'],1,'2024-10-25','IMF regional analysis for Middle East','mena','outside'],
-['IMF REO — Sub-Saharan Africa','صندوق النقد — أفريقيا','IMF SSA','ifi-reg','🏦','en','semi','https://www.imf.org/en/Publications/REO/SSA',0,['economy','governance'],1,'2024-10-25','IMF regional analysis for sub-Saharan Africa','africa','outside'],
-['UNDP HDR 2024/25','البرنامج الإنمائي','UNDP','un-reg','🇺🇳','en','annual','https://hdr.undp.org/content/human-development-report-2024-25',1,['governance','economy','rights'],1,'2025-03-13','Human development trends globally','global','outside'],
-['Economic Report on Africa 2024','اللجنة الاقتصادية لأفريقيا','UNECA','un-reg','🇺🇳','en','annual','https://www.uneca.org/economic-report-africa',0,['economy','governance'],1,'2024-03-20','ECA annual economic review of Africa','africa','outside'],
-['ESCWA — Arab Region Survey','الإسكوا','ESCWA','un-reg','🇺🇳','en','annual','https://www.unescwa.org/publications/survey-economic-social-developments-arab-region',0,['economy','governance'],1,'2024-04-10','Annual economic and social survey of the Arab region','mena','outside'],
-['ICG — Crisis Reports','مجموعة الأزمات الدولية','ICG','global','⚠️','en','periodic','https://www.crisisgroup.org/feed/rss',0,['security','peace','geopolitics'],0,'2024-12-01','Conflict analysis — major coverage of MENA/Africa crises','global','outside'],
-['ACLED Conflict Index','بيانات النزاعات المسلحة','ACLED','global','📊','en','annual','https://acleddata.com/conflict-index/',0,['security','peace'],1,'2025-01-14','Conflict data — extensive MENA/Africa tracking','global','outside'],
-['Fragile States Index 2024','صندوق السلام','FFP','global','📊','en','annual','https://fragilestatesindex.org/',0,['governance','security'],1,'2024-06-03','Fragility ranking — Arab/African states feature prominently','global','outside'],
-];
-
-// ══════ DYNAMIC RSS SOURCES — 70+ feeds ══════
-// [name, nameAr, url, cat, icon, lang, freq, topics, region, base]
-const API='https://api.rss2json.com/v1/api.json?rss_url=';
-const D=[
-// IN MENA
-['Al Jazeera Studies','مركز الجزيرة للدراسات','https://studies.aljazeera.net/ar/rss','mena-tk','🔬','ar','periodic',['politics','geopolitics'],'mena','in-mena'],
-['Carnegie ME','كارنيغي الشرق الأوسط','https://carnegie-mec.org/rss/solr.xml','mena-tk','🕊️','ar','periodic',['politics','governance'],'mena','in-mena'],
-['ARI','مبادرة الإصلاح العربي','https://www.arab-reform.net/feed/','mena-tk','📋','en','periodic',['governance','rights'],'mena','in-mena'],
-['PCNS Morocco','مركز السياسات — المغرب','https://www.policycenter.ma/feed','mena-tk','🇲🇦','en','periodic',['economy','governance'],'mena','in-mena'],
-['Fikra Forum','منتدى فكرة','https://www.washingtoninstitute.org/fikraforum/rss.xml','mena-tk','💬','en','periodic',['politics','geopolitics'],'mena','in-mena'],
-// IN AFRICA
-['ISS Africa','معهد الدراسات الأمنية','https://issafrica.org/iss-today/feed','afr-tk','🔬','en','periodic',['security','governance','peace'],'africa','in-afr'],
-['ACSS','مركز أفريقيا الاستراتيجي','https://africacenter.org/feed/','afr-tk','🌍','en','periodic',['security','governance'],'africa','in-afr'],
-['SAIIA','معهد جنوب أفريقيا','https://saiia.org.za/feed/','afr-tk','🌍','en','periodic',['governance','economy'],'africa','in-afr'],
-['African Arguments','حجج أفريقية','https://africanarguments.org/feed/','afr-tk','🌍','en','periodic',['politics','rights','culture'],'africa','in-afr'],
-['ACCORD','أكورد — حل النزاعات','https://www.accord.org.za/feed/','afr-tk','🕊️','en','periodic',['peace','security'],'africa','in-afr'],
-['ECDPM','سياسات التنمية الأوروبي','https://ecdpm.org/feed/','afr-tk','🇪🇺','en','periodic',['governance','economy'],'africa','in-afr'],
-['The Africa Report','تقرير أفريقيا','https://www.theafricareport.com/feed/','afr-tk','🌍','en','periodic',['politics','economy'],'africa','in-afr'],
-['NAI Uppsala','المعهد الاسكندنافي','https://nai.uu.se/feed/','afr-tk','🇸🇪','en','periodic',['governance','culture','economy'],'africa','outside'],
-['ICG Africa','مجموعة الأزمات — أفريقيا','https://www.crisisgroup.org/feed/rss','ext-afr','⚠️','en','periodic',['security','peace'],'africa','outside'],
-['Jeune Afrique','جون أفريك','https://www.jeuneafrique.com/politique/feed/','afr-tk','🌍','fr','periodic',['politics','governance'],'africa','in-afr'],
-// EXTERNAL — MENA FOCUSED
-['Brookings ME','بروكينغز — الشرق الأوسط','https://www.brookings.edu/centers/center-for-middle-east-policy/feed/','ext-mena','🏛️','en','periodic',['politics','economy'],'mena','outside'],
-['Chatham House MENA','تشاتام هاوس — MENA','https://www.chathamhouse.org/feed/default/rss.xml','ext-mena','🏛️','en','periodic',['politics','geopolitics'],'mena','outside'],
-['CSIS ME','مركز الدراسات الاستراتيجية — الشرق الأوسط','https://www.csis.org/analysis/feed','ext-mena','🔬','en','periodic',['security','geopolitics'],'mena','outside'],
-['MEI','معهد الشرق الأوسط','https://www.mei.edu/rss.xml','ext-mena','🏛️','en','periodic',['politics','economy','culture'],'mena','outside'],
-['POMEPS','مشروع علوم الشرق الأوسط','https://pomeps.org/feed','ext-mena','🎓','en','periodic',['politics','governance'],'mena','outside'],
-['Al-Shabaka','الشبكة','https://al-shabaka.org/feed/','ext-mena','📋','en','periodic',['politics','rights'],'mena','outside'],
-['TIMEP','معهد التحرير','https://timep.org/feed/','ext-mena','📊','en','periodic',['politics','rights','governance'],'mena','outside'],
-['MERIP','مشروع معلومات الشرق الأوسط','https://merip.org/feed/','ext-mena','📰','en','periodic',['politics','rights','culture'],'mena','outside'],
-// EXTERNAL — AFRICA FOCUSED
-['Brookings Africa','بروكينغز — أفريقيا','https://www.brookings.edu/topic/africa/feed/','ext-afr','🏛️','en','periodic',['economy','governance'],'africa','outside'],
-// GLOBAL THINK TANKS
-['SIPRI','ستوكهولم لأبحاث السلام','https://www.sipri.org/rss.xml','global','🔬','en','periodic',['security','peace'],'global','outside'],
-['Carnegie','كارنيغي','https://carnegieendowment.org/rss/solr.xml','global','🕊️','en','periodic',['governance','geopolitics'],'global','outside'],
-['Atlantic Council','المجلس الأطلسي','https://www.atlanticcouncil.org/feed/','global','🌊','en','periodic',['geopolitics','security'],'global','outside'],
-['RAND','مؤسسة راند','https://www.rand.org/pubs/research_reports.xml','global','🔬','en','periodic',['security','economy'],'global','outside'],
-['ECFR','المجلس الأوروبي','https://ecfr.eu/feed/','global','🇪🇺','en','periodic',['geopolitics','international'],'global','outside'],
-['Stimson','ستيمسون','https://www.stimson.org/feed/','global','🔬','en','periodic',['security','peace'],'global','outside'],
-['Egmont','إيغمونت','https://www.egmontinstitute.be/feed/','global','🇧🇪','en','periodic',['security','governance'],'global','outside'],
-['PRIO','أبحاث السلام أوسلو','https://www.prio.org/rss','global','🇳🇴','en','periodic',['peace','security'],'global','outside'],
-// FRENCH
-['IFRI ME','IFRI — الشرق الأوسط','https://www.ifri.org/fr/publications/rss.xml','ext-mena','🇫🇷','fr','periodic',['geopolitics','security'],'global','outside'],
-['IRIS','IRIS','https://www.iris-france.org/feed/','ext-mena','🇫🇷','fr','periodic',['security','geopolitics'],'global','outside'],
-// NGOs
-['HRW','هيومن رايتس ووتش','https://www.hrw.org/rss/publications','ngo-reg','⚖️','en','periodic',['rights','governance'],'global','outside'],
-['Amnesty','العفو الدولية','https://www.amnesty.org/en/feed/','ngo-reg','⚖️','en','periodic',['rights'],'global','outside'],
-['RSF','مراسلون بلا حدود','https://rsf.org/en/rss.xml','ngo-reg','📝','en','periodic',['rights'],'global','outside'],
-['GI-TOC','الجريمة المنظمة','https://globalinitiative.net/feed/','ngo-reg','🔍','en','periodic',['security','governance'],'global','outside'],
-['Oxfam','أوكسفام','https://www.oxfam.org/en/rss.xml','ngo-reg','🌱','en','periodic',['economy','rights'],'global','outside'],
-['ReliefWeb','ريليف ويب','https://reliefweb.int/updates/rss.xml?format=8&theme=4589','un-reg','🌐','en','periodic',['security','rights'],'global','outside'],
-];
-
-// REGION DETECTION
-const MENA_KW=['arab','middle east','mena','gulf','maghreb','levant','syria','iraq','yemen','libya','egypt','saudi','qatar','jordan','lebanon','palestine','sudan','algeria','morocco','tunisia','iran','turkey','israel','bahrain','oman','kuwait','عرب','شرق أوسط','خليج','مغرب','مشرق','moyen-orient','maghreb'];
-const AFR_KW=['africa','sahel','sub-saharan','nigeria','kenya','ethiopia','congo','somalia','mozambique','mali','niger','chad','cameroon','ghana','senegal','tanzania','uganda','rwanda','afrique','sahélien','أفريق','ساحل','horn of africa','corne de l\'afrique','west africa','east africa','southern africa'];
-function detectRg(text,def){const lo=text.toLowerCase();if(MENA_KW.some(k=>lo.includes(k)))return'mena';if(AFR_KW.some(k=>lo.includes(k)))return'africa';return def||'global'}
-
-// STATE
-let all=[],fTp='all',fSr='all',fLn='all',fFq='all',fRg='all',fBs='all',rejC=0;
-let bms=JSON.parse(localStorage.getItem('grv8_bm')||'[]');let cd=1800;
-const TKW={politics:['politic','election','democracy','parliament','government','سياس','انتخاب','ديمقراط','حكوم','politique','élection'],security:['security','military','defense','conflict','war','terror','أمن','عسكر','دفاع','sécurité','militaire'],governance:['governance','reform','corruption','transparency','justice','حوكم','إصلاح','فساد','gouvernance'],economy:['economic','trade','development','poverty','finance','اقتصاد','تجار','تنمي','économi','commerce'],rights:['human rights','refugee','freedom','humanitarian','حقوق','لاجئ','droits','réfugié'],geopolitics:['geopolitic','strategic','territorial','sanction','جيوبوليت','استراتيج','géopolit'],peace:['peace','ceasefire','disarmament','سلام','نزع سلاح','paix'],culture:['cultur','societ','identity','education','religion','youth','ثقاف','مجتمع','هوي','تعليم','دين','شباب','culturel','société'],migration:['migrat','refugee','asylum','displacement','هجر','لجوء','migrat'],energy:['energy','oil','gas','climate','renewable','طاق','نفط','غاز','مناخ','énergie','pétrole','climat']};
-const TL={politics:'سياسة',security:'أمن',governance:'حوكمة',economy:'اقتصاد',rights:'حقوق إنسان',geopolitics:'جيوبوليتيك',peace:'سلم ونزاعات',culture:'ثقافة ومجتمع',migration:'هجرة',energy:'طاقة ومناخ',international:'علاقات دولية'};
-const FL={annual:'سنوي',semi:'نصف سنوي',quarterly:'ربع سنوي',monthly:'شهري',periodic:'ورقة بحثية'};
-const CL={'mena-uni':'🎓 جامعة/المنطقة','afr-uni':'🎓 جامعة/أفريقيا','mena-tk':'🔬 مركز بحثي/المنطقة','afr-tk':'🔬 مركز بحثي/أفريقيا','ext-mena':'🏛 خارجي/MENA','ext-afr':'🏛 خارجي/أفريقيا','un-reg':'🇺🇳 أممي','ifi-reg':'🏦 مالي','ngo-reg':'⚖ حقوقي','global':'🌐 عالمي'};
-
-function cl(t){if(!t)return'';const d=document.createElement('div');d.innerHTML=t;return d.textContent.replace(/\s+/g,' ').trim().substring(0,600)}
-function hs(s){let v=0;for(let i=0;i<s.length;i++){v=((v<<5)-v)+s.charCodeAt(i);v&=v}return Math.abs(v).toString(36)}
-function dtp(text,def){const s=new Set(def),lo=text.toLowerCase();for(const[t,ks]of Object.entries(TKW))for(const k of ks)if(lo.includes(k)){s.add(t);break}return[...s]}
-function isPdf(u){return/\.pdf($|\?|#)/i.test(u||'')}
-function getPdf(item){if(isPdf(item.link))return item.link;if(item.enclosure&&isPdf(item.enclosure.link))return item.enclosure.link;const m=((item.description||'')+(item.content||'')).match(/href=["'](https?:\/\/[^"']*\.pdf[^"']*)/i);return m?m[1]:null}
-
-async function fetchD(s){
-  try{const r=await fetch(API+encodeURIComponent(s[2]));if(!r.ok)throw 0;const d=await r.json();if(d.status!=='ok'||!d.items)return{items:[],rej:0};let rej=0;
-  const items=d.items.filter(i=>{if(!ok12(i.pubDate)){rej++;return false}if(!isSubstantial(i.title,i.description||'')){rej++;return false}return true}).map(i=>{const pUrl=getPdf(i);const txt=i.title+' '+(i.description||'');return{title:cl(i.title),desc:cl(i.description||i.content||''),link:pUrl||i.link,date:i.pubDate||'',source:s[0],sourceAr:s[1],cat:s[3],icon:s[4],lang:s[5],freq:s[6],topics:dtp(txt,s[7]),fl:0,id:hs(i.link||i.title),hasPdf:!!pUrl,rg:detectRg(txt,s[8]),base:s[9]}});
-  return{items,rej}}catch{return{items:[],rej:0}}
-}
-
-async function loadAll(){
-  const g=document.getElementById('G'),pb=document.getElementById('pb');
-  g.innerHTML=`<div class="loader" style="grid-column:1/-1"><div class="spin"></div><p>جارٍ رصد دراسات الشرق الأوسط وأفريقيا...</p></div>`;
-  pb.style.width='5%';rejC=0;
-  const tF=F.length;
-  const fi=F.filter(r=>ok12(r[11])).map(r=>({title:r[0],desc:r[12],link:r[7],date:r[11],source:r[2],sourceAr:r[1],cat:r[3],icon:r[4],lang:r[5],freq:r[6],topics:r[9],fl:r[10],id:hs(r[0]+r[2]),hasPdf:!!r[8],rg:r[13],base:r[14]}));
-  rejC+=tF-fi.length;pb.style.width='20%';
-  let di=[];const bs=8;
-  for(let i=0;i<D.length;i+=bs){const b=D.slice(i,i+bs);const rs=await Promise.allSettled(b.map(fetchD));rs.forEach(r=>{if(r.status==='fulfilled'){di.push(...r.value.items);rejC+=r.value.rej}});pb.style.width=Math.min(20+(i/D.length)*75,93)+'%'}
-  all=[...fi,...di];const seen=new Set();all=all.filter(r=>{const k=r.title.substring(0,42).toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
-  all.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  pb.style.width='100%';setTimeout(()=>pb.style.width='0%',700);
-  document.getElementById('xT').textContent=all.length;document.getElementById('xR').textContent=rejC;
-  document.getElementById('xM').textContent=all.filter(r=>r.rg==='mena').length;
-  document.getElementById('xAf').textContent=all.filter(r=>r.rg==='africa').length;
-  document.getElementById('xU').textContent=F.length+D.length;
-  document.getElementById('xP').textContent=all.filter(r=>r.hasPdf).length;
-  document.getElementById('xTm').textContent=new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
-  if(rejC>0){document.getElementById('exB').style.display='flex';document.getElementById('exT').textContent=`تم استبعاد ${rejC} عنصر (بيانات صحفية أو أقل من 3 صفحات أو أقدم من سنة)`}
-  show(all);toast(`✅ ${all.length} دراسة/تقرير — ${all.filter(r=>r.rg==='mena').length} شرق أوسط | ${all.filter(r=>r.rg==='africa').length} أفريقيا`);cd=1800;
-}
-
-function show(rr){
-  const g=document.getElementById('G');
-  if(!rr.length){g.innerHTML=`<div class="nr" style="grid-column:1/-1"><i class="fas fa-file-pdf"></i><h3>لا توجد دراسات مطابقة</h3></div>`;return}
-  g.innerHTML=rr.map((r,i)=>{
-    const ib=bms.includes(r.id);const tags=r.topics.slice(0,3).map(t=>`<span>${TL[t]||t}</span>`).join('');
-    const ll=r.lang==='en'?'EN':r.lang==='ar'?'عربي':'FR';const fl=FL[r.freq]||r.freq;
-    const fr=freshB(r.date);const fh=fr?`<span class="fn ${fr.c}">${fr.t}</span>`:'';
-    const rgL=r.rg==='mena'?'🕌 شرق أوسط':r.rg==='africa'?'🌍 أفريقيا':'🌐 عالمي';
-    const rgC=r.rg;const baseL=r.base==='in-mena'?'📍 مقره في المنطقة':r.base==='in-afr'?'📍 مقره في أفريقيا':'🌐 خارجي';
-    let pf;
-    if(r.hasPdf){pf=`<div class="pf"><div class="pi"><div class="pc y"><i class="fas fa-file-pdf"></i></div><div class="pd"><b class="y">PDF</b> — ${fl} | ${r.source}</div></div><a href="${r.link}" target="_blank" class="pa dl" rel="noopener"><i class="fas fa-download"></i> PDF</a></div>`}
-    else{pf=`<div class="pf"><div class="pi"><div class="pc n"><i class="fas fa-external-link-alt"></i></div><div class="pd"><b class="n">أونلاين</b> — ${fl} | ${r.source}</div></div><a href="${r.link}" target="_blank" class="pa ol" rel="noopener"><i class="fas fa-external-link-alt"></i> اقرأ</a></div>`}
-    return`<div class="card ${r.fl?'fs':''}" data-c="${r.cat}" style="animation-delay:${Math.min(i*.015,.6)}s">
-    <div class="ct"><div class="cb"><span class="lb ${r.lang}">${ll}</span><span class="fb ${r.freq}">${fl}</span>${fh}<span class="rg ${rgC}">${rgL}</span><span class="bd ${r.cat}">${r.icon} ${r.sourceAr}</span>${r.fl?'<span style="font-size:.65rem">⭐</span>':''}</div>
-    <div class="cm"><button class="bm ${ib?'on':''}" onclick="togBm('${r.id}',this)"><i class="fa${ib?'s':'r'} fa-bookmark"></i></button><span class="cd">${fmtD(r.date)}</span></div></div>
-    <div class="tt"><a href="${r.link}" target="_blank" rel="noopener">${r.title}</a></div>
-    <div class="ds">${r.desc}</div>${pf}
-    <div class="cf"><div class="tg">${tags}<span style="background:rgba(139,92,246,.1);color:#8b5cf6">${baseL}</span></div></div></div>`}).join('');
-}
-
-function fmtD(d){try{const x=new Date(d),df=Math.floor((NOW-x)/864e5);if(df<0)return'قريباً';if(!df)return'اليوم';if(df===1)return'أمس';if(df<7)return`منذ ${df} أيام`;if(df<30)return`منذ ${Math.floor(df/7)} أسبوع`;const m=Math.floor(df/30);return m<12?`منذ ${m} ${m===1?'شهر':'أشهر'}`:x.toLocaleDateString('ar-EG',{year:'numeric',month:'short'})}catch{return d}}
-
-function sf(type,val,btn){
-  if(type==='rg')fRg=val;if(type==='tp')fTp=val;if(type==='sr')fSr=val;if(type==='ln')fLn=val;if(type==='fq')fFq=val;if(type==='bs')fBs=val;
-  btn.parentElement.querySelectorAll('.p').forEach(x=>x.classList.remove('a'));btn.classList.add('a');go();
-}
-function go(){
-  const q=document.getElementById('sIn').value.toLowerCase();
-  show(all.filter(r=>{
-    if(fRg!=='all'&&r.rg!==fRg)return false;
-    if(fBs==='in-mena'&&r.base!=='in-mena')return false;
-    if(fBs==='in-afr'&&r.base!=='in-afr')return false;
-    if(fBs==='outside'&&r.base!=='outside')return false;
-    if(fTp!=='all'&&!r.topics.includes(fTp))return false;
-    if(fLn!=='all'&&r.lang!==fLn)return false;
-    if(fFq==='flagship')return!!r.fl;
-    if(fFq!=='all'&&r.freq!==fFq)return false;
-    if(q)return(r.title+' '+r.desc+' '+r.sourceAr+' '+r.source).toLowerCase().includes(q);
-    return true;
-  }));
-}
-
-function togBm(id,b){const i=bms.indexOf(id);if(i>-1){bms.splice(i,1);b.classList.remove('on');b.innerHTML='<i class="far fa-bookmark"></i>'}else{bms.push(id);b.classList.add('on');b.innerHTML='<i class="fas fa-bookmark"></i>'}localStorage.setItem('grv8_bm',JSON.stringify(bms))}
-
-function doExp(){
-  const d={exported:new Date().toISOString(),focus:'MENA_Africa_Studies',window:'12_months',min_pages:3,total:all.length,mena:all.filter(r=>r.rg==='mena').length,africa:all.filter(r=>r.rg==='africa').length,based_in_region:all.filter(r=>r.base==='in-mena'||r.base==='in-afr').length,reports:all.map(r=>({title:r.title,source:r.source,cat:r.cat,lang:r.lang,freq:r.freq,flagship:!!r.fl,date:r.date,topics:r.topics,region:r.rg,base:r.base,url:r.link,hasPdf:r.hasPdf,desc:r.desc}))};
-  const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`mena_africa_studies_${NOW.toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);toast('📥 تم التصدير')
-}
-
-function togTh(){const t=document.body.getAttribute('data-theme')==='dark'?'light':'dark';document.body.setAttribute('data-theme',t);document.getElementById('thI').className=t==='dark'?'fas fa-moon':'fas fa-sun';localStorage.setItem('grv8_th',t)}
-(()=>{const t=localStorage.getItem('grv8_th')||'dark';document.body.setAttribute('data-theme',t);document.getElementById('thI').className=t==='dark'?'fas fa-moon':'fas fa-sun'})();
-
-function showSrc(){
-  let html='';
-  for(const[c,lb]of Object.entries(CL)){
-    const fi=F.filter(r=>r[3]===c),di=D.filter(r=>r[3]===c);if(!fi.length&&!di.length)continue;
-    html+=`<li class="ch">${lb} (${fi.length+di.length})</li>`;const seen=new Set();
-    fi.forEach(s=>{const n=s[2];if(seen.has(n))return;seen.add(n);const bl=s[14]==='in-mena'?'📍المنطقة':s[14]==='in-afr'?'📍أفريقيا':'🌐خارجي';html+=`<li><span>${s[4]}</span><div><b>${s[1]}${s[10]?' ⭐':''}</b><br><small style="color:var(--t2)">${n} — ${bl}</small></div></li>`});
-    di.forEach(s=>{const n=s[0];if(seen.has(n))return;seen.add(n);const bl=s[9]==='in-mena'?'📍المنطقة':s[9]==='in-afr'?'📍أفريقيا':'🌐خارجي';html+=`<li><span>${s[4]}</span><div><b>${s[1]}</b><br><small style="color:var(--t2)">${n} — ${bl}</small></div></li>`});
-  }
-  document.getElementById('sL').innerHTML=html;document.getElementById('mS').classList.add('on');
-}
-function cm(){document.querySelectorAll('.mbg').forEach(m=>m.classList.remove('on'))}
-document.querySelectorAll('.mbg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)cm()}));
-function toast(m){const t=document.getElementById('tst');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),4000)}
-window.addEventListener('scroll',()=>{document.getElementById('stB').style.display=window.scrollY>300?'flex':'none'});
-function doRef(){const i=document.getElementById('rfI');i.style.animation='sp .7s linear infinite';loadAll().then(()=>setTimeout(()=>i.style.animation='',700))}
-setInterval(()=>{cd--;if(cd<=0){loadAll();cd=1800}document.getElementById('tmr').textContent=String(Math.floor(cd/60)).padStart(2,'0')+':'+String(cd%60).padStart(2,'0')},1000);
-document.addEventListener('keydown',e=>{if((e.ctrlKey&&e.key==='k')||(e.key==='/'&&document.activeElement.tagName!=='INPUT')){e.preventDefault();document.getElementById('sIn').focus()}if(e.key==='Escape')cm()});
-document.addEventListener('DOMContentLoaded',loadAll);
-</script>
+    fetch('data/reports.json')
+      .then(r => r.json())
+      .then(data => {
+        REPORTS = data.reports || [];
+        document.getElementById('generated').textContent =
+          `آخر تحديث للبيانات: ${new Date(data.generatedAt).toLocaleString('ar-EG')}`;
+        render(REPORTS);
+      })
+      .catch(() => {
+        document.getElementById('grid').innerHTML =
+          '<div class="muted">تعذر تحميل data/reports.json. شغّل الجامع أولاً.</div>';
+      });
+  </script>
 </body>
 </html>
