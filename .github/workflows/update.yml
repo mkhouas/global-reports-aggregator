@@ -1,35 +1,163 @@
-name: Update reports index
+name: 🔄 Auto-Update Reports Feed
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "17 4 * * *"
+    # يعمل يومياً الساعة 6 صباحاً و 6 مساءً بتوقيت UTC
+    - cron: '0 6 * * *'
+    - cron: '0 18 * * *'
+  workflow_dispatch:  # تشغيل يدوي
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  update-reports:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node
+        
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-
-      - name: Install deps
-        run: npm install
-
-      - name: Build data
-        run: node collector.mjs
-
-      - name: Commit updated JSON
+          node-version: '20'
+          
+      - name: 📦 Install dependencies
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/reports.json
-          git diff --cached --quiet || git commit -m "chore: update reports index"
+          npm init -y
+          npm install rss-parser axios cheerio xml2js node-fetch
+          
+      - name: 🔍 Fetch latest reports
+        run: |
+          cat > fetch-reports.js << 'SCRIPT'
+          const Parser = require('rss-parser');
+          const fs = require('fs');
+          
+          const parser = new Parser({
+            timeout: 15000,
+            headers: {
+              'User-Agent': 'International-Reports-Aggregator/1.0'
+            }
+          });
+          
+          // RSS Feed Sources
+          const RSS_FEEDS = [
+            // UN System
+            { id: 'un-news', url: 'https://news.un.org/feed/subscribe/en/news/topic/peace-and-security/feed/rss.xml', source: 'UN News', category: 'un' },
+            { id: 'unhcr', url: 'https://www.unhcr.org/rss/news.xml', source: 'UNHCR', category: 'un' },
+            { id: 'reliefweb', url: 'https://reliefweb.int/updates/rss.xml?search=source.shortname%3AOCHA', source: 'ReliefWeb/OCHA', category: 'un' },
+            
+            // Think Tanks
+            { id: 'brookings', url: 'https://www.brookings.edu/topic/middle-east-north-africa/feed/', source: 'Brookings', category: 'think-tank' },
+            { id: 'crisis-group', url: 'https://www.crisisgroup.org/rss.xml', source: 'Crisis Group', category: 'think-tank' },
+            { id: 'ecfr', url: 'https://ecfr.eu/feed/', source: 'ECFR', category: 'eu' },
+            { id: 'cfr', url: 'https://www.cfr.org/rss.xml', source: 'CFR', category: 'think-tank' },
+            
+            // Africa Focus
+            { id: 'iss-africa', url: 'https://issafrica.org/rss', source: 'ISS Africa', category: 'africa' },
+            { id: 'acss', url: 'https://africacenter.org/feed/', source: 'Africa Center', category: 'africa' },
+            { id: 'accord', url: 'https://www.accord.org.za/feed/', source: 'ACCORD', category: 'africa' },
+            
+            // Academic
+            { id: 'lse-mec', url: 'https://blogs.lse.ac.uk/mec/feed/', source: 'LSE Middle East', category: 'academic' },
+          ];
+          
+          const KEYWORDS_FILTER = [
+            'africa', 'african', 'sahel', 'sudan', 'libya', 'somalia', 'ethiopia',
+            'middle east', 'arab', 'gulf', 'yemen', 'syria', 'iraq', 'palestine',
+            'security', 'conflict', 'governance', 'geopolitics', 'terrorism',
+            'migration', 'refugee', 'peacekeeping', 'democracy', 'human rights',
+            'political', 'diplomacy', 'military', 'arms', 'sanctions'
+          ];
+          
+          async function fetchAllFeeds() {
+            const allItems = [];
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            
+            for (const feed of RSS_FEEDS) {
+              try {
+                console.log(`Fetching: ${feed.source}...`);
+                const result = await parser.parseURL(feed.url);
+                
+                const items = result.items
+                  .filter(item => {
+                    const pubDate = new Date(item.pubDate || item.isoDate);
+                    return pubDate >= oneYearAgo;
+                  })
+                  .filter(item => {
+                    const text = `${item.title} ${item.contentSnippet || ''} ${item.content || ''}`.toLowerCase();
+                    return KEYWORDS_FILTER.some(kw => text.includes(kw));
+                  })
+                  .map(item => ({
+                    id: Buffer.from(item.link || item.guid || '').toString('base64').slice(0, 12),
+                    title: item.title,
+                    excerpt: (item.contentSnippet || item.content || '').slice(0, 300),
+                    source: feed.source,
+                    sourceId: feed.id,
+                    category: feed.category,
+                    date: item.pubDate || item.isoDate,
+                    url: item.link,
+                    fetchedAt: new Date().toISOString()
+                  }));
+                
+                allItems.push(...items);
+                console.log(`  ✓ ${items.length} relevant items from ${feed.source}`);
+              } catch (err) {
+                console.error(`  ✗ Error fetching ${feed.source}: ${err.message}`);
+              }
+            }
+            
+            // Sort by date (newest first)
+            allItems.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Remove duplicates
+            const seen = new Set();
+            const unique = allItems.filter(item => {
+              const key = item.title.toLowerCase().trim();
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+            
+            return unique;
+          }
+          
+          async function main() {
+            console.log('🔄 Starting reports fetch...');
+            console.log(`📅 Filtering: last 12 months only\n`);
+            
+            const reports = await fetchAllFeeds();
+            
+            // Save to data file
+            const output = {
+              lastUpdated: new Date().toISOString(),
+              totalReports: reports.length,
+              reports: reports
+            };
+            
+            fs.mkdirSync('data', { recursive: true });
+            fs.writeFileSync('data/reports.json', JSON.stringify(output, null, 2));
+            
+            console.log(`\n✅ Done! ${reports.length} reports saved to data/reports.json`);
+            console.log(`📊 Last updated: ${output.lastUpdated}`);
+          }
+          
+          main().catch(console.error);
+          SCRIPT
+          
+          node fetch-reports.js
+          
+      - name: 📝 Update timestamp
+        run: |
+          echo "Last auto-update: $(date -u +'%Y-%m-%d %H:%M UTC')" > data/last-update.txt
+          
+      - name: 📤 Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add -A
+          git diff --quiet && git diff --staged --quiet || \
+            git commit -m "🔄 Auto-update reports: $(date -u +'%Y-%m-%d %H:%M UTC') — $(cat data/reports.json | python3 -c 'import json,sys; print(json.load(sys.stdin)["totalReports"])') reports"
           git push
