@@ -1,151 +1,2895 @@
-<!doctype html>
+
+---
+
+## 2. ملف index.html
+
+```html
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>رصد دراسات الشرق الأوسط وأفريقيا</title>
-  <style>
-    body{font-family:Tahoma,Arial,sans-serif;margin:0;background:#0b1220;color:#e5e7eb}
-    header{padding:20px;background:#111827;position:sticky;top:0}
-    .wrap{max-width:1200px;margin:auto;padding:16px}
-    input,select{padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#e5e7eb}
-    .toolbar{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}
-    .stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-    .stat{background:#111827;padding:10px 14px;border-radius:10px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:18px}
-    .card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:14px}
-    .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-    .pill{font-size:12px;background:#1f2937;padding:4px 8px;border-radius:999px}
-    .title{font-size:18px;line-height:1.4;margin:8px 0}
-    .title a{color:#f8fafc;text-decoration:none}
-    .desc{font-size:13px;color:#94a3b8;line-height:1.6}
-    .actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-    .btn{padding:8px 12px;border-radius:8px;text-decoration:none;color:white;background:#2563eb}
-    .btn.pdf{background:#dc2626}
-    .muted{color:#94a3b8;font-size:12px}
-    @media(max-width:800px){.toolbar{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-  <header>
-    <div class="wrap">
-      <h1>رصد دراسات الشرق الأوسط وأفريقيا</h1>
-      <div class="toolbar">
-        <input id="q" placeholder="ابحث بالعنوان أو المصدر..." />
-        <select id="region">
-          <option value="all">كل المناطق</option>
-          <option value="mena">الشرق الأوسط/العالم العربي</option>
-          <option value="africa">أفريقيا</option>
-          <option value="global">عالمي</option>
-        </select>
-        <select id="base">
-          <option value="all">كل المقرات</option>
-          <option value="in-region">مقره في المنطقة</option>
-          <option value="in-africa">مقره في أفريقيا</option>
-          <option value="outside">مقره خارج المنطقة</option>
-        </select>
-        <select id="lang">
-          <option value="all">كل اللغات</option>
-          <option value="ar">العربية</option>
-          <option value="en">English</option>
-          <option value="fr">Français</option>
-        </select>
-      </div>
-      <div class="stats">
-        <div class="stat">الإجمالي: <b id="total">0</b></div>
-        <div class="stat">MENA: <b id="menaCount">0</b></div>
-        <div class="stat">Africa: <b id="africaCount">0</b></div>
-        <div class="stat">PDF مباشر: <b id="pdfCount">0</b></div>
-      </div>
-    </div>
-  </header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجمّع التقارير الدولية | International Reports Aggregator</title>
+    <meta name="description" content="منصة آلية لجمع التقارير الدولية حول السياسة والأمن والحكم - أفريقيا والعالم العربي والشرق الأوسط">
 
-  <main class="wrap">
-    <div id="generated" class="muted"></div>
-    <div id="grid" class="grid"></div>
-  </main>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <script>
-    let REPORTS = [];
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    function fmtDate(date) {
-      try { return new Date(date).toLocaleDateString('ar-EG'); }
-      catch { return date; }
-    }
-
-    function render(items) {
-      document.getElementById('total').textContent = items.length;
-      document.getElementById('menaCount').textContent = items.filter(x => x.region === 'mena').length;
-      document.getElementById('africaCount').textContent = items.filter(x => x.region === 'africa').length;
-      document.getElementById('pdfCount').textContent = items.filter(x => x.hasPdf).length;
-
-      const grid = document.getElementById('grid');
-      if (!items.length) {
-        grid.innerHTML = '<div class="muted">لا توجد نتائج مطابقة.</div>';
-        return;
-      }
-
-      grid.innerHTML = items.map(r => `
-        <div class="card">
-          <div class="meta">
-            <span class="pill">${r.sourceAr || r.source}</span>
-            <span class="pill">${r.region}</span>
-            <span class="pill">${r.base}</span>
-            <span class="pill">${r.lang}</span>
-            <span class="pill">${r.freq || 'periodic'}</span>
-          </div>
-          <div class="title"><a href="${r.pageUrl || r.url}" target="_blank" rel="noopener">${r.title}</a></div>
-          <div class="desc">${r.description || ''}</div>
-          <div class="meta" style="margin-top:10px">
-            ${(r.topics || []).slice(0,4).map(t => `<span class="pill">${t}</span>`).join('')}
-          </div>
-          <div class="actions">
-            <span class="muted">${fmtDate(r.date)}</span>
-            <a class="btn ${r.hasPdf ? 'pdf' : ''}" href="${r.url}" target="_blank" rel="noopener">
-              ${r.hasPdf ? 'تحميل PDF' : 'فتح التقرير'}
-            </a>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function applyFilters() {
-      const q = document.getElementById('q').value.toLowerCase();
-      const region = document.getElementById('region').value;
-      const base = document.getElementById('base').value;
-      const lang = document.getElementById('lang').value;
-
-      const filtered = REPORTS.filter(r => {
-        if (region !== 'all' && r.region !== region) return false;
-        if (base !== 'all' && r.base !== base) return false;
-        if (lang !== 'all' && r.lang !== lang) return false;
-        if (q) {
-          const hay = `${r.title} ${r.description} ${r.source} ${r.sourceAr}`.toLowerCase();
-          if (!hay.includes(q)) return false;
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #1a237e;
+            --primary-light: #3949ab;
+            --primary-dark: #0d1442;
+            --secondary: #c62828;
+            --accent: #ff8f00;
+            --accent-light: #ffb300;
+            --success: #2e7d32;
+            --warning: #f57f17;
+            --info: #0277bd;
+            --bg-main: #0a0e27;
+            --bg-card: #111640;
+            --bg-card-hover: #1a1f50;
+            --bg-surface: #0d1235;
+            --text-primary: #e8eaf6;
+            --text-secondary: #9fa8da;
+            --text-muted: #5c6bc0;
+            --border-color: #1a237e;
+            --border-light: #283593;
+            --gradient-1: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+            --gradient-2: linear-gradient(135deg, #c62828 0%, #d32f2f 100%);
+            --gradient-3: linear-gradient(135deg, #ff8f00 0%, #ffb300 100%);
+            --gradient-hero: linear-gradient(180deg, #0a0e27 0%, #1a237e 50%, #0a0e27 100%);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 20px rgba(57,73,171,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        return true;
-      });
 
-      render(filtered);
-    }
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    ['q','region','base','lang'].forEach(id => {
-      document.getElementById(id).addEventListener('input', applyFilters);
-      document.getElementById(id).addEventListener('change', applyFilters);
-    });
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
 
-    fetch('data/reports.json')
-      .then(r => r.json())
-      .then(data => {
-        REPORTS = data.reports || [];
-        document.getElementById('generated').textContent =
-          `آخر تحديث للبيانات: ${new Date(data.generatedAt).toLocaleString('ar-EG')}`;
-        render(REPORTS);
-      })
-      .catch(() => {
-        document.getElementById('grid').innerHTML =
-          '<div class="muted">تعذر تحميل data/reports.json. شغّل الجامع أولاً.</div>';
-      });
-  </script>
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-animation .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: float-particle linear infinite;
+        }
+
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 14, 39, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .header.scrolled {
+            background: rgba(10, 14, 39, 0.98);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        .lang-toggle {
+            background: var(--gradient-3);
+            color: var(--primary-dark);
+            border: none;
+            font-weight: 700;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            padding: 8rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            background: var(--gradient-hero);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233949ab' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: -1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1.5rem;
+            background: rgba(57, 73, 171, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent-light);
+            margin-bottom: 1.5rem;
+            animation: pulse-badge 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 179, 0, 0.2); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 179, 0, 0); }
+        }
+
+        .hero h2 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #e8eaf6, #9fa8da, #ffb300);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem auto;
+            max-width: 900px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem 1.5rem;
+            background: rgba(17, 22, 64, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            min-width: 140px;
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== SEARCH & FILTERS ===== */
+        .filters-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 75px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 3rem 0.8rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 143, 0, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.6rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 160px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .filter-tag {
+            padding: 0.4rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .filter-tag:hover, .filter-tag.active {
+            background: var(--primary);
+            border-color: var(--primary-light);
+            color: white;
+        }
+
+        .filter-tag i {
+            margin-left: 4px;
+        }
+
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .results-count {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .results-count strong {
+            color: var(--accent);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.4rem 0.8rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        /* ===== REPORTS GRID ===== */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .reports-grid.list-view {
+            grid-template-columns: 1fr;
+        }
+
+        /* ===== REPORT CARD ===== */
+        .report-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-1);
+            transition: var(--transition);
+        }
+
+        .report-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .report-card:hover::before {
+            width: 5px;
+            background: var(--gradient-3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.3rem 0.8rem;
+            background: rgba(57, 73, 171, 0.15);
+            border: 1px solid rgba(57, 73, 171, 0.3);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--primary-light);
+            white-space: nowrap;
+        }
+
+        .source-badge img {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .credibility-score {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .credibility-high {
+            background: rgba(46, 125, 50, 0.15);
+            color: #66bb6a;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+
+        .credibility-medium {
+            background: rgba(245, 127, 23, 0.15);
+            color: #ffa726;
+            border: 1px solid rgba(245, 127, 23, 0.3);
+        }
+
+        .report-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .report-title:hover {
+            color: var(--accent-light);
+        }
+
+        .report-excerpt {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.2rem 0.6rem;
+            background: rgba(26, 35, 126, 0.2);
+            border-radius: 50px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .tag.region-africa { background: rgba(46, 125, 50, 0.15); color: #66bb6a; }
+        .tag.region-mena { background: rgba(198, 40, 40, 0.15); color: #ef5350; }
+        .tag.region-arab { background: rgba(255, 143, 0, 0.15); color: #ffb300; }
+        .tag.topic-security { background: rgba(198, 40, 40, 0.15); color: #ef5350; }
+        .tag.topic-politics { background: rgba(2, 119, 189, 0.15); color: #42a5f5; }
+        .tag.topic-governance { background: rgba(46, 125, 50, 0.15); color: #66bb6a; }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .card-date {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        /* ===== SOURCES SIDEBAR ===== */
+        .layout-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 180px;
+            height: fit-content;
+        }
+
+        .sidebar-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+        }
+
+        .source-list {
+            list-style: none;
+        }
+
+        .source-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(26, 35, 126, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .source-list li:hover {
+            color: var(--accent);
+        }
+
+        .source-list li:last-child {
+            border-bottom: none;
+        }
+
+        .source-count {
+            padding: 0.15rem 0.5rem;
+            background: rgba(57, 73, 171, 0.2);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--primary-light);
+        }
+
+        /* ===== LOADING ===== */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* ===== LAST UPDATE BANNER ===== */
+        .update-banner {
+            background: rgba(46, 125, 50, 0.1);
+            border: 1px solid rgba(46, 125, 50, 0.3);
+            border-radius: var(--radius-md);
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .update-banner i {
+            color: var(--success);
+            margin-left: 8px;
+        }
+
+        .update-banner .update-time {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            padding: 0.4rem 1rem;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .refresh-btn:hover {
+            opacity: 0.85;
+            transform: scale(1.02);
+        }
+
+        /* ===== PAGINATION ===== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+            padding: 2rem 0;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: right;
+            margin-bottom: 2rem;
+        }
+
+        .footer-col h3 {
+            color: var(--accent);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col p, .footer-col a {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .footer-col a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 35px;
+            height: 35px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        /* ===== SCROLL TO TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+            z-index: 500;
+            box-shadow: var(--shadow-md);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .layout-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 1.8rem; }
+            .reports-grid { grid-template-columns: 1fr; }
+            .header-content { padding: 0.8rem 1rem; }
+            .header-nav { gap: 0.5rem; }
+            .nav-btn span { display: none; }
+            .stats-bar { gap: 1rem; }
+            .stat-item { min-width: 100px; padding: 0.8rem; }
+            .stat-number { font-size: 1.5rem; }
+            .filter-row { gap: 0.5rem; }
+            .search-box { flex-direction: column; }
+            .main-container { padding: 1rem; }
+            .filters-section { padding: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero { padding: 6rem 1rem 2rem; }
+            .hero h2 { font-size: 1.5rem; }
+            .hero p { font-size: 0.95rem; }
+        }
+
+        /* ===== CATEGORY TABS ===== */
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            scrollbar-width: thin;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .category-tab {
+            padding: 0.5rem 1.2rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .category-tab:hover, .category-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        .category-tab .tab-count {
+            background: rgba(255,255,255,0.2);
+            padding: 0.1rem 0.4rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+        }
+
+        /* ===== NEW BADGE ===== */
+        .new-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 0.2rem 0.6rem;
+            background: var(--gradient-2);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 50px;
+            animation: pulse-new 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-new {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(198, 40, 40, 0); }
+        }
+
+        /* ===== EXPORT BUTTONS ===== */
+        .export-section {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: auto;
+        }
+
+        .export-btn {
+            padding: 0.4rem 0.8rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        .export-btn:hover {
+            background: var(--info);
+            color: white;
+            border-color: var(--info);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <div class="loading-text">جاري تحميل التقارير...</div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-globe-africa"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>مجمّع التقارير الدولية</h1>
+                    <span>International Reports Aggregator</span>
+                </div>
+            </a>
+            <nav class="header-nav">
+                <button class="nav-btn active" onclick="showSection('all')">
+                    <i class="fas fa-th-large"></i>
+                    <span>الكل</span>
+                </button>
+                <button class="nav-btn" onclick="showSection('sources')">
+                    <i class="fas fa-university"></i>
+                    <span>المصادر</span>
+                </button>
+                <button class="nav-btn" onclick="showSection('stats')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>الإحصائيات</span>
+                </button>
+                <button class="nav-btn" onclick="exportData('csv')">
+                    <i class="fas fa-download"></i>
+                    <span>تصدير</span>
+                </button>
+                <button class="nav-btn lang-toggle" onclick="toggleLanguage()">
+                    EN / عربي
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">
+            <i class="fas fa-sync-alt fa-spin"></i>
+            <span>تحديث تلقائي يومي | آخر تحديث: <span id="lastUpdate"></span></span>
+        </div>
+        <h2>تقارير دولية حول أفريقيا والعالم العربي والشرق الأوسط</h2>
+        <p>
+            جمع آلي لأحدث التقارير والدراسات من أكثر من 50 مصدراً دولياً موثوقاً
+            في مجالات السياسة والأمن والحكم والعلاقات الدولية والجيوبوليتيك
+        </p>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalReports">0</span>
+                <span class="stat-label">تقرير ودراسة</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalSources">53</span>
+                <span class="stat-label">مصدر دولي</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalCategories">6</span>
+                <span class="stat-label">تصنيف رئيسي</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="thisWeek">0</span>
+                <span class="stat-label">هذا الأسبوع</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">12</span>
+                <span class="stat-label">شهراً كحد أقصى</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Update Banner -->
+        <div class="update-banner">
+            <div>
+                <i class="fas fa-check-circle"></i>
+                آخر تحديث تلقائي: <span class="update-time" id="updateTime"></span>
+                — تعرض فقط المنشورات التي لم يمر على نشرها أكثر من سنة
+            </div>
+            <button class="refresh-btn" onclick="refreshData()">
+                <i class="fas fa-sync-alt"></i>
+                تحديث الآن
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="searchInput"
+                           placeholder="ابحث في التقارير والدراسات..." oninput="filterReports()">
+                </div>
+            </div>
+
+            <div class="filter-row" style="margin-bottom: 0.8rem;">
+                <select class="filter-select" id="sourceFilter" onchange="filterReports()">
+                    <option value="">جميع المصادر</option>
+                    <optgroup label="🇺🇳 منظومة الأمم المتحدة">
+                        <option value="un-security-council">مجلس الأمن الدولي</option>
+                        <option value="undp">برنامج الأمم المتحدة الإنمائي</option>
+                        <option value="unhcr">المفوضية السامية لشؤون اللاجئين</option>
+                        <option value="uneca">اللجنة الاقتصادية لأفريقيا</option>
+                        <option value="escwa">الإسكوا</option>
+                        <option value="un-ocha">مكتب تنسيق الشؤون الإنسانية</option>
+                        <option value="un-women">هيئة الأمم المتحدة للمرأة</option>
+                        <option value="unodc">مكتب الأمم المتحدة المعني بالمخدرات</option>
+                    </optgroup>
+                    <optgroup label="🔬 مراكز الأبحاث">
+                        <option value="sipri">SIPRI</option>
+                        <option value="brookings">Brookings Institution</option>
+                        <option value="chatham-house">Chatham House</option>
+                        <option value="rand">RAND Corporation</option>
+                        <option value="carnegie">Carnegie Endowment</option>
+                        <option value="cfr">Council on Foreign Relations</option>
+                        <option value="iiss">IISS</option>
+                        <option value="crisis-group">International Crisis Group</option>
+                        <option value="swp">SWP Berlin</option>
+                        <option value="ifri">IFRI</option>
+                        <option value="mei">Middle East Institute</option>
+                        <option value="stimson">Stimson Center</option>
+                    </optgroup>
+                    <optgroup label="🌍 مصادر أفريقية">
+                        <option value="au">الاتحاد الأفريقي</option>
+                        <option value="iss-africa">ISS Africa</option>
+                        <option value="acss">Africa Center for Strategic Studies</option>
+                        <option value="mo-ibrahim">Mo Ibrahim Foundation</option>
+                        <option value="afdb">البنك الأفريقي للتنمية</option>
+                        <option value="accord">ACCORD</option>
+                        <option value="saiia">SAIIA</option>
+                        <option value="afrobarometer">Afrobarometer</option>
+                        <option value="codesria">CODESRIA</option>
+                    </optgroup>
+                    <optgroup label="🇪🇺 المؤسسات الأوروبية">
+                        <option value="eeas">الخدمة الأوروبية للشؤون الخارجية</option>
+                        <option value="euiss">EU ISS</option>
+                        <option value="ecfr">ECFR</option>
+                    </optgroup>
+                    <optgroup label="🎓 الجامعات والمراكز الأكاديمية">
+                        <option value="belfer">Belfer Center - Harvard</option>
+                        <option value="lse-mec">LSE Middle East Centre</option>
+                        <option value="oxford-ies">Oxford Institute for Energy Studies</option>
+                        <option value="ajcs">مركز الجزيرة للدراسات</option>
+                        <option value="epc">مركز الإمارات للسياسات</option>
+                        <option value="kfcris">مركز الملك فيصل</option>
+                    </optgroup>
+                </select>
+
+                <select class="filter-select" id="topicFilter" onchange="filterReports()">
+                    <option value="">جميع المواضيع</option>
+                    <option value="politics">السياسة</option>
+                    <option value="security">الأمن</option>
+                    <option value="governance">الحكم والحوكمة</option>
+                    <option value="international-relations">العلاقات الدولية</option>
+                    <option value="geopolitics">الجيوبوليتيك</option>
+                    <option value="human-rights">حقوق الإنسان</option>
+                    <option value="terrorism">الإرهاب والتطرف</option>
+                    <option value="conflict">النزاعات والسلام</option>
+                    <option value="migration">الهجرة واللجوء</option>
+                    <option value="development">التنمية</option>
+                    <option value="political-economy">الاقتصاد السياسي</option>
+                    <option value="energy">الطاقة والموارد</option>
+                </select>
+
+                <select class="filter-select" id="regionFilter" onchange="filterReports()">
+                    <option value="">جميع المناطق</option>
+                    <option value="africa">أفريقيا (عام)</option>
+                    <option value="north-africa">شمال أفريقيا</option>
+                    <option value="west-africa">غرب أفريقيا</option>
+                    <option value="east-africa">شرق أفريقيا</option>
+                    <option value="central-africa">وسط أفريقيا</option>
+                    <option value="southern-africa">جنوب أفريقيا</option>
+                    <option value="sahel">منطقة الساحل</option>
+                    <option value="horn-of-africa">القرن الأفريقي</option>
+                    <option value="middle-east">الشرق الأوسط</option>
+                    <option value="gulf">دول الخليج</option>
+                    <option value="levant">بلاد الشام</option>
+                    <option value="arab-world">العالم العربي</option>
+                </select>
+
+                <select class="filter-select" id="typeFilter" onchange="filterReports()">
+                    <option value="">جميع الأنواع</option>
+                    <option value="periodic-report">تقرير دوري</option>
+                    <option value="research-paper">دراسة بحثية</option>
+                    <option value="policy-brief">موجز سياسات</option>
+                    <option value="analysis">تحليل</option>
+                    <option value="annual-report">تقرير سنوي</option>
+                    <option value="working-paper">ورقة عمل</option>
+                </select>
+
+                <select class="filter-select" id="dateFilter" onchange="filterReports()">
+                    <option value="12">آخر 12 شهراً</option>
+                    <option value="6">آخر 6 أشهر</option>
+                    <option value="3">آخر 3 أشهر</option>
+                    <option value="1">آخر شهر</option>
+                </select>
+            </div>
+
+            <div class="category-tabs" id="categoryTabs">
+                <button class="category-tab active" onclick="filterByCategory('all', this)">
+                    <i class="fas fa-globe"></i> الكل
+                </button>
+                <button class="category-tab" onclick="filterByCategory('politics', this)">
+                    <i class="fas fa-landmark"></i> السياسة
+                </button>
+                <button class="category-tab" onclick="filterByCategory('security', this)">
+                    <i class="fas fa-shield-alt"></i> الأمن
+                </button>
+                <button class="category-tab" onclick="filterByCategory('governance', this)">
+                    <i class="fas fa-balance-scale"></i> الحوكمة
+                </button>
+                <button class="category-tab" onclick="filterByCategory('geopolitics', this)">
+                    <i class="fas fa-chess"></i> الجيوبوليتيك
+                </button>
+                <button class="category-tab" onclick="filterByCategory('conflict', this)">
+                    <i class="fas fa-fire"></i> النزاعات
+                </button>
+                <button class="category-tab" onclick="filterByCategory('international-relations', this)">
+                    <i class="fas fa-handshake"></i> علاقات دولية
+                </button>
+                <button class="category-tab" onclick="filterByCategory('human-rights', this)">
+                    <i class="fas fa-fist-raised"></i> حقوق الإنسان
+                </button>
+                <button class="category-tab" onclick="filterByCategory('migration', this)">
+                    <i class="fas fa-route"></i> الهجرة
+                </button>
+                <button class="category-tab" onclick="filterByCategory('terrorism', this)">
+                    <i class="fas fa-crosshairs"></i> الإرهاب
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <div class="results-count">
+                عرض <strong id="shownCount">0</strong> من <strong id="filteredTotal">0</strong> نتيجة
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportData('csv')">
+                        <i class="fas fa-file-csv"></i> CSV
+                    </button>
+                    <button class="export-btn" onclick="exportData('json')">
+                        <i class="fas fa-file-code"></i> JSON
+                    </button>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="setView('grid', this)">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" onclick="setView('list', this)">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="layout-wrapper">
+            <!-- Reports Grid -->
+            <div>
+                <div class="reports-grid" id="reportsGrid">
+                    <!-- Reports will be dynamically inserted here -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination"></div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-fire-alt"></i>
+                        المواضيع الرائجة
+                    </h3>
+                    <ul class="source-list" id="trendingTopics">
+                        <!-- Dynamic -->
+                    </ul>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-university"></i>
+                        أكثر المصادر نشراً
+                    </h3>
+                    <ul class="source-list" id="topSources">
+                        <!-- Dynamic -->
+                    </ul>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-map-marked-alt"></i>
+                        التغطية الجغرافية
+                    </h3>
+                    <ul class="source-list" id="regionCoverage">
+                        <!-- Dynamic -->
+                    </ul>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-info-circle"></i>
+                        عن المنصة
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.8;">
+                        منصة آلية تجمع التقارير الدورية والدراسات البحثية من أكثر من 50 مصدراً
+                        دولياً موثوقاً. يتم التحديث يومياً وتُعرض فقط المنشورات التي لم يمر
+                        على نشرها أكثر من 12 شهراً.
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Scroll to Top -->
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3><i class="fas fa-globe-africa"></i> مجمّع التقارير الدولية</h3>
+                    <p>
+                        منصة بحثية أكاديمية لجمع وتصنيف التقارير الدولية المتعلقة
+                        بالسياسة والأمن في أفريقيا والعالم العربي
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h3>التصنيفات</h3>
+                    <a href="#" onclick="filterByCategory('politics')">السياسة</a>
+                    <a href="#" onclick="filterByCategory('security')">الأمن</a>
+                    <a href="#" onclick="filterByCategory('governance')">الحوكمة</a>
+                    <a href="#" onclick="filterByCategory('geopolitics')">الجيوبوليتيك</a>
+                    <a href="#" onclick="filterByCategory('conflict')">النزاعات والسلام</a>
+                </div>
+                <div class="footer-col">
+                    <h3>المناطق</h3>
+                    <a href="#" onclick="filterByRegion('africa')">القارة الأفريقية</a>
+                    <a href="#" onclick="filterByRegion('middle-east')">الشرق الأوسط</a>
+                    <a href="#" onclick="filterByRegion('arab-world')">العالم العربي</a>
+                    <a href="#" onclick="filterByRegion('sahel')">منطقة الساحل</a>
+                    <a href="#" onclick="filterByRegion('horn-of-africa')">القرن الأفريقي</a>
+                </div>
+                <div class="footer-col">
+                    <h3>روابط مهمة</h3>
+                    <a href="https://github.com" target="_blank">المستودع على GitHub</a>
+                    <a href="#">دليل المصادر</a>
+                    <a href="#">API Documentation</a>
+                    <a href="#">المساهمة في المشروع</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>
+                    جميع المحتويات ملك لناشريها الأصليين. هذه المنصة لأغراض البحث العلمي والأكاديمي فقط.
+                </p>
+                <p style="margin-top: 0.5rem;">
+                    © 2024 International Reports Aggregator | Built with ❤️ for researchers
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const CONFIG = {
+            itemsPerPage: 12,
+            maxAgeMonths: 12,
+            updateInterval: 86400000, // 24 hours
+            apiEndpoints: {
+                // RSS Feed URLs for each source
+                feeds: [
+                    // === United Nations System ===
+                    {
+                        id: 'un-security-council',
+                        name: 'مجلس الأمن الدولي',
+                        nameEn: 'UN Security Council',
+                        category: 'un',
+                        url: 'https://www.un.org/securitycouncil/content/reports',
+                        rss: 'https://news.un.org/feed/subscribe/en/news/topic/peace-and-security/feed/rss.xml',
+                        icon: '🇺🇳',
+                        credibility: 'high',
+                        topics: ['security', 'conflict', 'politics'],
+                        regions: ['africa', 'middle-east', 'arab-world']
+                    },
+                    {
+                        id: 'undp',
+                        name: 'برنامج الأمم المتحدة الإنمائي',
+                        nameEn: 'UNDP',
+                        category: 'un',
+                        url: 'https://www.undp.org/publications',
+                        rss: 'https://www.undp.org/rss.xml',
+                        icon: '🇺🇳',
+                        credibility: 'high',
+                        topics: ['development', 'governance'],
+                        regions: ['africa', 'arab-world']
+                    },
+                    {
+                        id: 'unhcr',
+                        name: 'المفوضية السامية لشؤون اللاجئين',
+                        nameEn: 'UNHCR',
+                        category: 'un',
+                        url: 'https://www.unhcr.org/publications',
+                        rss: 'https://www.unhcr.org/rss/news.xml',
+                        icon: '🇺🇳',
+                        credibility: 'high',
+                        topics: ['migration', 'human-rights', 'conflict'],
+                        regions: ['africa', 'middle-east']
+                    },
+                    {
+                        id: 'uneca',
+                        name: 'اللجنة الاقتصادية لأفريقيا',
+                        nameEn: 'UNECA',
+                        category: 'un',
+                        url: 'https://www.uneca.org/publications',
+                        rss: 'https://www.uneca.org/rss.xml',
+                        icon: '🇺🇳',
+                        credibility: 'high',
+                        topics: ['development', 'political-economy', 'governance'],
+                        regions: ['africa']
+                    },
+                    {
+                        id: 'escwa',
+                        name: 'الإسكوا',
+                        nameEn: 'ESCWA',
+                        category: 'un',
+                        url: 'https://www.unescwa.org/publications',
+                        rss: 'https://www.unescwa.org/rss.xml',
+                        icon: '🇺🇳',
+                        credibility: 'high',
+                        topics: ['development', 'governance', 'political-economy'],
+                        regions: ['arab-world', 'middle-east']
+                    },
+
+                    // === Think Tanks ===
+                    {
+                        id: 'sipri',
+                        name: 'معهد ستوكهولم الدولي لأبحاث السلام',
+                        nameEn: 'SIPRI',
+                        category: 'think-tank',
+                        url: 'https://www.sipri.org/publications',
+                        rss: 'https://www.sipri.org/rss/publications',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['security', 'conflict', 'geopolitics'],
+                        regions: ['africa', 'middle-east']
+                    },
+                    {
+                        id: 'brookings',
+                        name: 'معهد بروكينغز',
+                        nameEn: 'Brookings Institution',
+                        category: 'think-tank',
+                        url: 'https://www.brookings.edu/topic/middle-east-north-africa/',
+                        rss: 'https://www.brookings.edu/feed/',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['politics', 'governance', 'international-relations'],
+                        regions: ['middle-east', 'africa', 'arab-world']
+                    },
+                    {
+                        id: 'chatham-house',
+                        name: 'تشاتام هاوس',
+                        nameEn: 'Chatham House',
+                        category: 'think-tank',
+                        url: 'https://www.chathamhouse.org/publications',
+                        rss: 'https://www.chathamhouse.org/rss',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['international-relations', 'geopolitics', 'politics'],
+                        regions: ['africa', 'middle-east']
+                    },
+                    {
+                        id: 'crisis-group',
+                        name: 'مجموعة الأزمات الدولية',
+                        nameEn: 'International Crisis Group',
+                        category: 'think-tank',
+                        url: 'https://www.crisisgroup.org/latest-updates',
+                        rss: 'https://www.crisisgroup.org/rss.xml',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['conflict', 'security', 'politics'],
+                        regions: ['africa', 'middle-east', 'sahel']
+                    },
+                    {
+                        id: 'carnegie',
+                        name: 'مؤسسة كارنيغي',
+                        nameEn: 'Carnegie Endowment',
+                        category: 'think-tank',
+                        url: 'https://carnegieendowment.org/publications',
+                        rss: 'https://carnegieendowment.org/rss/solr/?query=middle+east+africa',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['politics', 'geopolitics', 'governance'],
+                        regions: ['middle-east', 'arab-world', 'africa']
+                    },
+                    {
+                        id: 'rand',
+                        name: 'مؤسسة راند',
+                        nameEn: 'RAND Corporation',
+                        category: 'think-tank',
+                        url: 'https://www.rand.org/topics/middle-east.html',
+                        rss: 'https://www.rand.org/topics/middle-east.xml',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['security', 'terrorism', 'geopolitics'],
+                        regions: ['middle-east', 'africa']
+                    },
+                    {
+                        id: 'cfr',
+                        name: 'مجلس العلاقات الخارجية',
+                        nameEn: 'Council on Foreign Relations',
+                        category: 'think-tank',
+                        url: 'https://www.cfr.org/africa',
+                        rss: 'https://www.cfr.org/rss.xml',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['international-relations', 'geopolitics', 'security'],
+                        regions: ['africa', 'middle-east']
+                    },
+                    {
+                        id: 'iiss',
+                        name: 'المعهد الدولي للدراسات الاستراتيجية',
+                        nameEn: 'IISS',
+                        category: 'think-tank',
+                        url: 'https://www.iiss.org/publications',
+                        rss: 'https://www.iiss.org/rss',
+                        icon: '🛡️',
+                        credibility: 'high',
+                        topics: ['security', 'geopolitics', 'conflict'],
+                        regions: ['middle-east', 'africa']
+                    },
+                    {
+                        id: 'swp',
+                        name: 'المعهد الألماني للسياسة الدولية والأمن',
+                        nameEn: 'SWP Berlin',
+                        category: 'think-tank',
+                        url: 'https://www.swp-berlin.org/en/publications',
+                        rss: 'https://www.swp-berlin.org/en/rss',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['security', 'politics', 'international-relations'],
+                        regions: ['africa', 'middle-east']
+                    },
+                    {
+                        id: 'ifri',
+                        name: 'المعهد الفرنسي للعلاقات الدولية',
+                        nameEn: 'IFRI',
+                        category: 'think-tank',
+                        url: 'https://www.ifri.org/en/publications',
+                        rss: 'https://www.ifri.org/en/rss.xml',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['geopolitics', 'international-relations', 'security'],
+                        regions: ['africa', 'middle-east']
+                    },
+                    {
+                        id: 'mei',
+                        name: 'معهد الشرق الأوسط',
+                        nameEn: 'Middle East Institute',
+                        category: 'think-tank',
+                        url: 'https://www.mei.edu/publications',
+                        rss: 'https://www.mei.edu/rss.xml',
+                        icon: '🔬',
+                        credibility: 'high',
+                        topics: ['politics', 'geopolitics', 'security'],
+                        regions: ['middle-east', 'arab-world', 'north-africa']
+                    },
+
+                    // === Africa-Focused ===
+                    {
+                        id: 'au',
+                        name: 'الاتحاد الأفريقي',
+                        nameEn: 'African Union',
+                        category: 'africa',
+                        url: 'https://au.int/en/documents',
+                        rss: 'https://au.int/rss.xml',
+                        icon: '🌍',
+                        credibility: 'high',
+                        topics: ['politics', 'security', 'governance'],
+                        regions: ['africa']
+                    },
+                    {
+                        id: 'iss-africa',
+                        name: 'معهد الدراسات الأمنية',
+                        nameEn: 'ISS Africa',
+                        category: 'africa',
+                        url: 'https://issafrica.org/research',
+                        rss: 'https://issafrica.org/rss',
+                        icon: '🌍',
+                        credibility: 'high',
+                        topics: ['security', 'conflict', 'governance'],
+                        regions: ['africa', 'sahel', 'horn-of-africa']
+                    },
+                    {
+                        id: 'acss',
+                        name: 'مركز أفريقيا للدراسات الاستراتيجية',
+                        nameEn: 'Africa Center for Strategic Studies',
+                        category: 'africa',
+                        url: 'https://africacenter.org/publications/',
+                        rss: 'https://africacenter.org/feed/',
+                        icon: '🌍',
+                        credibility: 'high',
+                        topics: ['security', 'politics', 'governance'],
+                        regions: ['africa', 'sahel', 'horn-of-africa']
+                    },
+                    {
+                        id: 'mo-ibrahim',
+                        name: 'مؤسسة مو إبراهيم',
+                        nameEn: 'Mo Ibrahim Foundation',
+                        category: 'africa',
+                        url: 'https://mo.ibrahim.foundation/research',
+                        rss: '',
+                        icon: '🌍',
+                        credibility: 'high',
+                        topics: ['governance', 'development'],
+                        regions: ['africa']
+                    },
+                    {
+                        id: 'accord',
+                        name: 'مركز حل النزاعات',
+                        nameEn: 'ACCORD',
+                        category: 'africa',
+                        url: 'https://www.accord.org.za/publications/',
+                        rss: 'https://www.accord.org.za/feed/',
+                        icon: '🌍',
+                        credibility: 'high',
+                        topics: ['conflict', 'security', 'politics'],
+                        regions: ['africa']
+                    },
+                    {
+                        id: 'afrobarometer',
+                        name: 'أفروباروميتر',
+                        nameEn: 'Afrobarometer',
+                        category: 'africa',
+                        url: 'https://www.afrobarometer.org/publications/',
+                        rss: 'https://www.afrobarometer.org/feed/',
+                        icon: '🌍',
+                        credibility: 'high',
+                        topics: ['governance', 'politics', 'development'],
+                        regions: ['africa']
+                    },
+
+                    // === EU Institutions ===
+                    {
+                        id: 'euiss',
+                        name: 'معهد الاتحاد الأوروبي للدراسات الأمنية',
+                        nameEn: 'EU ISS',
+                        category: 'eu',
+                        url: 'https://www.iss.europa.eu/publications',
+                        rss: 'https://www.iss.europa.eu/rss',
+                        icon: '🇪🇺',
+                        credibility: 'high',
+                        topics: ['security', 'geopolitics', 'international-relations'],
+                        regions: ['africa', 'middle-east']
+                    },
+                    {
+                        id: 'ecfr',
+                        name: 'المجلس الأوروبي للعلاقات الخارجية',
+                        nameEn: 'ECFR',
+                        category: 'eu',
+                        url: 'https://ecfr.eu/publications/',
+                        rss: 'https://ecfr.eu/feed/',
+                        icon: '🇪🇺',
+                        credibility: 'high',
+                        topics: ['international-relations', 'geopolitics', 'politics'],
+                        regions: ['middle-east', 'africa', 'arab-world']
+                    },
+
+                    // === Academic ===
+                    {
+                        id: 'belfer',
+                        name: 'مركز بلفر - هارفارد',
+                        nameEn: 'Belfer Center - Harvard',
+                        category: 'academic',
+                        url: 'https://www.belfercenter.org/publications',
+                        rss: 'https://www.belfercenter.org/rss',
+                        icon: '🎓',
+                        credibility: 'high',
+                        topics: ['security', 'international-relations', 'geopolitics'],
+                        regions: ['middle-east', 'africa']
+                    },
+                    {
+                        id: 'lse-mec',
+                        name: 'مركز الشرق الأوسط - LSE',
+                        nameEn: 'LSE Middle East Centre',
+                        category: 'academic',
+                        url: 'https://blogs.lse.ac.uk/mec/',
+                        rss: 'https://blogs.lse.ac.uk/mec/feed/',
+                        icon: '🎓',
+                        credibility: 'high',
+                        topics: ['politics', 'international-relations', 'political-economy'],
+                        regions: ['middle-east', 'arab-world']
+                    },
+                    {
+                        id: 'ajcs',
+                        name: 'مركز الجزيرة للدراسات',
+                        nameEn: 'Al Jazeera Centre for Studies',
+                        category: 'academic',
+                        url: 'https://studies.aljazeera.net/',
+                        rss: 'https://studies.aljazeera.net/ar/rss.xml',
+                        icon: '🎓',
+                        credibility: 'medium',
+                        topics: ['politics', 'geopolitics', 'international-relations'],
+                        regions: ['arab-world', 'middle-east', 'africa']
+                    },
+                    {
+                        id: 'acled',
+                        name: 'مشروع بيانات النزاعات المسلحة',
+                        nameEn: 'ACLED',
+                        category: 'think-tank',
+                        url: 'https://acleddata.com/research/',
+                        rss: 'https://acleddata.com/feed/',
+                        icon: '📊',
+                        credibility: 'high',
+                        topics: ['conflict', 'security'],
+                        regions: ['africa', 'middle-east']
+                    }
+                ]
+            }
+        };
+
+        // ===== DATA STORE =====
+        let allReports = [];
+        let filteredReports = [];
+        let currentPage = 1;
+        let currentView = 'grid';
+        let currentCategory = 'all';
+        let isArabic = true;
+
+        // ===== SAMPLE DATA (Simulated - in production, this comes from RSS/API) =====
+        function generateSampleReports() {
+            const sampleReports = [
+                {
+                    id: 1,
+                    title: 'التقرير السنوي لحالة السلام والأمن في أفريقيا 2024',
+                    titleEn: 'Annual Report on Peace and Security in Africa 2024',
+                    excerpt: 'يستعرض هذا التقرير الدوري حالة السلام والأمن في القارة الأفريقية خلال العام 2024، مع التركيز على النزاعات المسلحة في منطقة الساحل والقرن الأفريقي والتحولات السياسية في غرب أفريقيا.',
+                    source: 'iss-africa',
+                    sourceName: 'معهد الدراسات الأمنية',
+                    sourceNameEn: 'ISS Africa',
+                    sourceIcon: '🌍',
+                    topics: ['security', 'conflict'],
+                    regions: ['africa', 'sahel', 'horn-of-africa'],
+                    type: 'annual-report',
+                    date: '2024-11-15',
+                    url: 'https://issafrica.org',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 2,
+                    title: 'اتجاهات الإنفاق العسكري العالمي: التركيز على الشرق الأوسط وشمال أفريقيا',
+                    titleEn: 'Global Military Expenditure Trends: Focus on MENA',
+                    excerpt: 'يحلل تقرير SIPRI الدوري اتجاهات الإنفاق العسكري في منطقة الشرق الأوسط وشمال أفريقيا، مع بيانات محدثة عن صفقات الأسلحة والتحالفات الأمنية الإقليمية.',
+                    source: 'sipri',
+                    sourceName: 'معهد ستوكهولم الدولي لأبحاث السلام',
+                    sourceNameEn: 'SIPRI',
+                    sourceIcon: '🔬',
+                    topics: ['security', 'geopolitics'],
+                    regions: ['middle-east', 'north-africa'],
+                    type: 'periodic-report',
+                    date: '2024-12-01',
+                    url: 'https://www.sipri.org',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 3,
+                    title: 'تقرير التنمية البشرية في المنطقة العربية: الحوكمة والمشاركة السياسية',
+                    titleEn: 'Arab Human Development Report: Governance and Political Participation',
+                    excerpt: 'يركز هذا الإصدار من تقرير التنمية البشرية العربية على تحديات الحوكمة والمشاركة السياسية في الدول العربية، مع تحليل معمق لمؤشرات الديمقراطية وسيادة القانون.',
+                    source: 'undp',
+                    sourceName: 'برنامج الأمم المتحدة الإنمائي',
+                    sourceNameEn: 'UNDP',
+                    sourceIcon: '🇺🇳',
+                    topics: ['governance', 'development', 'politics'],
+                    regions: ['arab-world', 'middle-east'],
+                    type: 'periodic-report',
+                    date: '2024-10-20',
+                    url: 'https://www.undp.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 4,
+                    title: 'أزمة السودان: تداعيات النزاع على الأمن الإقليمي في القرن الأفريقي',
+                    titleEn: 'Sudan Crisis: Impact on Regional Security in the Horn of Africa',
+                    excerpt: 'يحلل تقرير مجموعة الأزمات الدولية تطورات الصراع في السودان وتداعياته على دول الجوار وعلى الأمن الإقليمي في منطقة القرن الأفريقي.',
+                    source: 'crisis-group',
+                    sourceName: 'مجموعة الأزمات الدولية',
+                    sourceNameEn: 'International Crisis Group',
+                    sourceIcon: '🔬',
+                    topics: ['conflict', 'security', 'politics'],
+                    regions: ['africa', 'horn-of-africa'],
+                    type: 'analysis',
+                    date: '2024-11-28',
+                    url: 'https://www.crisisgroup.org',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 5,
+                    title: 'مؤشر إبراهيم للحوكمة الأفريقية 2024',
+                    titleEn: 'Ibrahim Index of African Governance 2024',
+                    excerpt: 'يقدم مؤشر إبراهيم للحوكمة الأفريقية تقييماً شاملاً لجودة الحوكمة في 54 دولة أفريقية، مع تصنيفات في مجالات الأمن وسيادة القانون والمشاركة والتنمية البشرية.',
+                    source: 'mo-ibrahim',
+                    sourceName: 'مؤسسة مو إبراهيم',
+                    sourceNameEn: 'Mo Ibrahim Foundation',
+                    sourceIcon: '🌍',
+                    topics: ['governance', 'development'],
+                    regions: ['africa'],
+                    type: 'annual-report',
+                    date: '2024-09-15',
+                    url: 'https://mo.ibrahim.foundation',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 6,
+                    title: 'الجيوبوليتيك المتغيرة في منطقة الساحل: الفاعلون الجدد والتحالفات',
+                    titleEn: 'Shifting Geopolitics in the Sahel: New Actors and Alliances',
+                    excerpt: 'تدرس هذه الورقة التحولات الجيوبوليتيكية في منطقة الساحل الأفريقي بعد الانسحاب الفرنسي وتنامي الدور الروسي والتركي، وتأثير ذلك على موازين القوى الإقليمية.',
+                    source: 'ifri',
+                    sourceName: 'المعهد الفرنسي للعلاقات الدولية',
+                    sourceNameEn: 'IFRI',
+                    sourceIcon: '🔬',
+                    topics: ['geopolitics', 'security', 'international-relations'],
+                    regions: ['africa', 'sahel'],
+                    type: 'research-paper',
+                    date: '2024-11-05',
+                    url: 'https://www.ifri.org',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 7,
+                    title: 'تقرير حالة اللاجئين في الشرق الأوسط وشمال أفريقيا',
+                    titleEn: 'MENA Refugee Situation Report',
+                    excerpt: 'يوثق تقرير المفوضية السامية الدوري أوضاع اللاجئين والنازحين في منطقة الشرق الأوسط وشمال أفريقيا، مع إحصاءات محدثة وتحليل للاتجاهات والتحديات.',
+                    source: 'unhcr',
+                    sourceName: 'المفوضية السامية لشؤون اللاجئين',
+                    sourceNameEn: 'UNHCR',
+                    sourceIcon: '🇺🇳',
+                    topics: ['migration', 'human-rights', 'conflict'],
+                    regions: ['middle-east', 'north-africa'],
+                    type: 'periodic-report',
+                    date: '2024-10-01',
+                    url: 'https://www.unhcr.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 8,
+                    title: 'التحولات الديمقراطية في أفريقيا: بين الانقلابات والاحتجاجات الشعبية',
+                    titleEn: 'Democratic Transitions in Africa: Between Coups and Popular Protests',
+                    excerpt: 'تحلل هذه الدراسة من مركز أفريقيا للدراسات الاستراتيجية موجة الانقلابات العسكرية في غرب ووسط أفريقيا والحركات الاحتجاجية المطالبة بالديمقراطية.',
+                    source: 'acss',
+                    sourceName: 'مركز أفريقيا للدراسات الاستراتيجية',
+                    sourceNameEn: 'Africa Center for Strategic Studies',
+                    sourceIcon: '🌍',
+                    topics: ['politics', 'governance', 'security'],
+                    regions: ['africa', 'west-africa', 'central-africa'],
+                    type: 'research-paper',
+                    date: '2024-12-10',
+                    url: 'https://africacenter.org',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 9,
+                    title: 'النفوذ الخارجي في ليبيا: خريطة التدخلات والتحالفات',
+                    titleEn: 'External Influence in Libya: Map of Interventions and Alliances',
+                    excerpt: 'يرسم تقرير تشاتام هاوس خريطة شاملة للتدخلات الخارجية في ليبيا، ويحلل أدوار الفاعلين الإقليميين والدوليين وتأثيرهم على مسار التسوية السياسية.',
+                    source: 'chatham-house',
+                    sourceName: 'تشاتام هاوس',
+                    sourceNameEn: 'Chatham House',
+                    sourceIcon: '🔬',
+                    topics: ['geopolitics', 'international-relations', 'conflict'],
+                    regions: ['north-africa', 'africa', 'middle-east'],
+                    type: 'policy-brief',
+                    date: '2024-11-22',
+                    url: 'https://www.chathamhouse.org',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 10,
+                    title: 'مستقبل الأمن في منطقة الخليج: التهديدات والفرص',
+                    titleEn: 'Future of Security in the Gulf Region: Threats and Opportunities',
+                    excerpt: 'يستشرف تقرير المعهد الدولي للدراسات الاستراتيجية مستقبل البيئة الأمنية في منطقة الخليج العربي، مع تحليل للتهديدات التقليدية وغير التقليدية.',
+                    source: 'iiss',
+                    sourceName: 'المعهد الدولي للدراسات الاستراتيجية',
+                    sourceNameEn: 'IISS',
+                    sourceIcon: '🛡️',
+                    topics: ['security', 'geopolitics'],
+                    regions: ['gulf', 'middle-east'],
+                    type: 'research-paper',
+                    date: '2024-10-15',
+                    url: 'https://www.iiss.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 11,
+                    title: 'الاقتصاد السياسي للتحولات في شمال أفريقيا',
+                    titleEn: 'Political Economy of Transitions in North Africa',
+                    excerpt: 'تحلل دراسة مؤسسة كارنيغي الأبعاد الاقتصادية والسياسية للتحولات الجارية في دول شمال أفريقيا، مع التركيز على العلاقة بين الإصلاح الاقتصادي والاستقرار السياسي.',
+                    source: 'carnegie',
+                    sourceName: 'مؤسسة كارنيغي',
+                    sourceNameEn: 'Carnegie Endowment',
+                    sourceIcon: '🔬',
+                    topics: ['political-economy', 'politics', 'governance'],
+                    regions: ['north-africa', 'arab-world'],
+                    type: 'research-paper',
+                    date: '2024-09-30',
+                    url: 'https://carnegieendowment.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 12,
+                    title: 'تقرير النزاعات المسلحة في أفريقيا: بيانات الربع الثالث 2024',
+                    titleEn: 'Armed Conflict in Africa: Q3 2024 Data Report',
+                    excerpt: 'يقدم مشروع ACLED بيانات محدثة عن النزاعات المسلحة والعنف السياسي في القارة الأفريقية خلال الربع الثالث من عام 2024، مع خرائط تفاعلية وتحليلات إحصائية.',
+                    source: 'acled',
+                    sourceName: 'مشروع بيانات النزاعات المسلحة',
+                    sourceNameEn: 'ACLED',
+                    sourceIcon: '📊',
+                    topics: ['conflict', 'security'],
+                    regions: ['africa'],
+                    type: 'periodic-report',
+                    date: '2024-11-01',
+                    url: 'https://acleddata.com',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 13,
+                    title: 'السياسة الأوروبية تجاه أفريقيا: إعادة تقييم الشراكة',
+                    titleEn: 'European Policy Towards Africa: Reassessing the Partnership',
+                    excerpt: 'يقيّم المجلس الأوروبي للعلاقات الخارجية السياسة الأوروبية تجاه أفريقيا في ضوء التحولات الجيوبوليتيكية العالمية وتنامي المنافسة مع الصين وروسيا.',
+                    source: 'ecfr',
+                    sourceName: 'المجلس الأوروبي للعلاقات الخارجية',
+                    sourceNameEn: 'ECFR',
+                    sourceIcon: '🇪🇺',
+                    topics: ['international-relations', 'geopolitics', 'politics'],
+                    regions: ['africa'],
+                    type: 'policy-brief',
+                    date: '2024-12-05',
+                    url: 'https://ecfr.eu',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 14,
+                    title: 'المسح العربي للرأي العام: اتجاهات المواطنين نحو الحوكمة والديمقراطية',
+                    titleEn: 'Arab Public Opinion Survey: Citizens Attitudes on Governance',
+                    excerpt: 'يعرض أفروباروميتر نتائج المسح الأخير لآراء المواطنين العرب والأفارقة حول جودة الحوكمة ومستوى الثقة في المؤسسات ومطالب الإصلاح الديمقراطي.',
+                    source: 'afrobarometer',
+                    sourceName: 'أفروباروميتر',
+                    sourceNameEn: 'Afrobarometer',
+                    sourceIcon: '🌍',
+                    topics: ['governance', 'politics'],
+                    regions: ['africa', 'arab-world'],
+                    type: 'periodic-report',
+                    date: '2024-08-20',
+                    url: 'https://www.afrobarometer.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 15,
+                    title: 'الإرهاب في أفريقيا: تقييم التهديدات والاستجابات',
+                    titleEn: 'Terrorism in Africa: Threat Assessment and Responses',
+                    excerpt: 'يحلل مركز بلفر بجامعة هارفارد تطور التهديدات الإرهابية في القارة الأفريقية مع التركيز على تنظيمات مرتبطة بتنظيم الدولة والقاعدة في الساحل وشرق أفريقيا.',
+                    source: 'belfer',
+                    sourceName: 'مركز بلفر - هارفارد',
+                    sourceNameEn: 'Belfer Center - Harvard',
+                    sourceIcon: '🎓',
+                    topics: ['terrorism', 'security'],
+                    regions: ['africa', 'sahel', 'east-africa'],
+                    type: 'research-paper',
+                    date: '2024-10-10',
+                    url: 'https://www.belfercenter.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 16,
+                    title: 'التنافس الدولي على موارد أفريقيا: الطاقة والمعادن الحرجة',
+                    titleEn: 'International Competition for African Resources: Energy and Critical Minerals',
+                    excerpt: 'تدرس ورقة SWP التنافس الدولي المتصاعد على الموارد الطبيعية الأفريقية وتأثيره على السياسات المحلية والعلاقات الدولية للدول الأفريقية.',
+                    source: 'swp',
+                    sourceName: 'المعهد الألماني للسياسة الدولية والأمن',
+                    sourceNameEn: 'SWP Berlin',
+                    sourceIcon: '🔬',
+                    topics: ['geopolitics', 'political-economy', 'energy'],
+                    regions: ['africa'],
+                    type: 'working-paper',
+                    date: '2024-11-18',
+                    url: 'https://www.swp-berlin.org',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 17,
+                    title: 'تحولات السياسة الخارجية لدول الخليج: رؤى جديدة',
+                    titleEn: 'Gulf States Foreign Policy Shifts: New Perspectives',
+                    excerpt: 'يستعرض معهد الشرق الأوسط التحولات الجوهرية في السياسة الخارجية لدول الخليج العربي، بما في ذلك التطبيع والتنويع الاقتصادي والتحالفات الجديدة.',
+                    source: 'mei',
+                    sourceName: 'معهد الشرق الأوسط',
+                    sourceNameEn: 'Middle East Institute',
+                    sourceIcon: '🔬',
+                    topics: ['international-relations', 'geopolitics', 'politics'],
+                    regions: ['gulf', 'middle-east', 'arab-world'],
+                    type: 'analysis',
+                    date: '2024-12-08',
+                    url: 'https://www.mei.edu',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 18,
+                    title: 'قرارات مجلس الأمن بشأن النزاعات الأفريقية: تقييم الفعالية',
+                    titleEn: 'UN Security Council Resolutions on African Conflicts: Effectiveness Assessment',
+                    excerpt: 'يقيم هذا التقرير فعالية قرارات مجلس الأمن الدولي المتعلقة بالنزاعات في أفريقيا، مع دراسة حالات السودان ومالي والكونغو الديمقراطية.',
+                    source: 'un-security-council',
+                    sourceName: 'مجلس الأمن الدولي',
+                    sourceNameEn: 'UN Security Council',
+                    sourceIcon: '🇺🇳',
+                    topics: ['security', 'conflict', 'politics'],
+                    regions: ['africa'],
+                    type: 'periodic-report',
+                    date: '2024-09-25',
+                    url: 'https://www.un.org/securitycouncil',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 19,
+                    title: 'التقرير الاقتصادي لأفريقيا 2024: آفاق النمو والتحديات',
+                    titleEn: 'Economic Report on Africa 2024: Growth Prospects and Challenges',
+                    excerpt: 'يقدم تقرير اللجنة الاقتصادية لأفريقيا تحليلاً شاملاً للأوضاع الاقتصادية في القارة مع توقعات النمو وتحديات التنمية المستدامة.',
+                    source: 'uneca',
+                    sourceName: 'اللجنة الاقتصادية لأفريقيا',
+                    sourceNameEn: 'UNECA',
+                    sourceIcon: '🇺🇳',
+                    topics: ['development', 'political-economy'],
+                    regions: ['africa'],
+                    type: 'annual-report',
+                    date: '2024-07-15',
+                    url: 'https://www.uneca.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 20,
+                    title: 'الأمن الاستراتيجي الأوروبي وجنوب المتوسط: تقييم 2024',
+                    titleEn: 'European Strategic Security and the Southern Mediterranean: 2024 Assessment',
+                    excerpt: 'يقيم معهد الاتحاد الأوروبي للدراسات الأمنية التحديات الأمنية على الحدود الجنوبية لأوروبا، بما في ذلك الهجرة والإرهاب وعدم الاستقرار في شمال أفريقيا.',
+                    source: 'euiss',
+                    sourceName: 'معهد الاتحاد الأوروبي للدراسات الأمنية',
+                    sourceNameEn: 'EU ISS',
+                    sourceIcon: '🇪🇺',
+                    topics: ['security', 'geopolitics', 'migration'],
+                    regions: ['north-africa', 'middle-east'],
+                    type: 'research-paper',
+                    date: '2024-11-10',
+                    url: 'https://www.iss.europa.eu',
+                    credibility: 'high',
+                    isNew: true
+                },
+                {
+                    id: 21,
+                    title: 'مسارات حل النزاعات في وسط أفريقيا',
+                    titleEn: 'Conflict Resolution Pathways in Central Africa',
+                    excerpt: 'يستعرض مركز حل النزاعات ACCORD مسارات السلام في منطقة وسط أفريقيا مع التركيز على دور الوساطة الأفريقية والمنظمات الإقليمية.',
+                    source: 'accord',
+                    sourceName: 'مركز حل النزاعات',
+                    sourceNameEn: 'ACCORD',
+                    sourceIcon: '🌍',
+                    topics: ['conflict', 'politics', 'security'],
+                    regions: ['central-africa', 'africa'],
+                    type: 'policy-brief',
+                    date: '2024-10-28',
+                    url: 'https://www.accord.org.za',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 22,
+                    title: 'الإسكوا: تقرير المرأة والحكم في المنطقة العربية',
+                    titleEn: 'ESCWA: Women and Governance in the Arab Region Report',
+                    excerpt: 'يرصد تقرير الإسكوا الدوري مشاركة المرأة في الحياة السياسية والحوكمة في الدول العربية مع مؤشرات التمكين والتحديات المستمرة.',
+                    source: 'escwa',
+                    sourceName: 'الإسكوا',
+                    sourceNameEn: 'ESCWA',
+                    sourceIcon: '🇺🇳',
+                    topics: ['governance', 'politics', 'human-rights'],
+                    regions: ['arab-world', 'middle-east'],
+                    type: 'periodic-report',
+                    date: '2024-08-05',
+                    url: 'https://www.unescwa.org',
+                    credibility: 'high',
+                    isNew: false
+                },
+                {
+                    id: 23,
+                    title: 'التحولات السياسية في الشرق الأوسط بعد 7 أكتوبر: دراسة مقارنة',
+                    titleEn: 'Political Transformations in the Middle East Post-October 7: Comparative Study',
+                    excerpt: 'يحلل مركز الجزيرة للدراسات التداعيات السياسية لأحداث السابع من أكتوبر على المنطقة، بما في ذلك التحالفات الإقليمية والمواقف الدولية.',
+                    source: 'ajcs',
+                    sourceName: 'مركز الجزيرة للدراسات',
+                    sourceNameEn: 'Al Jazeera Centre for Studies',
+                    sourceIcon: '🎓',
+                    topics: ['politics', 'geopolitics', 'international-relations'],
+                    regions: ['middle-east', 'arab-world'],
+                    type: 'analysis',
+                    date: '2024-12-12',
+                    url: 'https://studies.aljazeera.net',
+                    credibility: 'medium',
+                    isNew: true
+                },
+                {
+                    id: 24,
+                    title: 'الهجرة غير النظامية عبر البحر المتوسط: اتجاهات وسياسات',
+                    titleEn: 'Irregular Migration Across the Mediterranean: Trends and Policies',
+                    excerpt: 'يرصد مركز الشرق الأوسط بجامعة LSE اتجاهات الهجرة غير النظامية عبر البحر المتوسط وتأثير السياسات الأوروبية والإقليمية على حركة المهاجرين.',
+                    source: 'lse-mec',
+                    sourceName: 'مركز الشرق الأوسط - LSE',
+                    sourceNameEn: 'LSE Middle East Centre',
+                    sourceIcon: '🎓',
+                    topics: ['migration', 'politics', 'human-rights'],
+                    regions: ['north-africa', 'middle-east'],
+                    type: 'working-paper',
+                    date: '2024-09-20',
+                    url: 'https://blogs.lse.ac.uk/mec',
+                    credibility: 'high',
+                    isNew: false
+                }
+            ];
+
+            return sampleReports;
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
+
+        function initApp() {
+            // Show loading
+            showLoading(true);
+
+            // Create background particles
+            createParticles();
+
+            // Load data
+            setTimeout(() => {
+                allReports = generateSampleReports();
+
+                // Filter by max age (12 months)
+                const maxDate = new Date();
+                maxDate.setMonth(maxDate.getMonth() - 12);
+                allReports = allReports.filter(r => new Date(r.date) >= maxDate);
+
+                // Sort by date (newest first)
+                allReports.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                filteredReports = [...allReports];
+
+                // Update UI
+                updateStats();
+                updateSidebar();
+                renderReports();
+                updateLastUpdate();
+
+                showLoading(false);
+            }, 1500);
+
+            // Setup event listeners
+            setupScrollListeners();
+
+            // Auto-refresh check
+            checkAutoRefresh();
+        }
+
+        // ===== BACKGROUND PARTICLES =====
+        function createParticles() {
+            const container = document.getElementById('bgAnimation');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                particle.style.animationDelay = (Math.random() * 15) + 's';
+                particle.style.width = (Math.random() * 3 + 1) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+
+        // ===== LOADING =====
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+
+        // ===== RENDER REPORTS =====
+        function renderReports() {
+            const grid = document.getElementById('reportsGrid');
+            const start = (currentPage - 1) * CONFIG.itemsPerPage;
+            const end = start + CONFIG.itemsPerPage;
+            const pageReports = filteredReports.slice(start, end);
+
+            grid.innerHTML = '';
+
+            if (pageReports.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+                        <i class="fas fa-search" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem; display: block;"></i>
+                        <h3 style="color: var(--text-secondary); margin-bottom: 0.5rem;">لم يتم العثور على نتائج</h3>
+                        <p style="color: var(--text-muted);">جرّب تغيير معايير البحث أو الفلاتر</p>
+                    </div>
+                `;
+                document.getElementById('shownCount').textContent = '0';
+                document.getElementById('filteredTotal').textContent = '0';
+                return;
+            }
+
+            pageReports.forEach(report => {
+                const card = createReportCard(report);
+                grid.innerHTML += card;
+            });
+
+            // Update counts
+            document.getElementById('shownCount').textContent = pageReports.length;
+            document.getElementById('filteredTotal').textContent = filteredReports.length;
+
+            // Render pagination
+            renderPagination();
+        }
+
+        function createReportCard(report) {
+            const topicNames = {
+                'politics': 'السياسة',
+                'security': 'الأمن',
+                'governance': 'الحوكمة',
+                'international-relations': 'علاقات دولية',
+                'geopolitics': 'الجيوبوليتيك',
+                'human-rights': 'حقوق الإنسان',
+                'terrorism': 'الإرهاب',
+                'conflict': 'النزاعات',
+                'migration': 'الهجرة',
+                'development': 'التنمية',
+                'political-economy': 'اقتصاد سياسي',
+                'energy': 'الطاقة'
+            };
+
+            const regionNames = {
+                'africa': 'أفريقيا',
+                'north-africa': 'شمال أفريقيا',
+                'west-africa': 'غرب أفريقيا',
+                'east-africa': 'شرق أفريقيا',
+                'central-africa': 'وسط أفريقيا',
+                'southern-africa': 'جنوب أفريقيا',
+                'sahel': 'الساحل',
+                'horn-of-africa': 'القرن الأفريقي',
+                'middle-east': 'الشرق الأوسط',
+                'gulf': 'الخليج',
+                'levant': 'الشام',
+                'arab-world': 'العالم العربي'
+            };
+
+            const typeNames = {
+                'periodic-report': 'تقرير دوري',
+                'research-paper': 'دراسة بحثية',
+                'policy-brief': 'موجز سياسات',
+                'analysis': 'تحليل',
+                'annual-report': 'تقرير سنوي',
+                'working-paper': 'ورقة عمل'
+            };
+
+            const daysAgo = Math.floor((new Date() - new Date(report.date)) / (1000 * 60 * 60 * 24));
+            const dateFormatted = new Date(report.date).toLocaleDateString('ar-EG', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const topicTags = report.topics.map(t =>
+                `<span class="tag topic-${t}">${topicNames[t] || t}</span>`
+            ).join('');
+
+            const regionTags = report.regions.slice(0, 2).map(r =>
+                `<span class="tag region-${r.includes('africa') ? 'africa' : r.includes('arab') ? 'arab' : 'mena'}">${regionNames[r] || r}</span>`
+            ).join('');
+
+            return `
+                <article class="report-card" onclick="openReport(${report.id})">
+                    ${report.isNew ? '<span class="new-badge"><i class="fas fa-bolt"></i> جديد</span>' : ''}
+                    <div class="card-header">
+                        <span class="source-badge">
+                            ${report.sourceIcon}
+                            ${isArabic ? report.sourceName : report.sourceNameEn}
+                        </span>
+                        <span class="credibility-score credibility-${report.credibility}">
+                            <i class="fas fa-${report.credibility === 'high' ? 'check-circle' : 'info-circle'}"></i>
+                            ${report.credibility === 'high' ? 'موثوق' : 'متوسط'}
+                        </span>
+                    </div>
+                    <h3 class="report-title">${isArabic ? report.title : report.titleEn}</h3>
+                    <p class="report-excerpt">${report.excerpt}</p>
+                    <div class="card-tags">
+                        <span class="tag" style="background: rgba(255,143,0,0.15); color: #ffb300;">
+                            <i class="fas fa-file-alt"></i> ${typeNames[report.type] || report.type}
+                        </span>
+                        ${topicTags}
+                        ${regionTags}
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-date">
+                            <i class="far fa-calendar-alt"></i>
+                            ${dateFormatted}
+                            ${daysAgo <= 7 ? '<span style="color: var(--accent); margin-right: 8px;">• منذ ' + daysAgo + ' أيام</span>' : ''}
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="event.stopPropagation(); bookmarkReport(${report.id})" title="حفظ">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                            <button class="action-btn" onclick="event.stopPropagation(); shareReport(${report.id})" title="مشاركة">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <a class="action-btn" href="${report.url}" target="_blank" onclick="event.stopPropagation()" title="فتح المصدر">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        // ===== PAGINATION =====
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredReports.length / CONFIG.itemsPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // Previous
+            html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.3"' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+            // Pages
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span style="color: var(--text-muted);">...</span>`;
+                }
+            }
+
+            // Next
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.3"' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredReports.length / CONFIG.itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderReports();
+            window.scrollTo({ top: document.querySelector('.filters-section').offsetTop - 80, behavior: 'smooth' });
+        }
+
+        // ===== FILTERING =====
+        function filterReports() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const source = document.getElementById('sourceFilter').value;
+            const topic = document.getElementById('topicFilter').value;
+            const region = document.getElementById('regionFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const months = parseInt(document.getElementById('dateFilter').value);
+
+            const maxDate = new Date();
+            maxDate.setMonth(maxDate.getMonth() - months);
+
+            filteredReports = allReports.filter(report => {
+                // Date filter
+                if (new Date(report.date) < maxDate) return false;
+
+                // Search
+                if (search) {
+                    const searchText = `${report.title} ${report.titleEn} ${report.excerpt} ${report.sourceName} ${report.sourceNameEn}`.toLowerCase();
+                    if (!searchText.includes(search)) return false;
+                }
+
+                // Source
+                if (source && report.source !== source) return false;
+
+                // Topic
+                if (topic && !report.topics.includes(topic)) return false;
+
+                // Region
+                if (region && !report.regions.includes(region)) return false;
+
+                // Type
+                if (type && report.type !== type) return false;
+
+                // Category tab
+                if (currentCategory !== 'all' && !report.topics.includes(currentCategory)) return false;
+
+                return true;
+            });
+
+            currentPage = 1;
+            renderReports();
+        }
+
+        function filterByCategory(category, btn) {
+            currentCategory = category;
+
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            filterReports();
+        }
+
+        function filterByRegion(region) {
+            document.getElementById('regionFilter').value = region;
+            filterReports();
+            window.scrollTo({ top: document.querySelector('.filters-section').offsetTop - 80, behavior: 'smooth' });
+        }
+
+        // ===== VIEW TOGGLE =====
+        function setView(view, btn) {
+            currentView = view;
+            const grid = document.getElementById('reportsGrid');
+
+            if (view === 'list') {
+                grid.classList.add('list-view');
+            } else {
+                grid.classList.remove('list-view');
+            }
+
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+
+        // ===== STATS =====
+        function updateStats() {
+            document.getElementById('totalReports').textContent = allReports.length;
+
+            const thisWeek = allReports.filter(r => {
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return new Date(r.date) >= weekAgo;
+            }).length;
+            document.getElementById('thisWeek').textContent = thisWeek;
+        }
+
+        // ===== SIDEBAR =====
+        function updateSidebar() {
+            // Trending topics
+            const topicCount = {};
+            allReports.forEach(r => {
+                r.topics.forEach(t => {
+                    topicCount[t] = (topicCount[t] || 0) + 1;
+                });
+            });
+
+            const topicNames = {
+                'politics': 'السياسة',
+                'security': 'الأمن',
+                'governance': 'الحوكمة',
+                'international-relations': 'العلاقات الدولية',
+                'geopolitics': 'الجيوبوليتيك',
+                'human-rights': 'حقوق الإنسان',
+                'terrorism': 'الإرهاب',
+                'conflict': 'النزاعات',
+                'migration': 'الهجرة',
+                'development': 'التنمية',
+                'political-economy': 'الاقتصاد السياسي',
+                'energy': 'الطاقة'
+            };
+
+            const sortedTopics = Object.entries(topicCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            document.getElementById('trendingTopics').innerHTML = sortedTopics.map(([topic, count]) =>
+                `<li onclick="filterByCategory('${topic}')">
+                    <span>${topicNames[topic] || topic}</span>
+                    <span class="source-count">${count}</span>
+                </li>`
+            ).join('');
+
+            // Top sources
+            const sourceCount = {};
+            allReports.forEach(r => {
+                const name = isArabic ? r.sourceName : r.sourceNameEn;
+                sourceCount[name] = (sourceCount[name] || 0) + 1;
+            });
+
+            const sortedSources = Object.entries(sourceCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            document.getElementById('topSources').innerHTML = sortedSources.map(([name, count]) =>
+                `<li>
+                    <span>${name}</span>
+                    <span class="source-count">${count}</span>
+                </li>`
+            ).join('');
+
+            // Region coverage
+            const regionCount = {};
+            const regionNames = {
+                'africa': 'أفريقيا',
+                'middle-east': 'الشرق الأوسط',
+                'arab-world': 'العالم العربي',
+                'sahel': 'الساحل',
+                'horn-of-africa': 'القرن الأفريقي',
+                'north-africa': 'شمال أفريقيا',
+                'gulf': 'الخليج',
+                'west-africa': 'غرب أفريقيا',
+                'east-africa': 'شرق أفريقيا',
+                'central-africa': 'وسط أفريقيا'
+            };
+
+            allReports.forEach(r => {
+                r.regions.forEach(reg => {
+                    regionCount[reg] = (regionCount[reg] || 0) + 1;
+                });
+            });
+
+            const sortedRegions = Object.entries(regionCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            document.getElementById('regionCoverage').innerHTML = sortedRegions.map(([region, count]) =>
+                `<li onclick="filterByRegion('${region}')">
+                    <span>${regionNames[region] || region}</span>
+                    <span class="source-count">${count}</span>
+                </li>`
+            ).join('');
+        }
+
+        // ===== MODAL =====
+        function openReport(id) {
+            const report = allReports.find(r => r.id === id);
+            if (!report) return;
+
+            const topicNames = {
+                'politics': 'السياسة', 'security': 'الأمن', 'governance': 'الحوكمة',
+                'international-relations': 'العلاقات الدولية', 'geopolitics': 'الجيوبوليتيك',
+                'human-rights': 'حقوق الإنسان', 'terrorism': 'الإرهاب', 'conflict': 'النزاعات',
+                'migration': 'الهجرة', 'development': 'التنمية',
+                'political-economy': 'الاقتصاد السياسي', 'energy': 'الطاقة'
+            };
+
+            const regionNames = {
+                'africa': 'أفريقيا', 'middle-east': 'الشرق الأوسط', 'arab-world': 'العالم العربي',
+                'sahel': 'الساحل', 'horn-of-africa': 'القرن الأفريقي', 'north-africa': 'شمال أفريقيا',
+                'gulf': 'الخليج', 'west-africa': 'غرب أفريقيا', 'east-africa': 'شرق أفريقيا',
+                'central-africa': 'وسط أفريقيا'
+            };
+
+            const dateFormatted = new Date(report.date).toLocaleDateString('ar-EG', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            document.getElementById('modalContent').innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <span class="source-badge" style="margin-bottom: 1rem; display: inline-flex;">
+                        ${report.sourceIcon} ${report.sourceName}
+                    </span>
+                    <h2 style="font-size: 1.4rem; margin: 1rem 0; line-height: 1.6;">${report.title}</h2>
+                    <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 1rem; font-weight: 400;">
+                        ${report.titleEn}
+                    </h3>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">
+                        <i class="far fa-calendar-alt"></i> ${dateFormatted}
+                    </span>
+                    <span class="credibility-score credibility-${report.credibility}">
+                        <i class="fas fa-check-circle"></i> ${report.credibility === 'high' ? 'مصدر موثوق' : 'مصدر متوسط الموثوقية'}
+                    </span>
+                </div>
+                <p style="line-height: 2; margin-bottom: 1.5rem; color: var(--text-secondary);">
+                    ${report.excerpt}
+                </p>
+                <div style="margin-bottom: 1.5rem;">
+                    <strong style="display: block; margin-bottom: 0.5rem;">المواضيع:</strong>
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        ${report.topics.map(t => `<span class="tag topic-${t}">${topicNames[t]}</span>`).join('')}
+                    </div>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <strong style="display: block; margin-bottom: 0.5rem;">التغطية الجغرافية:</strong>
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        ${report.regions.map(r => `<span class="tag">${regionNames[r] || r}</span>`).join('')}
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <a href="${report.url}" target="_blank"
+                       style="flex: 1; padding: 0.8rem; background: var(--gradient-1); color: white; text-align: center;
+                              border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: var(--transition);">
+                        <i class="fas fa-external-link-alt"></i> فتح التقرير الأصلي
+                    </a>
+                    <button onclick="shareReport(${report.id})"
+                            style="padding: 0.8rem 1.5rem; background: transparent; border: 1px solid var(--border-color);
+                                   color: var(--text-secondary); border-radius: var(--radius-md); cursor: pointer; font-family: 'Cairo';">
+                        <i class="fas fa-share-alt"></i> مشاركة
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('reportModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('reportModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on overlay click
+        document.getElementById('reportModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ===== LANGUAGE TOGGLE =====
+        function toggleLanguage() {
+            isArabic = !isArabic;
+            document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+            document.documentElement.lang = isArabic ? 'ar' : 'en';
+            renderReports();
+            updateSidebar();
+        }
+
+        // ===== EXPORT =====
+        function exportData(format) {
+            const data = filteredReports.map(r => ({
+                title: r.title,
+                titleEn: r.titleEn,
+                source: r.sourceNameEn,
+                date: r.date,
+                topics: r.topics.join(', '),
+                regions: r.regions.join(', '),
+                type: r.type,
+                url: r.url,
+                credibility: r.credibility
+            }));
+
+            if (format === 'json') {
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                downloadFile(blob, 'reports-export.json');
+            } else if (format === 'csv') {
+                const headers = Object.keys(data[0]).join(',');
+                const rows = data.map(d => Object.values(d).map(v => `"${v}"`).join(','));
+                const csv = [headers, ...rows].join('\n');
+                const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+                downloadFile(blob, 'reports-export.csv');
+            }
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ===== SHARE =====
+        function shareReport(id) {
+            const report = allReports.find(r => r.id === id);
+            if (!report) return;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: report.title,
+                    text: report.excerpt,
+                    url: report.url
+                });
+            } else {
+                navigator.clipboard.writeText(report.url).then(() => {
+                    alert('تم نسخ رابط التقرير!');
+                });
+            }
+        }
+
+        // ===== BOOKMARK =====
+        function bookmarkReport(id) {
+            let bookmarks = JSON.parse(localStorage.getItem('report-bookmarks') || '[]');
+            const idx = bookmarks.indexOf(id);
+            if (idx > -1) {
+                bookmarks.splice(idx, 1);
+            } else {
+                bookmarks.push(id);
+            }
+            localStorage.setItem('report-bookmarks', JSON.stringify(bookmarks));
+        }
+
+        // ===== SCROLL HANDLERS =====
+        function setupScrollListeners() {
+            window.addEventListener('scroll', () => {
+                // Header
+                const header = document.getElementById('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+
+                // Scroll to top button
+                const scrollBtn = document.getElementById('scrollTop');
+                if (window.scrollY > 500) {
+                    scrollBtn.classList.add('visible');
+                } else {
+                    scrollBtn.classList.remove('visible');
+                }
+            });
+        }
+
+        // ===== LAST UPDATE =====
+        function updateLastUpdate() {
+            const now = new Date();
+            const formatted = now.toLocaleDateString('ar-EG', {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            document.getElementById('lastUpdate').textContent = formatted;
+            document.getElementById('updateTime').textContent = formatted;
+        }
+
+        // ===== AUTO REFRESH =====
+        function checkAutoRefresh() {
+            setInterval(() => {
+                refreshData();
+            }, CONFIG.updateInterval);
+        }
+
+        function refreshData() {
+            showLoading(true);
+            setTimeout(() => {
+                updateLastUpdate();
+                showLoading(false);
+            }, 2000);
+        }
+
+        // ===== SECTION NAVIGATION =====
+        function showSection(section) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.closest('.nav-btn').classList.add('active');
+
+            if (section === 'all') {
+                currentCategory = 'all';
+                document.getElementById('sourceFilter').value = '';
+                document.getElementById('topicFilter').value = '';
+                document.getElementById('regionFilter').value = '';
+                filterReports();
+            }
+        }
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === '/' && !e.ctrlKey) {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    </script>
 </body>
 </html>
